@@ -4,13 +4,13 @@ from opendbc.can.parser import CANParser
 from cereal import car
 from selfdrive.car.interfaces import RadarInterfaceBase
 
-RADAR_MSGS_C = list(range(0x2c2, 0x2d4+2, 2))  # c_ messages 706,...,724
-RADAR_MSGS_D = list(range(0x2a2, 0x2b4+2, 2))  # d_ messages
+RADAR_MSGS_C = [0x2c0]  # c_ messages 704, 800, 864, 928
+RADAR_MSGS_D = [0x2a0]  # d_ messages
 LAST_MSG = max(RADAR_MSGS_C + RADAR_MSGS_D)
 NUMBER_MSGS = len(RADAR_MSGS_C) + len(RADAR_MSGS_D)
 
 def _create_radar_can_parser():
-  dbc_f = 'chrysler_pacifica_2017_hybrid_private_fusion.dbc'
+  dbc_f = 'lrr3_chrysler_200_kl_private_fusion.dbc'
   msg_n = len(RADAR_MSGS_C)
   # list of [(signal name, message name or number, initial values), (...)]
   # [('RADAR_STATE', 1024, 0),
@@ -22,13 +22,14 @@ def _create_radar_can_parser():
   # The factor and offset are applied by the dbc parsing library, so the
   # default values should be after the factor/offset are applied.
   signals = list(zip(['LONG_DIST'] * msg_n +
-                ['LAT_DIST'] * msg_n +
+               # ['LAT1'] * msg_n +
+                ['LAT2'] * msg_n +
                 ['REL_SPEED'] * msg_n,
                 RADAR_MSGS_C * 2 +  # LONG_DIST, LAT_DIST
                 RADAR_MSGS_D,    # REL_SPEED
                 [0] * msg_n +  # LONG_DIST
-                [-1000] * msg_n +    # LAT_DIST
-                [-146.278] * msg_n))  # REL_SPEED set to 0, factor/offset to this
+                [-4.80] * msg_n +    # LAT_DIST
+                [96] * msg_n))  # REL_SPEED set to 0, factor/offset to this
   # TODO what are the checks actually used for?
   # honda only checks the last message,
   # toyota checks all the messages. Which do we want?
@@ -82,7 +83,7 @@ class RadarInterface(RadarInterfaceBase):
         self.pts[trackId].dRel = cpt['LONG_DIST']  # from front of car
         # our lat_dist is positive to the right in car's frame.
         # TODO what does yRel want?
-        self.pts[trackId].yRel = cpt['LAT_DIST']  # in car frame's y axis, left is positive
+        self.pts[trackId].yRel = cpt['LAT2']  # in car frame's y axis, left is positive
       else:  # d_* message
         self.pts[trackId].vRel = cpt['REL_SPEED']
 
