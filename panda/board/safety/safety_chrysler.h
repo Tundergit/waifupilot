@@ -87,7 +87,7 @@ static int chrysler_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
 
     // enter controls on rising edge of ACC, exit controls on ACC off
     if (addr == 498) {
-      int cruise_engaged = ((GET_BYTE(to_push, 2) & 0x38) >> 3) == 7;
+      int cruise_engaged = (GET_BYTE(to_push, 0) >> 4) == 8;
       if (cruise_engaged && !chrysler_cruise_engaged_last) {
         controls_allowed = 1;
       }
