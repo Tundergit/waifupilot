@@ -48,15 +48,15 @@ class CarState(CarStateBase):
     #ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(cp.vl['GEAR']['PRNDL'], None))
     ret.gearShifter = car.CarState.GearShifter.drive
 
-    ret.cruiseState.enabled = cp.vl["ACC_1"]['ACC_STATE'] == 8  # ACC is green.
-    ret.cruiseState.available = cp.vl["ACC_1"]['ACC_STATE'] == 6  
+    ret.cruiseState.enabled = cp.vl["ACC_1"]['ACC_STATE'] == 8  # ACC is green
+    ret.cruiseState.available = cp.vl["ACC_1"]['ACC_STATE'] == 6  # ACC is white
     ret.cruiseState.speed = cp.vl["DASHBOARD"]['ACC_SPEED_CONFIG_KPH'] * CV.KPH_TO_MS
 
     ret.steeringTorque = cp.vl["EPS_STATUS"]["TORQUE_DRIVER"]
     ret.steeringTorqueEps = cp.vl["EPS_STATUS"]["TORQUE_MOTOR"]
     ret.steeringPressed = abs(ret.steeringTorque) > STEER_THRESHOLD
-    steer_state = cp.vl["EPS_STATUS"]["LKAS_STATE"]
-    self.steer_error = steer_state == 4 or (steer_state == 0 and ret.vEgo > self.CP.minSteerSpeed)
+    steer_state = cp.vl["LKAS_COMMAND"]["LKAS_STATE"] == 2  #  LKAS is green
+    self.steer_error = steer_state == 1 or (steer_state == 0 and ret.vEgo > self.CP.minSteerSpeed)
 
     ret.genericToggle = bool(cp.vl["STEERING_LEVERS"]['HIGH_BEAM_FLASH'])
 
@@ -90,7 +90,7 @@ class CarState(CarStateBase):
       ("ACC_SPEED_CONFIG_KPH", "DASHBOARD", 0), # find this #
       ("TORQUE_DRIVER", "EPS_STATUS", 0),
       ("TORQUE_MOTOR", "EPS_STATUS", 0), # find this, this is the bigger #
-      ("LKAS_STATE", "EPS_STATUS", 1), # find this #
+      ("LKAS_STATE", "LKAS_COMMAND", 1), 
       ("COUNTER", "EPS_STATUS", -1),
       ("TRACTION_OFF", "TRACTION_BUTTON", 0),
       ("SEATBELT_DRIVER_UNLATCHED", "SEATBELT_STATUS", 0),
