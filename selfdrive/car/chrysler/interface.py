@@ -95,9 +95,11 @@ class CarInterface(CarInterfaceBase):
   # to be called @ 100hz
   def apply(self, c):
 
-    if (self.CS.frame == -1):
-      return [] # if we haven't seen a frame 1ec, then do not update.
+#    if (self.CS.frame == -1):
+#      return [] # if we haven't seen a frame 1ec, then do not update.
 
     can_sends = self.CC.update(c.enabled, self.CS, self.frame, c.actuators, c.cruiseControl.cancel) # c.hudControl.visualAlert (TODO)
+    
     self.CS.frame != self.frame
+    
     return can_sends
