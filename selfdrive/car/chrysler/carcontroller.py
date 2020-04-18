@@ -20,10 +20,10 @@ class CarController():
 
   def update(self, enabled, CS, actuators, pcm_cancel_cmd): #TODO hud_alert
     # this seems needed to avoid steering faults and to force the sync with the EPS counter
-    frame = CS.lkas_counter
-    ccframe = CS.frame_23b
-    if self.prev_frame == frame:
-      return []
+ #   frame = CS.lkas_counter  # using traditional counter instead
+ #   ccframe = CS.frame_23b
+ #   if self.prev_frame == frame:
+ #     return []
 
     # *** compute control surfaces ***
     # steer torque
