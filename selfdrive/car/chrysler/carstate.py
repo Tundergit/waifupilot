@@ -48,8 +48,8 @@ class CarState(CarStateBase):
     #ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(cp.vl['GEAR']['PRNDL'], None))
     ret.gearShifter = car.CarState.GearShifter.drive
 
-    ret.cruiseState.enabled = cp.vl["ACC_1"]['ACC_STATE'] == 4  # ACC is green.
-    ret.cruiseState.available = cp.vl["ACC_1"]['ACC_STATE'] == 3  
+    ret.cruiseState.enabled = cp.vl["ACC_1"]['ACC_STATE'] == 8  # ACC is green.
+    ret.cruiseState.available = cp.vl["ACC_1"]['ACC_STATE'] == 6  
     ret.cruiseState.speed = cp.vl["DASHBOARD"]['ACC_SPEED_CONFIG_KPH'] * CV.KPH_TO_MS
 
     ret.steeringTorque = cp.vl["EPS_STATUS"]["TORQUE_DRIVER"]
