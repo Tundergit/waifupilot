@@ -98,6 +98,6 @@ class CarInterface(CarInterfaceBase):
     if (self.CS.frame == -1):
       return [] # if we haven't seen a frame 1ec, then do not update.
 
-    can_sends = self.CC.update(c.enabled, self.CS, c.actuators, c.cruiseControl.cancel) # c.hudControl.visualAlert (TODO)
+    can_sends = self.CC.update(c.enabled, self.CS, self.frame, c.actuators, c.cruiseControl.cancel) # c.hudControl.visualAlert (TODO)
 
     return can_sends
