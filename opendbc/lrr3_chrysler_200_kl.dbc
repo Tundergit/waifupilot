@@ -156,7 +156,8 @@ BO_ 498 ACC_2: 8 XXX
 BO_ 490 DASHBOARD: 8 XXX
  SG_ ACC_SPEED_CONFIG_KPH : 7|8@0+ (0.1625,0) [0|1] "m/s" XXX
 
-
+ BO_ 1006 ACC_1: 8 XXX
+ SG_ ACC_STATE : 7|3@0+ (1,0) [0|15] "" XXX
 
 
 CM_ SG_ 1250 TRUNK "1 = open, 0 = closed";
