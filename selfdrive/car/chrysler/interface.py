@@ -100,6 +100,6 @@ class CarInterface(CarInterfaceBase):
 
     can_sends = self.CC.update(c.enabled, self.CS, self.frame, c.actuators, c.cruiseControl.cancel) # c.hudControl.visualAlert (TODO)
     
-    self.CS.frame != self.frame
+    self.CS.frame += 0x01
     
     return can_sends
