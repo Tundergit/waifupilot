@@ -16,7 +16,7 @@ class CarState(CarStateBase):
 
     ret = car.CarState.new_message()
 
-    self.frame = int(cp.vl["LKAS_COMMAND"]['COUNTER'])
+    self.frame = int(cp.vl["LKAS_COMMAND"]['COUNTER'])  # added LKAS_COMMAND instead of EPS_STATUS, instead of self.frame = frame
     self.frame_23b = int(cp.vl["WHEEL_BUTTONS"]['COUNTER'])
 
     ret.doorOpen = any([cp.vl["DOORS"]['DOOR_OPEN_FL'],
