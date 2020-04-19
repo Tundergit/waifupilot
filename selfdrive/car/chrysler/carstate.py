@@ -16,7 +16,7 @@ class CarState(CarStateBase):
 
     ret = car.CarState.new_message()
 
-    self.frame = frame   # int(cp.vl["EPS_STATUS"]['COUNTER'])
+    self.frame = int(cp.vl["LKAS_COMMAND"]['COUNTER'])
     self.frame_23b = int(cp.vl["WHEEL_BUTTONS"]['COUNTER'])
 
     ret.doorOpen = any([cp.vl["DOORS"]['DOOR_OPEN_FL'],
@@ -91,7 +91,7 @@ class CarState(CarStateBase):
       ("TORQUE_DRIVER", "EPS_STATUS", 0),
       ("TORQUE_MOTOR", "EPS_STATUS", 0), # find this, this is the bigger #
       ("LKAS_STATE", "LKAS_COMMAND", 1), 
-      ("COUNTER", "EPS_STATUS", -1),
+      ("COUNTER", "LKAS_COMMAND", -1),
       ("TRACTION_OFF", "TRACTION_BUTTON", 0),
       ("SEATBELT_DRIVER_UNLATCHED", "SEATBELT_STATUS", 0),
       ("COUNTER", "WHEEL_BUTTONS", -1),
