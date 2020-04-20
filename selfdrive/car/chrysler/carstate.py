@@ -48,10 +48,10 @@ class CarState(CarStateBase):
 
     ret.cruiseState.speed = cp.vl["DASHBOARD"]['ACC_SPEED_CONFIG_KPH'] * CV.KPH_TO_MS
     acc_status = cp.vl["ACC_1"]['ACC_STATE']
-    if acc_status == 6:
+    if acc_status == 3:
       ret.cruiseState.available = True
       ret.cruiseState.enabled = False
-    elif acc_status == 8:
+    elif acc_status == 4:
       ret.cruiseState.available = True
       ret.cruiseState.enabled = True
     else:
