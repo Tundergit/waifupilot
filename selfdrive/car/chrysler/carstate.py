@@ -97,7 +97,6 @@ class CarState(CarStateBase):
       ("TORQUE_DRIVER", "EPS_STATUS", 0),
       ("TORQUE_MOTOR", "EPS_STATUS", 0), # find this, this is the bigger #
       ("LKAS_FAULT", "EPS_STATUS", 0),
-      ("LKAS_STATE", "LKAS_COMMAND", 1), 
       ("TRACTION_OFF", "TRACTION_BUTTON", 0),
       ("SEATBELT_DRIVER_UNLATCHED", "SEATBELT_STATUS", 0),
       ("COUNTER", "WHEEL_BUTTONS", -1),
