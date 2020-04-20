@@ -25,13 +25,10 @@ class CarController():
     self.steer_rate_limited = new_steer != apply_steer
 
     moving_fast = CS.out.vEgo > CS.CP.minSteerSpeed  # for status message
-    if CS.out.vEgo > (CS.CP.minSteerSpeed - 0.5):  # for command high bit
-      self.gone_fast_yet = True
-  #  elif self.car_fingerprint in (CAR.PACIFICA_2019_HYBRID, CAR.JEEP_CHEROKEE_2019):
-  #    if CS.out.vEgo < (CS.CP.minSteerSpeed - 3.0):
-  #      self.gone_fast_yet = False  # < 14.5m/s stock turns off this bit, but fine down to 13.5
+    # FIXME: do we need this for the "high torque" bit?
+    # if CS.out.vEgo > (CS.CP.minSteerSpeed - 0.5):  # for command high bit
+    #   self.gone_fast_yet = True
     lkas_active = moving_fast and enabled
-
     if not lkas_active:
       apply_steer = 0
 
@@ -41,9 +38,10 @@ class CarController():
 
     #*** control msgs ***
 
-    if pcm_cancel_cmd:
-      new_msg = create_wheel_buttons(CS.frame_23b)
-      can_sends.append(new_msg)
+    # FIXME: restore cruise control button spam cancellation after we're further along in development
+    # if pcm_cancel_cmd:
+    #   new_msg = create_wheel_buttons(CS.frame_23b)
+    #   can_sends.append(new_msg)
 
     # LKAS_HEARTBIT is forwarded by Panda so no need to send it here.
     # frame is 100Hz (0.01s period)
@@ -56,7 +54,7 @@ class CarController():
   #      can_sends.append(new_msg)
   #      self.hud_count += 1
 
-    new_msg = create_lkas_command(self.packer, int(apply_steer), self.gone_fast_yet, frame)
+    new_msg = create_lkas_command(self.packer, int(apply_steer), lkas_active, frame)
     can_sends.append(new_msg)
 
     return can_sends

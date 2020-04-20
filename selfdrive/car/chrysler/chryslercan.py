@@ -66,11 +66,11 @@ def calc_checksum(data):
 #  return packer.make_can_msg("LKAS_HUD", 0, values)  # 0x2a6
 
 
-def create_lkas_command(packer, apply_steer, moving_fast, frame):
+def create_lkas_command(packer, apply_steer, lkas_active, frame):
   # LKAS_COMMAND 0x1f6 (502) Lane-keeping signal to turn the wheel.
   values = {
     "LKAS_STEERING_TORQUE": apply_steer,
-    "LKAS_STATE": int(moving_fast),
+    "LKAS_STATE": 2 if lkas_active else 0,
     "COUNTER": frame % 0x10,
   }
 
