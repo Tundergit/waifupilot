@@ -11,6 +11,7 @@ class CarState(CarStateBase):
     super().__init__(CP)
     #can_define = CANDefine(DBC[CP.carFingerprint]['pt'])
     #self.shifter_values = can_define.dv["GEAR"]['PRNDL']
+    self.steer_error = False
 
   def update(self, cp, cp_cam):
 
@@ -61,10 +62,7 @@ class CarState(CarStateBase):
     ret.steeringTorque = cp.vl["EPS_STATUS"]["TORQUE_DRIVER"]
     ret.steeringTorqueEps = cp.vl["EPS_STATUS"]["TORQUE_MOTOR"]
     ret.steeringPressed = abs(ret.steeringTorque) > STEER_THRESHOLD
-    # FIXME: come back and check health state properly from EPS, not from LKAS_COMMAND
-    # steer_state = cp.vl["LKAS_COMMAND"]["LKAS_STATE"]
-    # self.steer_error = steer_state == 1 or (steer_state == 0 and ret.vEgo > self.CP.minSteerSpeed)
-    self.steer_error = False
+    self.steer_error = bool(cp.vl["EPS_STATUS"]["LKAS_FAULT"])
 
     ret.genericToggle = bool(cp.vl["STEERING_LEVERS"]['HIGH_BEAM_FLASH'])
 
@@ -100,6 +98,7 @@ class CarState(CarStateBase):
       ("ACC_SPEED_CONFIG_KPH", "DASHBOARD", 0), # find this #
       ("TORQUE_DRIVER", "EPS_STATUS", 0),
       ("TORQUE_MOTOR", "EPS_STATUS", 0), # find this, this is the bigger #
+      ("LKAS_FAULT", "EPS_STATUS", 0),
       ("LKAS_STATE", "LKAS_COMMAND", 1), 
       ("COUNTER", "LKAS_COMMAND", -1),
       ("TRACTION_OFF", "TRACTION_BUTTON", 0),
