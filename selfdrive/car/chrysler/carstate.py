@@ -1,6 +1,6 @@
 from cereal import car
 from opendbc.can.parser import CANParser
-#from opendbc.can.can_define import CANDefine
+from opendbc.can.can_define import CANDefine
 from selfdrive.config import Conversions as CV
 from selfdrive.car.interfaces import CarStateBase
 from selfdrive.car.chrysler.values import DBC, STEER_THRESHOLD
@@ -9,8 +9,8 @@ from selfdrive.car.chrysler.values import DBC, STEER_THRESHOLD
 class CarState(CarStateBase):
   def __init__(self, CP):
     super().__init__(CP)
-    #can_define = CANDefine(DBC[CP.carFingerprint]['pt'])
-    #self.shifter_values = can_define.dv["GEAR"]['PRNDL']
+    can_define = CANDefine(DBC[CP.carFingerprint]['pt'])
+    self.shifter_values = can_define.dv["GEAR"]['PRNDL']
     self.steer_error = False
 
   def update(self, cp, cp_cam):
@@ -43,8 +43,7 @@ class CarState(CarStateBase):
     ret.rightBlinker = cp.vl["STEERING_LEVERS"]['TURN_SIGNALS'] == 2
     ret.steeringAngle = cp.vl["STEERING"]['STEER_ANGLE']
     ret.steeringRate = cp.vl["STEERING"]['STEERING_RATE']
-    # FIXME: restore gear shift position detection
-    # ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(cp.vl['GEAR']['PRNDL'], None))
+    ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(cp.vl['GEAR']['PRNDL'], None))
     ret.gearShifter = car.CarState.GearShifter.drive
 
     ret.cruiseState.speed = cp.vl["DASHBOARD"]['ACC_SPEED_CONFIG_KPH'] * CV.KPH_TO_MS
