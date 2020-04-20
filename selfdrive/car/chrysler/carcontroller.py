@@ -28,7 +28,7 @@ class CarController():
     # FIXME: do we need this for the "high torque" bit?
     # if CS.out.vEgo > (CS.CP.minSteerSpeed - 0.5):  # for command high bit
     #   self.gone_fast_yet = True
-    lkas_active = moving_fast and enabled
+    lkas_active = enabled and moving_fast and apply_steer != 0
     if not lkas_active:
       apply_steer = 0
 
