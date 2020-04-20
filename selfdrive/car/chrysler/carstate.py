@@ -66,7 +66,6 @@ class CarState(CarStateBase):
 
     ret.genericToggle = bool(cp.vl["STEERING_LEVERS"]['HIGH_BEAM_FLASH'])
 
-    self.lkas_counter = cp_cam.vl["LKAS_COMMAND"]['COUNTER']
     self.frame_23b = int(cp.vl["WHEEL_BUTTONS"]['COUNTER'])
 
 #    self.lkas_car_model = cp_cam.vl["LKAS_HUD"]['CAR_MODEL'] #TODO
@@ -100,7 +99,6 @@ class CarState(CarStateBase):
       ("TORQUE_MOTOR", "EPS_STATUS", 0), # find this, this is the bigger #
       ("LKAS_FAULT", "EPS_STATUS", 0),
       ("LKAS_STATE", "LKAS_COMMAND", 1), 
-      ("COUNTER", "LKAS_COMMAND", -1),
       ("TRACTION_OFF", "TRACTION_BUTTON", 0),
       ("SEATBELT_DRIVER_UNLATCHED", "SEATBELT_STATUS", 0),
       ("COUNTER", "WHEEL_BUTTONS", -1),
@@ -123,8 +121,6 @@ class CarState(CarStateBase):
   def get_cam_can_parser(CP):
     signals = [
       # sig_name, sig_address, default
-      ("COUNTER", "LKAS_COMMAND", -1),
-    #  ("CAR_MODEL", "ACC_2", -1),
       ("LKAS_STATUS_OK", "LKAS_HEARTBIT", -1)
     ]
     checks = []
