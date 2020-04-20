@@ -16,7 +16,7 @@ class CarInterface(CarInterfaceBase):
   def get_params(candidate, fingerprint=gen_empty_fingerprint(), has_relay=False, car_fw=[]):
     ret = CarInterfaceBase.get_std_params(candidate, fingerprint, has_relay)
     ret.carName = "chrysler"
-    ret.safetyModel = car.CarParams.SafetyModel.allOutput
+    ret.safetyModel = car.CarParams.SafetyModel.chrysler
 
     # Speed conversion:              20, 45 mph
     ret.wheelbase = 2.743  # in meters for Chrysler 200 2016
