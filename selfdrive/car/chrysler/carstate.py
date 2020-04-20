@@ -16,9 +16,6 @@ class CarState(CarStateBase):
 
     ret = car.CarState.new_message()
 
-    self.frame = int(cp.vl["LKAS_COMMAND"]['COUNTER'])  # added LKAS_COMMAND instead of EPS_STATUS, instead of self.frame = frame
-    self.frame_23b = int(cp.vl["WHEEL_BUTTONS"]['COUNTER'])
-
     ret.doorOpen = any([cp.vl["DOORS"]['DOOR_OPEN_FL'],
                         cp.vl["DOORS"]['DOOR_OPEN_FR'],
                         cp.vl["DOORS"]['DOOR_OPEN_RL'],
@@ -61,6 +58,8 @@ class CarState(CarStateBase):
     ret.genericToggle = bool(cp.vl["STEERING_LEVERS"]['HIGH_BEAM_FLASH'])
 
     self.lkas_counter = cp_cam.vl["LKAS_COMMAND"]['COUNTER']
+    self.frame_23b = int(cp.vl["WHEEL_BUTTONS"]['COUNTER'])
+
 #    self.lkas_car_model = cp_cam.vl["LKAS_HUD"]['CAR_MODEL'] #TODO
     self.lkas_status_ok = cp_cam.vl["LKAS_HEARTBIT"]['LKAS_STATUS_OK']
 

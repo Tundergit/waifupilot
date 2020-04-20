@@ -7,8 +7,6 @@ class CarController():
   def __init__(self, dbc_name, CP, VM):
     self.braking = False
     self.apply_steer_last = 0
-    self.ccframe = 0
-    self.prev_frame = -1
     self.hud_count = 0
     self.car_fingerprint = CP.carFingerprint
     self.alert_active = False
@@ -19,12 +17,6 @@ class CarController():
 
 
   def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd): #TODO hud_alert
-    # this seems needed to avoid steering faults and to force the sync with the EPS counter
-    frame = CS.lkas_counter  
- #   ccframe = CS.frame_23b
- #   if self.prev_frame == frame:
- #     return []
-
     # *** compute control surfaces ***
     # steer torque
     new_steer = actuators.steer * SteerLimitParams.STEER_MAX
@@ -50,8 +42,7 @@ class CarController():
     #*** control msgs ***
 
     if pcm_cancel_cmd:
-      # TODO: would be better to start from frame_2b3
-      new_msg = create_wheel_buttons(self.ccframe)
+      new_msg = create_wheel_buttons(CS.frame_23b)
       can_sends.append(new_msg)
 
     # LKAS_HEARTBIT is forwarded by Panda so no need to send it here.
@@ -67,8 +58,5 @@ class CarController():
 
     new_msg = create_lkas_command(self.packer, int(apply_steer), self.gone_fast_yet, frame)
     can_sends.append(new_msg)
-
-    self.ccframe += 1
-    self.prev_frame = frame
 
     return can_sends
