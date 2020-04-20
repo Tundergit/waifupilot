@@ -42,12 +42,21 @@ class CarState(CarStateBase):
     ret.rightBlinker = cp.vl["STEERING_LEVERS"]['TURN_SIGNALS'] == 2
     ret.steeringAngle = cp.vl["STEERING"]['STEER_ANGLE']
     ret.steeringRate = cp.vl["STEERING"]['STEERING_RATE']
-    #ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(cp.vl['GEAR']['PRNDL'], None))
+    # FIXME: restore gear shift position detection
+    # ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(cp.vl['GEAR']['PRNDL'], None))
     ret.gearShifter = car.CarState.GearShifter.drive
 
-    ret.cruiseState.enabled = cp.vl["ACC_1"]['ACC_STATE'] == 8  # ACC is green
-    ret.cruiseState.available = cp.vl["ACC_1"]['ACC_STATE'] == 6  # ACC is white
     ret.cruiseState.speed = cp.vl["DASHBOARD"]['ACC_SPEED_CONFIG_KPH'] * CV.KPH_TO_MS
+    acc_status = cp.vl["ACC_1"]['ACC_STATE']
+    if acc_status == 6:
+      ret.cruiseState.available = True
+      ret.cruiseState.enabled = False
+    elif acc_status == 8:
+      ret.cruiseState.available = True
+      ret.cruiseState.enabled = True
+    else:
+      ret.cruiseState.available = False
+      ret.cruiseState.enabled = False
 
     ret.steeringTorque = cp.vl["EPS_STATUS"]["TORQUE_DRIVER"]
     ret.steeringTorqueEps = cp.vl["EPS_STATUS"]["TORQUE_MOTOR"]
