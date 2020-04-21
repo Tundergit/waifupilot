@@ -3,11 +3,14 @@ from cereal import car
 Ecu = car.CarParams.Ecu
 
 
-class SteerLimitParams:
+class CarControllerParams:
   STEER_MAX = 300         # Observed factory LKAS hitting 306, we may have even more headroom here
   STEER_DELTA_UP = 5      # Factory LKAS ramps up at 5 per ms, have not tested more
   STEER_DELTA_DOWN = 5    # Factory LKAS ramps down at 5 per ms, have not tested more, more is probably possible
   STEER_ERROR_MAX = 80    # FIXME: is this actually needed/usable for anything besides Toyota?
+  STEER_DRIVER_ALLOWANCE = 80
+  STEER_DRIVER_MULTIPLIER = 3    # weight driver torque heavily
+  STEER_DRIVER_FACTOR = 1        # from dbc
 
 
 

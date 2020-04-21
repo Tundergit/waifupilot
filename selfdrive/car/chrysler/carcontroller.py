@@ -1,27 +1,27 @@
-from selfdrive.car import apply_toyota_steer_torque_limits
+from selfdrive.car import apply_std_steer_torque_limits
 from selfdrive.car.chrysler.chryslercan import create_lkas_command, create_wheel_buttons
-from selfdrive.car.chrysler.values import CAR, DBC, SteerLimitParams
+from selfdrive.car.chrysler.values import CAR, DBC, CarControllerParams
 from opendbc.can.packer import CANPacker
 
 class CarController():
   def __init__(self, dbc_name, CP, VM):
     self.braking = False
-    self.apply_steer_last = 0
     self.hud_count = 0
     self.car_fingerprint = CP.carFingerprint
     self.alert_active = False
     self.gone_fast_yet = False
+    self.apply_steer_last = 0
     self.steer_rate_limited = False
 
     self.packer = CANPacker(DBC[CP.carFingerprint]['pt'])
 
 
   def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd): #TODO hud_alert
+    P = CarControllerParams
+
     # *** compute control surfaces ***
-    # steer torque
-    new_steer = actuators.steer * SteerLimitParams.STEER_MAX
-    apply_steer = apply_toyota_steer_torque_limits(new_steer, self.apply_steer_last,
-                                                   CS.out.steeringTorqueEps, SteerLimitParams)
+    new_steer = int(round(actuators.steer * P.STEER_MAX))
+    apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, P)
     self.steer_rate_limited = new_steer != apply_steer
 
     moving_fast = CS.out.vEgo > CS.CP.minSteerSpeed  # for status message
@@ -33,8 +33,6 @@ class CarController():
       apply_steer = 0
 
     self.apply_steer_last = apply_steer
-
-    can_sends = []
 
     #*** control msgs ***
 
@@ -53,6 +51,8 @@ class CarController():
   #          self.hud_count, CS.lkas_car_model)
   #      can_sends.append(new_msg)
   #      self.hud_count += 1
+
+    can_sends = []
 
     new_msg = create_lkas_command(self.packer, int(apply_steer), lkas_active, frame)
     can_sends.append(new_msg)
