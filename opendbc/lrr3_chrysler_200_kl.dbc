@@ -167,7 +167,7 @@ CM_ SG_ 1250 DOOR_OPEN_FL "1 = open, 0 = closed";
 CM_ SG_ 1250 DOOR_OPEN_FR "1 = open, 0 = closed";
 CM_ SG_ 1250 DOOR_OPEN_RL "1 = open, 0 = closed";
 CM_ SG_ 1250 DOOR_OPEN_RR "1 = open, 0 = closed";
-CM_ SG_ 1262 PRNDL "1 = park, 2 = reverse, 3 = neutral, 4 = drive, 5 = sport";
+CM_ SG_ 1262 PRNDL "1 = park, 2 = reverse, 3 = neutral, 4 = drive, 5 = sport (snicker... sport)";
 CM_ SG_ 875 SEATBELT_DRIVER_UNLATCHED "1 = unlatched, 0 = safety first";
 CM_ SG_ 1264 TURN_SIGNALS "0 = off, 1 = left blinker, 2 = right blinker";
 CM_ SG_ 480 TRACTION_OFF "0 = TCS on, 1 = TCS off (light on dash ON)";
