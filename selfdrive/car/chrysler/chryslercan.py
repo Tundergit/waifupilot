@@ -53,15 +53,15 @@ def create_lkas_hud_command(packer, enabled, left_lane_visible, right_lane_visib
   if enabled:
     if left_lane_visible:
       if right_lane_visible:
-        lane_visibility_signal = 0x6  # Both sides
+        lane_visibility_signal = 0x6  # Both sides white
       else:
-        lane_visibility_signal = 0x2  # Left only
+        lane_visibility_signal = 0x2  # Left only white
     elif right_lane_visible:
-      lane_visibility_signal = 0x3    # Right only
+      lane_visibility_signal = 0x3    # Right only white
     else:
-      lane_visibility_signal = 0x1    # Neither
+      lane_visibility_signal = 0x1    # Neither lane border shown
   else:
-    lane_visibility_signal = 0x1      # Neither
+    lane_visibility_signal = 0x1      # Neither lane border shown
 
   values = {
     "SET_ME_0XAC": 0xAC,
