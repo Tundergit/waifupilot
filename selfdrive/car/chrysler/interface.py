@@ -36,7 +36,7 @@ class CarInterface(CarInterfaceBase):
 
     ret.centerToFront = ret.wheelbase * 0.44
 
-    ret.minSteerSpeed = 17.5  # m/s
+    ret.minSteerSpeed = 20.0  # m/s
 #    if candidate in (CAR.PACIFICA_2019_HYBRID, CAR.JEEP_CHEROKEE_2019):
       # TODO allow 2019 cars to steer down to 13 m/s if already engaged.
 #      ret.minSteerSpeed = 17.5  # m/s 17 on the way up, 13 on the way down once engaged.
