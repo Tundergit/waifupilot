@@ -28,8 +28,8 @@ class CarController():
     # FIXME: do we need this for the "high torque" bit?
     # if CS.out.vEgo > (CS.CP.minSteerSpeed - 0.5):  # for command high bit
     #   self.gone_fast_yet = True
-    lkas_active = enabled and moving_fast and apply_steer != 0
-    if not lkas_active:
+    # lkas_active = enabled and moving_fast and apply_steer != 0
+    if not moving_fast:
       apply_steer = 0
     self.apply_steer_last = apply_steer
 
@@ -38,7 +38,7 @@ class CarController():
     can_sends = []
 
     if frame % P.STEER_STEP == 0:
-      can_sends.append(create_lkas_command(self.packer, int(apply_steer), lkas_active, frame))
+      can_sends.append(create_lkas_command(self.packer, int(apply_steer), moving_fast, frame))
 
     if frame % P.HUD_STEP == 0:
       can_sends.append(create_lkas_hud_command(self.packer, enabled, left_lane_visble, right_lane_visible))
