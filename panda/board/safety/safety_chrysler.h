@@ -209,23 +209,32 @@ static int chrysler_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
 }
 
 static int chrysler_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
-
   int bus_fwd = -1;
   int addr = GET_ADDR(to_fwd);
 
   if (!relay_malfunction) {
-    // forward CAN 0 -> 2 so stock LKAS camera sees messages
-    if (bus_num == 0) {
-      bus_fwd = 2;
-    }
-    // forward all messages from camera except LKAS_COMMAND and LKAS_HUD
-    if (((bus_num == 2) && (addr != 502)) || ((bus_num == 2) && (addr != 1500))) {
-      bus_fwd = 0;
+    switch (bus_num) {
+      case 0:
+        // Forward all traffic from the vehicle on toward the camera
+        bus_fwd = 2;
+        break;
+      case 2:
+        if ((addr == 502) || (addr == 1500)) {
+          // OP takes control of the LKAS_COMMAND and LKAS_HUD messages from the camera
+          bus_fwd = -1;
+        } else {
+          // Forward any other camera traffic on toward the car
+          bus_fwd = 0;
+        }
+        break;
+      default:
+        // No other buses should be in use; fallback to do-not-forward
+        bus_fwd = -1;
+        break;
     }
   }
   return bus_fwd;
 }
-
 
 const safety_hooks chrysler_hooks = {
   .init = nooutput_init,

@@ -134,6 +134,9 @@ def boardd_mock_loop():
     m = can_list_to_can_capnp(can_msgs, msgtype='sendcan')
     sendcan.send(m.to_bytes())
 
+    handle.controlWrite(0x40, 0xf3, 1, 0, b'')
+
+
 def boardd_test_loop():
   can_init()
   cnt = 0
