@@ -20,17 +20,16 @@ class CarController():
     P = CarControllerParams
 
     # *** compute control surfaces ***
-    new_steer = int(round(actuators.steer * P.STEER_MAX))
-    apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, P)
-    self.steer_rate_limited = new_steer != apply_steer
 
     moving_fast = CS.out.vEgo > CS.CP.minSteerSpeed  # for status message
-    # FIXME: do we need this for the "high torque" bit?
-    # if CS.out.vEgo > (CS.CP.minSteerSpeed - 0.5):  # for command high bit
-    #   self.gone_fast_yet = True
-    # lkas_active = enabled and moving_fast and apply_steer != 0
-    if not moving_fast:
-      apply_steer = 0
+
+    if moving_fast:
+      new_steer = int(round(actuators.steer * P.STEER_MAX))
+    else:
+      new_steer = 0
+
+    apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, P)
+    self.steer_rate_limited = new_steer != apply_steer
     self.apply_steer_last = apply_steer
 
     #*** control msgs ***
