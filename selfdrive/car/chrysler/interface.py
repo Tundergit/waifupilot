@@ -23,7 +23,7 @@ class CarInterface(CarInterfaceBase):
     ret.steerRatio = 16.2 # Pacifica Hybrid 2017
     ret.mass = 1721. + STD_CARGO_KG  # kg curb weight Chrysler 200 2016
     ret.lateralTuning.pid.kpBP, ret.lateralTuning.pid.kiBP = [[0.], [0.]]
-    ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.5], [0.15]]
+    ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.4], [0.1]]
     ret.lateralTuning.pid.kf = 0.00006   # full torque for 10 deg at 80mph means 0.00007818594
     ret.steerActuatorDelay = 0.1
     ret.steerRateCost = 1.0
