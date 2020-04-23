@@ -22,6 +22,7 @@ class CarController():
     # *** compute control surfaces ***
 
     moving_fast = CS.out.vEgo > CS.CP.minSteerSpeed  # for status message
+    moving_kinda_fast = CS.out.vEgo > CS.CP.minSteerSpeed - 1.0
 
     # Calculate torque limits and ramp-up/ramp-down rates. If we fall below
     # minSteerSpeed, ramp-down toward zero.
@@ -39,7 +40,7 @@ class CarController():
     can_sends = []
 
     if frame % P.STEER_STEP == 0:
-      can_sends.append(create_lkas_command(self.packer, int(apply_steer), moving_fast or apply_steer > 0, frame))
+      can_sends.append(create_lkas_command(self.packer, int(apply_steer), moving_kinda_fast, frame))
 
     if frame % P.HUD_STEP == 0:
       can_sends.append(create_lkas_hud_command(self.packer, enabled, left_lane_visble, right_lane_visible))
