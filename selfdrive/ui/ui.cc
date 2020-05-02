@@ -487,6 +487,7 @@ void handle_message(UIState *s, Message * msg) {
       s->scene.blinker_blinkingrate = 100;
     s->scene.leftBlinker = datad.leftBlinker;
     s->scene.rightBlinker = datad.rightBlinker;
+    s->scene.engineRPM = datad.engineRPM;
 
   } else if (eventd.which == cereal_Event_gpsLocationExternal) {
     struct cereal_GpsLocationData datad;

@@ -51,7 +51,7 @@ class CarInterface(CarInterfaceBase):
     ret.steerActuatorDelay = 0.15  # Default delay
     ret.steerRateCost = 0.45
     ret.steerLimitTimer = 0.8
-    tire_stiffness_factor = 0.7
+    tire_stiffness_factor = 0.5
 
     ret.minEnableSpeed = -1.   # enable is done by stock ACC, so ignore this
 
@@ -224,6 +224,7 @@ class CarInterface(CarInterfaceBase):
     # gas pedal
     ret.gas = self.CS.car_gas
     ret.gasPressed = self.CS.pedal_gas > 1e-3   # tolerance to avoid false press reading
+    ret.engineRPM = self.CS.engineRPM
 
     # brake pedal
     ret.brake = self.CS.user_brake

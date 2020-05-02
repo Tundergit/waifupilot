@@ -118,6 +118,7 @@ struct CarState {
   # gas pedal, 0.0-1.0
   gas @3 :Float32;        # this is user + computer
   gasPressed @4 :Bool;    # this is user pedal only
+  engineRPM @38 :Float32; # ui 
 
   # brake pedal, 0.0-1.0
   brake @5 :Float32;      # this is user pedal only

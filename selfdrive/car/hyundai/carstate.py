@@ -32,6 +32,7 @@ def get_can_parser(CP):
     ("TPS", "EMS12", 0),
 
     ("CYL_PRES", "ESP12", 0),
+    ("ENGINE_RPM", "POWERTRAIN_DATA", 0),
 
     ("CF_Clu_CruiseSwState", "CLU11", 0),
     ("CF_Clu_CruiseSwMain", "CLU11", 0),
@@ -302,6 +303,7 @@ class CarState():
     self.mdps_bus = CP.mdpsBus
     self.sas_bus = CP.sasBus
     self.scc_bus = CP.sccBus
+    self.engineRPM = 0
 
     # Q = np.matrix([[10.0, 0.0], [0.0, 100.0]])
     # R = 1e3
@@ -335,6 +337,7 @@ class CarState():
     self.brake_pressed = cp.vl["TCS13"]['DriverBraking']
     self.esp_disabled = cp.vl["TCS15"]['ESC_Off_Step']
     self.park_brake = cp.vl["CGW1"]['CF_Gway_ParkBrakeSw']
+    self.engineRPM = cp.vl["POWERTRAIN_DATA"]['ENGINE_RPM']
 
     self.main_on = (cp_scc.vl["SCC11"]["MainMode_ACC"] != 0) if not self.no_radar else \
                                             cp.vl['EMS16']['CRUISE_LAMP_M']
@@ -401,7 +404,7 @@ class CarState():
     else:
       self.pedal_gas = cp.vl["EMS12"]['TPS']
     self.car_gas = cp.vl["EMS12"]['TPS']
-
+    
     # Gear Selection via Cluster - For those Kia/Hyundai which are not fully discovered, we can use the Cluster Indicator for Gear Selection, as this seems to be standard over all cars, but is not the preferred method.
     if self.car_fingerprint in FEATURES["use_cluster_gears"]:
       if cp.vl["CLU15"]["CF_Clu_InhibitD"] == 1:
