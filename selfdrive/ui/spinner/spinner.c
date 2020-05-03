@@ -36,7 +36,7 @@ int main() {
   NVGcontext *vg = nvgCreateGLES3(NVG_ANTIALIAS | NVG_STENCIL_STROKES);
   assert(vg);
 
-  int font = nvgCreateFont(vg, "Bold", "../../assets/fonts/opensans_semibold.ttf");
+  int font = nvgCreateFont(vg, "Bold", "../../assets/fonts/cheeky-rabbit.ttf");
   assert(font >= 0);
 
   int spinner_img = nvgCreateImage(vg, "../../assets/img_spinner_track.png", 0);
