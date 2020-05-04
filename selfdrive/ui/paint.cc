@@ -481,7 +481,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
         val_color = nvgRGBA(255, 0, 0, 200);
       }
       // temp is alway in C * 10
-      snprintf(val_str, sizeof(val_str), "%d°C", (int)(scene->maxCpuTemp/10));
+      snprintf(val_str, sizeof(val_str), "%d*C", (int)(scene->maxCpuTemp/10));
       snprintf(uom_str, sizeof(uom_str), "");
     bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "CPU TEMP",
         bb_rx, bb_ry, bb_uom_dx,
@@ -502,7 +502,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
       val_color = nvgRGBA(255, 0, 0, 200);
     }
     // temp is alway in C * 1000
-    snprintf(val_str, sizeof(val_str), "%d°C", (int)(scene->maxBatTemp/1000));
+    snprintf(val_str, sizeof(val_str), "%d*C", (int)(scene->maxBatTemp/1000));
     snprintf(uom_str, sizeof(uom_str), "");
     bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "BAT TEMP",
         bb_rx, bb_ry, bb_uom_dx,
@@ -690,7 +690,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
         val_color = nvgRGBA(255, 0, 0, 200);
       }
       // steering is in degrees
-      snprintf(val_str, sizeof(val_str), "%.1f°",(scene->angleSteers));
+      snprintf(val_str, sizeof(val_str), "%.1f*",(scene->angleSteers));
 
       snprintf(uom_str, sizeof(uom_str), "");
     bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "REAL STEER",
@@ -715,7 +715,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
         val_color = nvgRGBA(255, 255, 255, 200);
       }
       // steering is in degrees
-      snprintf(val_str, sizeof(val_str), "%.1f°",(scene->angleSteersDes));
+      snprintf(val_str, sizeof(val_str), "%.1f*",(scene->angleSteersDes));
     } else {
        snprintf(val_str, sizeof(val_str), "-");
     }
@@ -1013,10 +1013,10 @@ static void ui_draw_vision_event(UIState *s) {
     nvgFill(s->vg);
   } else {
     // draw steering wheel
-    const int bg_wheel_size = 144;
+    const int bg_wheel_size = 100;
     const int bg_wheel_x = viz_event_x + (viz_event_w-bg_wheel_size);
     const int bg_wheel_y = viz_event_y + (bg_wheel_size/2);
-    const int img_wheel_size = bg_wheel_size*1.25;
+    const int img_wheel_size = bg_wheel_size*1.75;
     const int img_wheel_x = bg_wheel_x-(img_wheel_size/2);
     const int img_wheel_y = bg_wheel_y-25;
     const float img_rotation = s->scene.angleSteers/180*3.141592;
@@ -1079,10 +1079,10 @@ static void ui_draw_vision_map(UIState *s) {
 
 static void ui_draw_vision_face(UIState *s) {
   const UIScene *scene = &s->scene;
-  const int face_size = 144;
+  const int face_size = 100;
   const int face_x = (scene->ui_viz_rx + face_size + (bdr_is * 2));
   const int face_y = (footer_y + ((footer_h - face_size) / 2));
-  const int face_img_size = (face_size * 1.25);
+  const int face_img_size = (face_size * 1.75);
   const int face_img_x = (face_x - (face_img_size / 2));
   const int face_img_y = (face_y - (face_size / 4));
   float face_img_alpha = scene->monitoring_active ? 1.0f : 0.15f;
@@ -1092,7 +1092,7 @@ static void ui_draw_vision_face(UIState *s) {
     face_img_size, face_img_size, 0, s->img_face, face_img_alpha);
 
   nvgBeginPath(s->vg);
-  nvgCircle(s->vg, face_x, (face_y + (bdr_is * 1.25)), face_size);
+  nvgCircle(s->vg, face_x, (face_y + (bdr_is * 1.75)), face_size);
   nvgFillColor(s->vg, face_bg);
   nvgFill(s->vg);
 
@@ -1105,10 +1105,10 @@ static void ui_draw_vision_face(UIState *s) {
 
 static void ui_draw_vision_brake(UIState *s) {
   const UIScene *scene = &s->scene;
-  const int brake_size = 144;
+  const int brake_size = 100;
   const int brake_x = (scene->ui_viz_rx + (brake_size * 5) + (bdr_is * 4));
   const int brake_y = (footer_y + ((footer_h - brake_size) / 2));
-  const int brake_img_size = (brake_size * 1.25);
+  const int brake_img_size = (brake_size * 1.75);
   const int brake_img_x = (brake_x - (brake_img_size / 2));
   const int brake_img_y = (brake_y - (brake_size / 4));
 
@@ -1120,7 +1120,7 @@ static void ui_draw_vision_brake(UIState *s) {
     brake_img_size, brake_img_size, 0, s->img_brake, brake_img_alpha);
 
   nvgBeginPath(s->vg);
-  nvgCircle(s->vg, brake_x, (brake_y + (bdr_is * 1.25)), brake_size);
+  nvgCircle(s->vg, brake_x, (brake_y + (bdr_is * 1.75)), brake_size);
   nvgFillColor(s->vg, brake_bg);
   nvgFill(s->vg);
 
