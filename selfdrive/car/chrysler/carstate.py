@@ -35,7 +35,7 @@ class CarState(CarStateBase):
     ret.wheelSpeeds.rr = cp.vl['WHEEL_SPEEDS_REAR']['WHEEL_SPEED_RR']
     ret.wheelSpeeds.rl = cp.vl['WHEEL_SPEEDS_REAR']['WHEEL_SPEED_RL']
     ret.wheelSpeeds.fr = cp.vl['WHEEL_SPEEDS_FRONT']['WHEEL_SPEED_FR']
-    ret.vEgoRaw = (cp.vl['WHEEL_SPEEDS_REAR']['WHEEL_SPEED_RL'] + cp.vl['WHEEL_SPEEDS_REAR']['WHEEL_SPEED_RR']) / 2.
+    ret.vEgoRaw = cp.vl["BRAKE_1"]['VEHICLE_SPEED']
     ret.vEgo, ret.aEgo = self.update_speed_kf(ret.vEgoRaw)
     ret.standstill = not ret.vEgoRaw > 0.001
 
@@ -100,13 +100,14 @@ class CarState(CarStateBase):
       ("TRACTION_OFF", "TRACTION_BUTTON", 0),
       ("SEATBELT_DRIVER_UNLATCHED", "SEATBELT_STATUS", 0),
       ("COUNTER", "WHEEL_BUTTONS", -1),
+      ("VEHICLE_SPEED", "BRAKE_1", 0),
     ]
 
     checks = [
       # sig_address, frequency
       ("BRAKE_2", 50),
       ("EPS_STATUS", 100),
-    #  ("SPEED_1", 100),
+      ("BRAKE_1", 50),
       ("WHEEL_SPEEDS_FRONT", 50),
       ("WHEEL_SPEEDS_REAR", 50),
       ("STEERING", 100),
