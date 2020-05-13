@@ -23,10 +23,11 @@ class CarController():
 
     moving_fast = CS.out.vEgo > CS.CP.minSteerSpeed  # for status message
     moving_kinda_fast = CS.out.vEgo > CS.CP.minSteerSpeed - 1.0
-
+    enabled_below_minSteer = enabled and (CS.out.vEgo < CS.CP.minSteerSpeed) and (CS.out.vEgo > CS.CP.minSteerSpeed - 2.5)
+    
     # Calculate torque limits and ramp-up/ramp-down rates. If we fall below
     # minSteerSpeed, ramp-down toward zero.
-    if moving_fast:
+    if moving_fast or enabled_below_minSteer:
       new_steer = int(round(actuators.steer * P.STEER_MAX))
     else:
       new_steer = 0
