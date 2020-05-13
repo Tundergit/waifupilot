@@ -77,7 +77,7 @@ class CarInterface(CarInterfaceBase):
     elif not ret.cruiseState.enabled:
       events.append(create_event('pcmDisable', [ET.USER_DISABLE]))
 
-    if ret.vEgo < self.CP.minSteerSpeed:
+    if ret.vEgo < self.CP.minSteerSpeed - 3.5:  # to reflect falling edge disengage speed
       events.append(create_event('belowSteerSpeed', [ET.WARNING]))
 
     ret.events = events
