@@ -35,7 +35,7 @@ class CarState(CarStateBase):
     ret.wheelSpeeds.rr = cp.vl['WHEEL_SPEEDS_REAR']['WHEEL_SPEED_RR']
     ret.wheelSpeeds.rl = cp.vl['WHEEL_SPEEDS_REAR']['WHEEL_SPEED_RL']
     ret.wheelSpeeds.fr = cp.vl['WHEEL_SPEEDS_FRONT']['WHEEL_SPEED_FR']
-    ret.vEgoRaw = cp.vl["BRAKE_1"]['VEHICLE_SPEED']
+    ret.vEgoRaw = cp.vl["BRAKE_1"]['VEHICLE_SPEED'] # math sucks
     ret.vEgo, ret.aEgo = self.update_speed_kf(ret.vEgoRaw)
     ret.standstill = not ret.vEgoRaw > 0.001
 
@@ -44,9 +44,9 @@ class CarState(CarStateBase):
     ret.steeringAngle = cp.vl["STEERING"]['STEER_ANGLE']
     ret.steeringRate = cp.vl["STEERING"]['STEERING_RATE']
     ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(cp.vl['GEAR']['PRNDL'], None))
-    ret.gearShifter = car.CarState.GearShifter.drive
+    ret.gearShifter = car.CarState.GearShifter.drive # LOL, nice ..|.> rules
 
-    ret.cruiseState.speed = cp.vl["DASHBOARD"]['ACC_SPEED_CONFIG_KPH'] * CV.KPH_TO_MS
+    ret.cruiseState.speed = cp.vl["ACC_1"]['ACC_SET_SPEED_KMH'] * CV.KPH_TO_MS
     acc_status = cp.vl["ACC_1"]['ACC_STATE']
     if acc_status == 3:
       ret.cruiseState.available = True
@@ -92,10 +92,11 @@ class CarState(CarStateBase):
       ("STEERING_RATE", "STEERING", 0),
       ("TURN_SIGNALS", "STEERING_LEVERS", 0),
       ("ACC_STATE", "ACC_1", 0),
+      ("ACC_SET_SPEED_KMH", "ACC_1", 0),
       ("HIGH_BEAM_FLASH", "STEERING_LEVERS", 0),
-      ("ACC_SPEED_CONFIG_KPH", "DASHBOARD", 0), # find this #
+      #  ("ACC_SPEED_CONFIG_KPH", "DASHBOARD", 0), # find this **tunder: found it 
       ("TORQUE_DRIVER", "EPS_STATUS", 0),
-      ("TORQUE_MOTOR", "EPS_STATUS", 0), # find this, this is the bigger #
+      ("TORQUE_MOTOR", "EPS_STATUS", 0),
       ("LKAS_FAULT", "EPS_STATUS", 0),
       ("TRACTION_OFF", "TRACTION_BUTTON", 0),
       ("SEATBELT_DRIVER_UNLATCHED", "SEATBELT_STATUS", 0),
