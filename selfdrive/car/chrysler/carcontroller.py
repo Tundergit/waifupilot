@@ -22,12 +22,17 @@ class CarController():
     # *** compute control surfaces ***
 
     moving_fast = CS.out.vEgo > CS.CP.minSteerSpeed  # for status message
-    moving_kinda_fast = CS.out.vEgo > CS.CP.minSteerSpeed # - 1.0 **tunder: i'm not sure why this - 1.0 is here
-    enabled_below_minSteer = enabled and (CS.out.vEgo < CS.CP.minSteerSpeed) and (CS.out.vEgo > CS.CP.minSteerSpeed - 2.0) # 2.5 was too far
+    # moving_kinda_fast = CS.out.vEgo > CS.CP.minSteerSpeed # - 1.0 **tunder: why - 1.0? i don't think this line is required anymore
+    enabled_below_minSteer = enabled and (CS.out.vEgo < CS.CP.minSteerSpeed) and (CS.out.vEgo > CS.CP.minSteerSpeed - 3.0) # 15.5 m/s cutoff
     
+    if moving_fast or enabled_below_minSteer:
+      moving_kinda_fast = True # moving_kinda_fast is the lkas active bit, right?
+    elif CS.out.vEgo < (CS.CP.minSteerSpeed - 3.0):
+      moving_kinda_fast = False 
+      
     # Calculate torque limits and ramp-up/ramp-down rates. If we fall below
     # minSteerSpeed, ramp-down toward zero.
-    if moving_fast or enabled_below_minSteer:
+    if moving_kinda_fast = True:
       new_steer = int(round(actuators.steer * P.STEER_MAX))
     else:
       new_steer = 0
