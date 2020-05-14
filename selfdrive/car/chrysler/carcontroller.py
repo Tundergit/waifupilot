@@ -32,7 +32,7 @@ class CarController():
       
     # Calculate torque limits and ramp-up/ramp-down rates. If we fall below
     # minSteerSpeed, ramp-down toward zero.
-    if moving_kinda_fast = True:
+    if moving_kinda_fast == True:
       new_steer = int(round(actuators.steer * P.STEER_MAX))
     else:
       new_steer = 0
