@@ -23,7 +23,7 @@ class CarController():
     
     # I THINK I GET IT NOW!!!  
     
-    moving_fast = CS.out.vEgo > CS.CP.minSteerSpeed  # for status message
+    moving_fast = CS.out.vEgo > CS.CP.minSteerSpeed + 0.5 # for status message
     moving_kinda_fast = CS.out.vEgo > CS.CP.minSteerSpeed # - 1.0 (i think the logic here was to keep the status bit on longer)
     bad_to_bone = enabled and moving_fast
     
