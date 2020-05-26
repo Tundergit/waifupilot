@@ -8,7 +8,7 @@ class CAR:
   KIA_OPTIMA = "KIA OPTIMA SX 2019 & 2016"
   KIA_OPTIMA_H = "KIA OPTIMA HYBRID 2017 & SPORTS 2019"
   KIA_SORENTO = "KIA SORENTO GT LINE 2018"
-  KIA_STINGER = "KIA STINGER GT2 2018"
+  KIA_STINGER = "KIA STINGER GT LIMITED AWD"
   SANTA_FE = "HYUNDAI SANTA FE LIMITED 2019"
   SANTA_FE_1 = "HYUNDAI SANTA FE has no scc"
   KONA = "HYUNDAI KONA 2019"
@@ -136,7 +136,7 @@ DBC = {
   CAR.KIA_OPTIMA: dbc_dict('hyundai_kia_generic', None),
   CAR.KIA_OPTIMA_H: dbc_dict('hyundai_kia_generic', None),
   CAR.KIA_SORENTO: dbc_dict('hyundai_kia_generic', None),
-  CAR.KIA_STINGER: dbc_dict('hyundai_kia_generic', None),
+  CAR.KIA_STINGER: dbc_dict('kia_stinger_2020_awd', None),
   CAR.SANTA_FE: dbc_dict('hyundai_kia_generic', None),
   CAR.SANTA_FE_1: dbc_dict('hyundai_kia_generic', None),
   CAR.GENESIS_G90: dbc_dict('hyundai_kia_generic', None),
