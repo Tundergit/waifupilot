@@ -136,7 +136,7 @@ DBC = {
   CAR.KIA_OPTIMA: dbc_dict('hyundai_kia_generic', None),
   CAR.KIA_OPTIMA_H: dbc_dict('hyundai_kia_generic', None),
   CAR.KIA_SORENTO: dbc_dict('hyundai_kia_generic', None),
-  CAR.KIA_STINGER: dbc_dict('kia_stinger_2020_awd', None),
+  CAR.KIA_STINGER: dbc_dict('hyundai_kia_generic', None),
   CAR.SANTA_FE: dbc_dict('hyundai_kia_generic', None),
   CAR.SANTA_FE_1: dbc_dict('hyundai_kia_generic', None),
   CAR.GENESIS_G90: dbc_dict('hyundai_kia_generic', None),
