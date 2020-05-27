@@ -56,16 +56,23 @@ class CarInterface(CarInterfaceBase):
     ret.minEnableSpeed = -1.   # enable is done by stock ACC, so ignore this
 
     if candidate == CAR.KIA_STINGER:
-      ret.lateralTuning.pid.kf = 0.00005
+      
+      ret.lateralTuning.init('indi')
+      ret.lateralTuning.indi.innerLoopGain = 4.0
+      ret.lateralTuning.indi.outerLoopGain = 3.0
+      ret.lateralTuning.indi.timeConstant = 1.0
+      ret.lateralTuning.indi.actuatorEffectiveness = 1.0
+      
       ret.steerActuatorDelay = 0.08 # Stinger Limited AWD 3.3T stock value (Tunder's 2020) 
-      ret.steerLimitTimer = 0.01 # no timer on value changes, lightning fast up or down (Tunder's 2020)
+      ret.steerLimitTimer = 0.4 # no timer on value changes, lightning fast up or down (Tunder's 2020) (stock 0.01, changed to 0.4)
       tire_stiffness_factor = 1.0 # LiveParameters (Tunder's 2020)
       ret.steerRateCost = 1.0 # i don't know what this actually does, but the car drives much better this way than at 1.0.  (Tunder)
       ret.mass = 1825. + STD_CARGO_KG
       ret.wheelbase = 2.906 # https://www.kia.com/us/en/stinger/specs
       ret.steerRatio = 10.28   # 10.28 measured by wheel alignment machine/reported steering angle by OP, still being worked on.  2020 GT Limited AWD has a variable steering ratio ultimately ending in 10.28.  The ratio at 0-1 deg is unknown, but likely higher than 10.28 to soften steering movements at midline (Tunder) 11.451 in previous tuning configs.  oversteering at 10.28, though. 
-      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.20], [0.05]] 
+#      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
+#      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.20], [0.05]]
+#      ret.lateralTuning.pid.kf = 0.00005
 #    if candidate == CAR.KIA_STINGER:
 #      ret.lateralTuning.pid.kf = 0.00005
 #      ret.mass = 1825. + STD_CARGO_KG
