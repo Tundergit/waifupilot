@@ -65,11 +65,11 @@ class CarInterface(CarInterfaceBase):
       
       ret.steerActuatorDelay = 0.08 # Stinger GT Limited AWD 3.3T stock value (Tunder's 2020) 
       ret.steerLimitTimer = 0.4 # stock is 0.01 but 0.04 seems to work well
-      tire_stiffness_factor = 0.5 # LiveParameters (Tunder's 2020)
+      tire_stiffness_factor = 1.125 # LiveParameters (Tunder's 2020)
       ret.steerRateCost = 1.0
       ret.mass = 1825.0 + STD_CARGO_KG
       ret.wheelbase = 2.906 # https://www.kia.com/us/en/stinger/specs
-      ret.steerRatio = 12.0   # 10.28 measured by wheel alignment machine/reported steering angle by OP, still being worked on.  2020 GT Limited AWD has a variable steering ratio ultimately ending in 10.28.  The ratio at 0-1 deg is unknown, but likely higher than 10.28 to soften steering movements at midline (Tunder) 11.451 in previous tuning configs.  oversteering at 10.28, though. 
+      ret.steerRatio = 13.56   # 10.28 measured by wheel alignment machine/reported steering angle by OP. 2020 GT Limited AWD has a variable steering ratio ultimately ending in 10.28.  13.56 after 1200km in LiveParamaters (Tunder)
 #      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
 #      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.20], [0.05]]
 #      ret.lateralTuning.pid.kf = 0.00005
