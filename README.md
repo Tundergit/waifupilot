@@ -1,3 +1,5 @@
+This branch is specifically for 2014+ Chrysler 200 and 2014-2018 Jeep Cherokee (KL) only.  It will not work for other FCA vehicles, although other makes are unaffected.
+
 [![](https://i.imgur.com/UelUjKAh.png)](#)
 
 Table of Contents
