@@ -110,13 +110,19 @@ class CarInterface(CarInterfaceBase):
       tire_stiffness_factor = 0.5
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
-    elif candidate == CAR.KIA_STINGER:
-      ret.lateralTuning.pid.kf = 0.00005
+    elif candidate == CAR.KIA_STINGER: # ^^^^^^^^^^^^^^^^^ STINGER ^^^^^^^^^^^^^^^^^^^^^^^
+      ret.lateralTuning.init('indi')
+      ret.lateralTuning.indi.innerLoopGain = 3.5  #stock is 3.0 but 4.0 seems good
+      ret.lateralTuning.indi.outerLoopGain = 2.5  #stock is 2.0.  Trying out 2.5
+      ret.lateralTuning.indi.timeConstant = 1.5  #Stock is 1.5.  1.3 is good
+      ret.lateralTuning.indi.actuatorEffectiveness = 3.0  #Stock is 1.0 1.4 is good
+      ret.steerActuatorDelay = 0.08 # Stinger GT Limited AWD 3.3T stock value (Tunder's 2020) 
+      ret.steerLimitTimer = 0.4 # stock is 0.01, 0.4 works well, trying 0.2, 0.1 for quicker turn in.  0.1 is strong on highway, notchy in town
+      tire_stiffness_factor = 1.0 # LiveParameters (Tunder's 2020)
+      ret.steerRateCost = 1.0
       ret.mass = 1825. + STD_CARGO_KG
-      ret.wheelbase = 2.78
-      ret.steerRatio = 14.4 * 1.15   # 15% higher at the center seems reasonable
-      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
+      ret.wheelbase = 2.906
+      ret.steerRatio = 14.4
     elif candidate == CAR.KONA:
       ret.lateralTuning.pid.kf = 0.00005
       ret.mass = 1275. + STD_CARGO_KG
