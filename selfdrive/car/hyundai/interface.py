@@ -112,8 +112,8 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
     elif candidate == CAR.KIA_STINGER: # ^^^^^^^^^^^^^^^^^ STINGER ^^^^^^^^^^^^^^^^^^^^^^^
       ret.lateralTuning.init('indi')
-      ret.lateralTuning.indi.innerLoopGain = 3.5  #stock is 3.0 but 4.0 seems good
-      ret.lateralTuning.indi.outerLoopGain = 2.5  #stock is 2.0.  Trying out 2.5
+      ret.lateralTuning.indi.innerLoopGain = 2.5  #stock is 3.0 but 4.0 seems good
+      ret.lateralTuning.indi.outerLoopGain = 3.5  #stock is 2.0.  Trying out 2.5
       ret.lateralTuning.indi.timeConstant = 1.5  #Stock is 1.5.  1.3 is good
       ret.lateralTuning.indi.actuatorEffectiveness = 3.0  #Stock is 1.0 1.4 is good
       ret.steerActuatorDelay = 0.08 # Stinger GT Limited AWD 3.3T stock value (Tunder's 2020) 
