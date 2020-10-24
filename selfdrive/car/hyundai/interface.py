@@ -115,8 +115,8 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.indi.innerLoopGain = 2.5  #stock is 3.0 but 4.0 seems good
       ret.lateralTuning.indi.outerLoopGain = 3.5  #stock is 2.0.  Trying out 2.5
       ret.lateralTuning.indi.timeConstant = 1.5  #Stock is 1.5.  1.3 is good
-      ret.lateralTuning.indi.actuatorEffectiveness = 2.5  #Stock is 1.0 1.4 is good
-      ret.steerActuatorDelay = 0.08 # Stinger GT Limited AWD 3.3T stock value (Tunder's 2021) 
+      ret.lateralTuning.indi.actuatorEffectiveness = 1.8  #Stock is 1.0 1.4 is good
+      ret.steerActuatorDelay = 0.1 # Stinger GT Limited AWD 3.3T stock value (Tunder's 2021) up from 0.08 correcting late turn in 
       ret.steerLimitTimer = 0.4 # stock is 0.01, 0.4 works well, trying 0.2, 0.1 for quicker turn in.  0.1 is strong on highway, notchy in town
       tire_stiffness_factor = 1.0 # LiveParameters (Tunder's 2021)
       ret.steerRateCost = 1.0
@@ -128,7 +128,7 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.indi.innerLoopGain = 2.5  #stock is 3.0 but 4.0 seems good
       ret.lateralTuning.indi.outerLoopGain = 3.5  #stock is 2.0.  Trying out 2.5
       ret.lateralTuning.indi.timeConstant = 1.5  #Stock is 1.5.  1.3 is good
-      ret.lateralTuning.indi.actuatorEffectiveness = 2.5  #Stock is 1.0 1.4 is good
+      ret.lateralTuning.indi.actuatorEffectiveness = 1.8  #Stock is 1.0 1.4 is good
       ret.steerActuatorDelay = 0.08 # Stinger GT Limited AWD 3.3T stock value (Tunder's 2020) 
       ret.steerLimitTimer = 0.4 # stock is 0.01, 0.4 works well, trying 0.2, 0.1 for quicker turn in.  0.1 is strong on highway, notchy in town
       tire_stiffness_factor = 1.0 # LiveParameters (Tunder's 2020)
