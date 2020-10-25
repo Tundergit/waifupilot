@@ -7,7 +7,7 @@ Ecu = car.CarParams.Ecu
 # Steer torque limits
 class SteerLimitParams:
   def __init__(self, CP):
-    if CP.carFingerprint in [CAR.SONATA, CAR.PALISADE, CAR.KIA_STINGER, CAR.KIA_STINGER_2021]:
+    if CP.carFingerprint in [CAR.SONATA, CAR.PALISADE, CAR.KIA_STINGER]:
       self.STEER_MAX = 384
     else:
       self.STEER_MAX = 255
@@ -32,7 +32,7 @@ class CAR:
   KIA_OPTIMA_H = "KIA OPTIMA HYBRID 2017 & SPORTS 2019"
   KIA_SORENTO = "KIA SORENTO GT LINE 2018"
   KIA_STINGER = "KIA STINGER GT2 2018"
-  KIA_STINGER_2021 = "KIA STINGER GT LIMITED AWD (GT2) 2021"
+#  KIA_STINGER_2021 = "KIA STINGER GT LIMITED AWD (GT2) 2021"
   KONA = "HYUNDAI KONA 2020"
   KONA_EV = "HYUNDAI KONA ELECTRIC 2019"
   SANTA_FE = "HYUNDAI SANTA FE LIMITED 2019"
@@ -196,13 +196,13 @@ FW_VERSIONS = {
       b'\xf1\x87VDHLG17000192DK2xdFffT\xa5VUD$DwT\x86wveVeeD&T\x99\xba\x8f\xff\xcc\x99\xf1\x81E21\x00\x00\x00\x00\x00\x00\x00\xf1\x00bcsh8p54  E21\x00\x00\x00\x00\x00\x00\x00SCK0T33NB0\x88\xa2\xe6\xf0',
     ],
   },
-  CAR.KIA_STINGER_2021: {
-    (Ecu.fwdRadar, 0x7d0, None): [b'\xf1\x00CK__ SCC F_CUP      1.00 1.03 96400-J5100         \xf1\xa01.03'],
-    (Ecu.engine, 0x7e0, None): [b'\xf1\x81640L0051\x00\x00\x00\x00\x00\x00\x00\x00',],
-    (Ecu.eps, 0x7d4, None): [b'\xf1\x00CK  MDPS R 1.00 1.07 57700-J5420 4C4VL107'],
-    (Ecu.fwdCamera, 0x7c4, None): [b'\xf1\x00CK  MFC  AT USA LHD 1.00 1.04 95740-J5000 180504'],
-    (Ecu.transmission, 0x7e1, None): [b'\xf1\x87VDJLG18425192DK2xeGewfgf\x86eFeweWv\x88eVeuTGT\x89vo\xff\tJ\xf1\x81E24\x00\x00\x00\x00\x00\x00\x00\xf1\x00bcsh8p54  E24\x00\x00\x00\x00\x00\x00\x00SCK0T33NB1\x8a\xdcM\x90'],
-  },
+#  CAR.KIA_STINGER_2021: {
+#    (Ecu.fwdRadar, 0x7d0, None): [b'\xf1\x00CK__ SCC F_CUP      1.00 1.03 96400-J5100         \xf1\xa01.03'],
+#    (Ecu.engine, 0x7e0, None): [b'\xf1\x81640L0051\x00\x00\x00\x00\x00\x00\x00\x00',],
+#    (Ecu.eps, 0x7d4, None): [b'\xf1\x00CK  MDPS R 1.00 1.07 57700-J5420 4C4VL107'],
+#    (Ecu.fwdCamera, 0x7c4, None): [b'\xf1\x00CK  MFC  AT USA LHD 1.00 1.04 95740-J5000 180504'],
+#    (Ecu.transmission, 0x7e1, None): [b'\xf1\x87VDJLG18425192DK2xeGewfgf\x86eFeweWv\x88eVeuTGT\x89vo\xff\tJ\xf1\x81E24\x00\x00\x00\x00\x00\x00\x00\xf1\x00bcsh8p54  E24\x00\x00\x00\x00\x00\x00\x00SCK0T33NB1\x8a\xdcM\x90'],
+#  },
   CAR.KIA_OPTIMA_H: {
     (Ecu.fwdRadar, 0x7d0, None): [b'\xf1\x00DEhe SCC H-CUP      1.01 1.02 96400-G5100         ',],
     (Ecu.engine, 0x7e0, None): [b'\xf1\x816H6F4051\x00\x00\x00\x00\x00\x00\x00\x00',],
@@ -277,7 +277,7 @@ FEATURES = {
   "use_elect_gears": set([CAR.KIA_OPTIMA_H, CAR.IONIQ_EV_LTD, CAR.KONA_EV, CAR.IONIQ]),
 
   # these cars use the FCA11 message for the AEB and FCW signals, all others use SCC12
-  "use_fca": set([CAR.SONATA, CAR.ELANTRA, CAR.ELANTRA_GT_I30, CAR.KIA_STINGER, CAR.KIA_STINGER_2021, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_FORTE, CAR.PALISADE, CAR.GENESIS_G70, CAR.KONA]),
+  "use_fca": set([CAR.SONATA, CAR.ELANTRA, CAR.ELANTRA_GT_I30, CAR.KIA_STINGER, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_FORTE, CAR.PALISADE, CAR.GENESIS_G70, CAR.KONA]),
 
   "use_bsm": set([CAR.SONATA, CAR.PALISADE, CAR.HYUNDAI_GENESIS, CAR.GENESIS_G70, CAR.GENESIS_G80, CAR.GENESIS_G90, CAR.KONA]),
 }
@@ -298,7 +298,7 @@ DBC = {
   CAR.KIA_OPTIMA_H: dbc_dict('hyundai_kia_generic', None),
   CAR.KIA_SORENTO: dbc_dict('hyundai_kia_generic', None),
   CAR.KIA_STINGER: dbc_dict('hyundai_kia_generic', None),
-  CAR.KIA_STINGER_2021: dbc_dict('hyundai_kia_generic', None),
+#  CAR.KIA_STINGER_2021: dbc_dict('hyundai_kia_generic', None),
   CAR.KONA: dbc_dict('hyundai_kia_generic', None),
   CAR.KONA_EV: dbc_dict('hyundai_kia_generic', None),
   CAR.SANTA_FE: dbc_dict('hyundai_kia_generic', None),
