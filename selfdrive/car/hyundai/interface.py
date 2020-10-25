@@ -110,28 +110,28 @@ class CarInterface(CarInterfaceBase):
       tire_stiffness_factor = 0.5
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
-    elif candidate == CAR.KIA_STINGER_2021: # ^^^^^^^^^^^^^^^^^ 2021 STINGER ^^^^^^^^^^^^^^^^^^^^^^^
-      ret.lateralTuning.init('indi')
-      ret.lateralTuning.indi.innerLoopGain = 2.5  #stock is 3.0 but 4.0 seems good
-      ret.lateralTuning.indi.outerLoopGain = 3.5  #stock is 2.0.  Trying out 2.5
-      ret.lateralTuning.indi.timeConstant = 1.0  #Stock is 1.5.  1.3 is good
-      ret.lateralTuning.indi.actuatorEffectiveness = 1.8  #Stock is 1.0 1.4 is good
-      ret.steerActuatorDelay = 0.1 # Stinger GT Limited AWD 3.3T stock value (Tunder's 2021) up from 0.08 correcting late turn in 
-      ret.steerLimitTimer = 0.4 # stock is 0.01, 0.4 works well, trying 0.2, 0.1 for quicker turn in.  0.1 is strong on highway, notchy in town
-      tire_stiffness_factor = 1.0 # LiveParameters (Tunder's 2021)
-      ret.steerRateCost = 1.0
-      ret.mass = 1825. + STD_CARGO_KG
-      ret.wheelbase = 2.906
-      ret.steerRatio = 14.4
-    elif candidate == CAR.KIA_STINGER: # OLDER STINGERS should be PID
-      ret.lateralTuning.init('indi')
-      ret.lateralTuning.indi.innerLoopGain = 2.5  #stock is 3.0 but 4.0 seems good
-      ret.lateralTuning.indi.outerLoopGain = 3.5  #stock is 2.0.  Trying out 2.5
-      ret.lateralTuning.indi.timeConstant = 1.0  #Stock is 1.5.  1.3 is good
-      ret.lateralTuning.indi.actuatorEffectiveness = 1.8  #Stock is 1.0 1.4 is good
-      ret.steerActuatorDelay = 0.1 # Stinger GT Limited AWD 3.3T stock value (Tunder's 2020) 
-      ret.steerLimitTimer = 0.4 # stock is 0.01, 0.4 works well, trying 0.2, 0.1 for quicker turn in.  0.1 is strong on highway, notchy in town
-      tire_stiffness_factor = 1.0 # LiveParameters (Tunder's 2020)
+#    elif candidate == CAR.KIA_STINGER_2021: # ^^^^^^^^^^^^^^^^^ 2021 STINGER ^^^^^^^^^^^^^^^^^^^^^^^
+#      ret.lateralTuning.init('indi')
+#      ret.lateralTuning.indi.innerLoopGain = 2.5  #stock is 3.0 but 4.0 seems good
+#      ret.lateralTuning.indi.outerLoopGain = 3.5  #stock is 2.0.  Trying out 2.5
+#      ret.lateralTuning.indi.timeConstant = 1.0  #Stock is 1.5.  1.3 is good
+#      ret.lateralTuning.indi.actuatorEffectiveness = 1.8  #Stock is 1.0 1.4 is good
+#      ret.steerActuatorDelay = 0.1 # Stinger GT Limited AWD 3.3T stock value (Tunder's 2021) up from 0.08 correcting late turn in 
+#      ret.steerLimitTimer = 0.4 # stock is 0.01, 0.4 works well, trying 0.2, 0.1 for quicker turn in.  0.1 is strong on highway, notchy in town
+#      tire_stiffness_factor = 1.0 # LiveParameters (Tunder's 2021)
+#      ret.steerRateCost = 1.0
+#      ret.mass = 1825. + STD_CARGO_KG
+#      ret.wheelbase = 2.906
+#      ret.steerRatio = 14.4
+    elif candidate == CAR.KIA_STINGER: # OLDER STINGERS should be PID, NEWER STINGERS should be INDI 
+      ret.lateralTuning.init('indi') # TODO: BPs for city speeds - this tuning is great on the highway but a bit lazy in town
+      ret.lateralTuning.indi.innerLoopGain = 2.5  # higher values steer more
+      ret.lateralTuning.indi.outerLoopGain = 3.5  # higher values steer more
+      ret.lateralTuning.indi.timeConstant = 1.0  # lower values steer more
+      ret.lateralTuning.indi.actuatorEffectiveness = 1.8  # lower values steer more
+      ret.steerActuatorDelay = 0.1 # 0.08 stock
+      ret.steerLimitTimer = 0.4 
+      tire_stiffness_factor = 1.0 
       ret.steerRateCost = 1.0
       ret.mass = 1825. + STD_CARGO_KG
       ret.wheelbase = 2.906
@@ -180,7 +180,7 @@ class CarInterface(CarInterfaceBase):
 
     # these cars require a special panda safety mode due to missing counters and checksums in the messages
     if candidate in [CAR.HYUNDAI_GENESIS, CAR.IONIQ_EV_LTD, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_SORENTO, CAR.SONATA_2019, 
-                     CAR.KIA_OPTIMA, CAR.VELOSTER, CAR.KIA_STINGER, CAR.KIA_STINGER_2021, CAR.GENESIS_G70]:
+                     CAR.KIA_OPTIMA, CAR.VELOSTER, CAR.KIA_STINGER, CAR.GENESIS_G70]:
       ret.safetyModel = car.CarParams.SafetyModel.hyundaiLegacy
 
     ret.centerToFront = ret.wheelbase * 0.4
