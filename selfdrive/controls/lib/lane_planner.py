@@ -1,6 +1,8 @@
 from common.numpy_fast import interp
 import numpy as np
 from cereal import log
+from common.dp_common import get_last_modified, param_get_if_updated
+from common.dp_time import LAST_MODIFIED_LANE_PLANNER
 
 CAMERA_OFFSET = 0.06  # m from center car to camera
 
@@ -52,9 +54,9 @@ class LanePlanner():
     self.p_poly = [0., 0., 0., 0.]
     self.d_poly = [0., 0., 0., 0.]
 
-    self.lane_width_estimate = 3.7
+    self.lane_width_estimate = 2.85
     self.lane_width_certainty = 1.0
-    self.lane_width = 3.7
+    self.lane_width = 2.85
 
     self.l_prob = 0.
     self.r_prob = 0.
@@ -64,6 +66,13 @@ class LanePlanner():
 
     self._path_pinv = compute_path_pinv()
     self.x_points = np.arange(50)
+
+    # dp
+    self.dp_camera_offset = CAMERA_OFFSET * 100
+    self.last_modified_dp_camera_offset = None
+    self.modified = None
+    self.last_modified = None
+    self.last_modified_check = None
 
   def parse_model(self, md):
     if len(md.leftLane.poly):
@@ -83,14 +92,20 @@ class LanePlanner():
 
   def update_d_poly(self, v_ego):
     # only offset left and right lane lines; offsetting p_poly does not make sense
-    self.l_poly[3] += CAMERA_OFFSET
-    self.r_poly[3] += CAMERA_OFFSET
+    self.last_modified_check, self.modified = get_last_modified(LAST_MODIFIED_LANE_PLANNER, self.last_modified_check, self.modified)
+    if self.last_modified != self.modified:
+      self.dp_camera_offset, self.last_modified_dp_camera_offset = param_get_if_updated("dp_camera_offset", "int", self.dp_camera_offset, self.last_modified_dp_camera_offset)
+      self.last_modified = self.modified
+    offset = self.dp_camera_offset * 0.01 if self.dp_camera_offset != 0 else 0
+    self.l_poly[3] += offset
+    self.r_poly[3] += offset
+    self.p_poly[3] += offset
 
     # Find current lanewidth
     self.lane_width_certainty += 0.05 * (self.l_prob * self.r_prob - self.lane_width_certainty)
     current_lane_width = abs(self.l_poly[3] - self.r_poly[3])
     self.lane_width_estimate += 0.005 * (current_lane_width - self.lane_width_estimate)
-    speed_lane_width = interp(v_ego, [0., 31.], [2.8, 3.5])
+    speed_lane_width = interp(v_ego, [0., 14., 20.], [2.5, 3., 3.5]) # German Standards
     self.lane_width = self.lane_width_certainty * self.lane_width_estimate + \
                       (1 - self.lane_width_certainty) * speed_lane_width
 

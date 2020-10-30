@@ -49,6 +49,16 @@ void nvgluDeleteFramebuffer(NVGLUframebuffer* fb);
 
 static GLint defaultFBO = -1;
 
+int nvgluGetCurrFramebuffer() {
+#ifdef NANOVG_FBO_VALID
+	GLint defaultFBO;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFBO);
+	return defaultFBO;
+#else
+	return -1;
+#endif
+}
+
 NVGLUframebuffer* nvgluCreateFramebuffer(NVGcontext* ctx, int w, int h, int imageFlags)
 {
 #ifdef NANOVG_FBO_VALID
@@ -90,7 +100,18 @@ NVGLUframebuffer* nvgluCreateFramebuffer(NVGcontext* ctx, int w, int h, int imag
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fb->texture, 0);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fb->rbo);
 
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) goto error;
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+#ifdef GL_DEPTH24_STENCIL8
+		// If GL_STENCIL_INDEX8 is not supported, try GL_DEPTH24_STENCIL8 as a fallback.
+		// Some graphics cards require a depth buffer along with a stencil.
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fb->texture, 0);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fb->rbo);
+
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+#endif // GL_DEPTH24_STENCIL8
+			goto error;
+	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, defaultFBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, defaultRBO);
@@ -117,6 +138,14 @@ void nvgluBindFramebuffer(NVGLUframebuffer* fb)
 #else
 	NVG_NOTUSED(fb);
 #endif
+}
+
+void nvgluReadCurrentFramebufferData(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned int width, unsigned int height, void* pixels)
+{
+	if(x + w <= width && y + h <= height && pixels != NULL) {
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+	}
 }
 
 void nvgluDeleteFramebuffer(NVGLUframebuffer* fb)

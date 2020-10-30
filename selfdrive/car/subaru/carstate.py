@@ -146,7 +146,7 @@ class CarState(CarStateBase):
         ("Dashlights", 10),
         ("CruiseControl", 50),
       ]
-
+    checks = []
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 0)
 
   @staticmethod
@@ -226,5 +226,5 @@ class CarState(CarStateBase):
         ("ES_Distance", 20),
         ("ES_LKAS_State", 10),
       ]
-
+    checks = []
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 2)

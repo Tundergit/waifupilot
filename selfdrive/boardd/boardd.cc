@@ -60,6 +60,7 @@ bool time_valid(struct tm sys_time){
 }
 
 void safety_setter_thread() {
+  #ifndef DisableRelay
   LOGD("Starting safety setter thread");
   // diagnostic only is the default, needed for VIN query
   panda->set_safety_model(cereal::CarParams::SafetyModel::ELM327);
@@ -84,7 +85,7 @@ void safety_setter_thread() {
 
   // VIN query done, stop listening to OBDII
   panda->set_safety_model(cereal::CarParams::SafetyModel::NO_OUTPUT);
-
+  #endif
   std::vector<char> params;
   LOGW("waiting for params to set safety model");
   while (1) {
@@ -106,7 +107,8 @@ void safety_setter_thread() {
   capnp::FlatArrayMessageReader cmsg(amsg);
   cereal::CarParams::Reader car_params = cmsg.getRoot<cereal::CarParams>();
   cereal::CarParams::SafetyModel safety_model = car_params.getSafetyModel();
-
+  LOGW("setting unsafe mode");
+  panda->set_unsafe_mode(9);
   auto safety_param = car_params.getSafetyParam();
   LOGW("setting safety model: %d with param %d", (int)safety_model, safety_param);
 
@@ -293,12 +295,12 @@ void can_health_thread() {
     if (spoofing_started) {
       health.ignition_line = 1;
     }
-
+    #ifndef DisableRelay
     // Make sure CAN buses are live: safety_setter_thread does not work if Panda CAN are silent and there is only one other CAN node
     if (health.safety_model == (uint8_t)(cereal::CarParams::SafetyModel::SILENT)) {
       panda->set_safety_model(cereal::CarParams::SafetyModel::NO_OUTPUT);
     }
-
+    #endif
     ignition = ((health.ignition_line != 0) || (health.ignition_can != 0));
 
     if (ignition) {
@@ -312,11 +314,12 @@ void can_health_thread() {
     if (health.power_save_enabled != power_save_desired){
       panda->set_power_saving(power_save_desired);
     }
-
+    #ifndef DisableRelay
     // set safety mode to NO_OUTPUT when car is off. ELM327 is an alternative if we want to leverage athenad/connect
     if (!ignition && (health.safety_model != (uint8_t)(cereal::CarParams::SafetyModel::NO_OUTPUT))) {
       panda->set_safety_model(cereal::CarParams::SafetyModel::NO_OUTPUT);
     }
+    #endif
 #endif
 
     // clear VIN, CarParams, and set new safety on car start
@@ -478,7 +481,10 @@ void pigeon_thread() {
 #endif
 
   pigeon->init();
-
+  // dp
+  #ifdef DisableRelay
+  panda->set_safety_model(cereal::CarParams::SafetyModel::TOYOTA);
+  #endif
   while (!do_exit && panda->connected) {
     std::string recv = pigeon->receive();
     if (recv.length() > 0) {
@@ -501,7 +507,9 @@ void pigeon_thread() {
 int main() {
   int err;
   LOGW("starting boardd");
-
+  #ifdef DisableRelay
+  LOGW("boardd is in DisableRelay mode.");
+  #endif
   // set process priority and affinity
   err = set_realtime_priority(54);
   LOG("set priority returns %d", err);

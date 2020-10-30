@@ -10,6 +10,7 @@ from selfdrive.car.honda.values import CruiseButtons, CAR, HONDA_BOSCH, Ecu, ECU
 from selfdrive.car import STD_CARGO_KG, CivicParams, scale_rot_inertia, scale_tire_stiffness, is_ecu_disconnected, gen_empty_fingerprint
 from selfdrive.controls.lib.planner import _A_CRUISE_MAX_V_FOLLOWING
 from selfdrive.car.interfaces import CarInterfaceBase
+from common.dp_common import common_interface_atl, common_interface_get_params_lqr
 
 A_ACC_MAX = max(_A_CRUISE_MAX_V_FOLLOWING)
 
@@ -122,6 +123,7 @@ class CarInterface(CarInterfaceBase):
   def get_params(candidate, fingerprint=gen_empty_fingerprint(), has_relay=False, car_fw=[]):  # pylint: disable=dangerous-default-value
     ret = CarInterfaceBase.get_std_params(candidate, fingerprint, has_relay)
     ret.carName = "honda"
+    ret.lateralTuning.init('pid')
 
     if candidate in HONDA_BOSCH:
       ret.safetyModel = car.CarParams.SafetyModel.hondaBoschHarness if has_relay else car.CarParams.SafetyModel.hondaBoschGiraffe
@@ -306,6 +308,20 @@ class CarInterface(CarInterfaceBase):
       ret.longitudinalTuning.kiBP = [0., 35.]
       ret.longitudinalTuning.kiV = [0.18, 0.12]
 
+    elif candidate == CAR.JADE:
+      stop_and_go = False
+      ret.mass = 1557. + STD_CARGO_KG
+      ret.wheelbase = 2.76
+      ret.centerToFront = ret.wheelbase * 0.41
+      ret.steerRatio = 15.2
+      ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 4096], [0, 4096]]
+      tire_stiffness_factor = 0.5
+      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.16], [0.025]]
+      ret.longitudinalTuning.kpBP = [0., 5., 35.]
+      ret.longitudinalTuning.kpV = [1.2, 0.8, 0.5]
+      ret.longitudinalTuning.kiBP = [0., 35.]
+      ret.longitudinalTuning.kiV = [0.18, 0.12]
+
     elif candidate == CAR.ACURA_RDX:
       stop_and_go = False
       ret.mass = 3935. * CV.LB_TO_KG + STD_CARGO_KG
@@ -408,6 +424,9 @@ class CarInterface(CarInterfaceBase):
     else:
       raise ValueError("unsupported car %s" % candidate)
 
+    # dp
+    ret = common_interface_get_params_lqr(ret)
+
     # min speed to enable ACC. if car can do stop and go, then set enabling speed
     # to a negative value, so it won't matter. Otherwise, add 0.5 mph margin to not
     # conflict with PCM acc
@@ -437,7 +456,7 @@ class CarInterface(CarInterfaceBase):
     return ret
 
   # returns a car.CarState
-  def update(self, c, can_strings):
+  def update(self, c, can_strings, dragonconf):
     # ******************* do can recv *******************
     self.cp.update_strings(can_strings)
     self.cp_cam.update_strings(can_strings)
@@ -445,13 +464,18 @@ class CarInterface(CarInterfaceBase):
       self.cp_body.update_strings(can_strings)
 
     ret = self.CS.update(self.cp, self.cp_cam, self.cp_body)
-
+    # dp
+    self.dragonconf = dragonconf
+    ret.cruiseState.enabled = common_interface_atl(ret, dragonconf.dpAtl)
     ret.canValid = self.cp.can_valid and self.cp_cam.can_valid and (self.cp_body is None or self.cp_body.can_valid)
     ret.yawRate = self.VM.yaw_rate(ret.steeringAngle * CV.DEG_TO_RAD, ret.vEgo)
     # FIXME: read sendcan for brakelights
     brakelights_threshold = 0.02 if self.CS.CP.carFingerprint == CAR.CIVIC else 0.1
     ret.brakeLights = bool(self.CS.brake_switch or
                            c.actuators.brake > brakelights_threshold)
+
+    # dp
+    ret.lkMode = self.CS.lkMode
 
     buttonEvents = []
 
@@ -491,6 +515,8 @@ class CarInterface(CarInterfaceBase):
 
     # events
     events = self.create_common_events(ret, pcm_enable=False)
+    if not self.CS.lkMode or (dragonconf.dpAtl and ret.vEgo <= self.CP.minEnableSpeed):
+      events.add(EventName.manualSteeringRequired)
     if self.CS.brake_error:
       events.add(EventName.brakeUnavailable)
     if self.CS.brake_hold and self.CS.CP.openpilotLongitudinalControl:
@@ -507,8 +533,8 @@ class CarInterface(CarInterfaceBase):
        and (c.actuators.brake <= 0. or not self.CP.openpilotLongitudinalControl):
       # non loud alert if cruise disables below 25mph as expected (+ a little margin)
       if ret.vEgo < self.CP.minEnableSpeed + 2.:
-        events.add(EventName.speedTooLow)
-      else:
+      #   events.add(EventName.speedTooLow)
+      # else:
         events.add(EventName.cruiseDisabled)
     if self.CS.CP.minEnableSpeed > 0 and ret.vEgo < 0.001:
       events.add(EventName.manualRestart)
@@ -564,6 +590,7 @@ class CarInterface(CarInterfaceBase):
                                pcm_accel,
                                hud_v_cruise,
                                c.hudControl.lanesVisible,
+                               self.dragonconf,
                                hud_show_car=c.hudControl.leadVisible,
                                hud_alert=c.hudControl.visualAlert)
 

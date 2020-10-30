@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) 2013 Mikko Mononen memon@inside.org
 //
 // This software is provided 'as-is', without any express or implied
@@ -24,6 +24,7 @@ extern "C" {
 #endif
 
 #define NVG_PI 3.14159265358979323846264338327f
+#define WITH_NANOVG_GPU
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -141,6 +142,7 @@ enum NVGimageFlags {
 	NVG_IMAGE_REPEATY			= 1<<2,		// Repeat image in Y direction.
 	NVG_IMAGE_FLIPY				= 1<<3,		// Flips (inverses) image in Y direction when rendered.
 	NVG_IMAGE_PREMULTIPLIED		= 1<<4,		// Image data has premultiplied alpha.
+	NVG_IMAGE_NEAREST			= 1<<5,		// Image interpolation is Nearest instead Linear
 };
 
 // Begin drawing a new frame
@@ -151,7 +153,7 @@ enum NVGimageFlags {
 // For example, GLFW returns two dimension for an opened window: window size and
 // frame buffer size. In that case you would set windowWidth/Height to the window size
 // devicePixelRatio to: frameBufferWidth / windowWidth.
-void nvgBeginFrame(NVGcontext* ctx, int windowWidth, int windowHeight, float devicePixelRatio);
+void nvgBeginFrame(NVGcontext* ctx, float windowWidth, float windowHeight, float devicePixelRatio);
 
 // Cancels drawing the current frame.
 void nvgCancelFrame(NVGcontext* ctx);
@@ -236,6 +238,9 @@ void nvgReset(NVGcontext* ctx);
 // using nvgLinearGradient(), nvgBoxGradient(), nvgRadialGradient() and nvgImagePattern().
 //
 // Current render style can be saved and restored using nvgSave() and nvgRestore().
+
+// Sets whether to draw antialias for nvgStroke() and nvgFill(). It's enabled by default.
+void nvgShapeAntiAlias(NVGcontext* ctx, int enabled);
 
 // Sets current stroke style to a solid color.
 void nvgStrokeColor(NVGcontext* ctx, NVGcolor color);
@@ -384,6 +389,9 @@ void nvgImageSize(NVGcontext* ctx, int image, int* w, int* h);
 // Deletes created image.
 void nvgDeleteImage(NVGcontext* ctx, int image);
 
+// Deletes font's assets for font's name.
+void nvgDeleteFontByName(NVGcontext* ctx, const char* name);
+
 //
 // Paints
 //
@@ -416,6 +424,9 @@ NVGpaint nvgRadialGradient(NVGcontext* ctx, float cx, float cy, float inr, float
 NVGpaint nvgImagePattern(NVGcontext* ctx, float ox, float oy, float ex, float ey,
 						 float angle, int image, float alpha);
 
+// get xfrom data
+void nvgGetStateXfrom(NVGcontext* ctx, float* xform);
+
 //
 // Scissoring
 //
@@ -434,8 +445,44 @@ void nvgScissor(NVGcontext* ctx, float x, float y, float w, float h);
 // transform space. The resulting shape is always rectangle.
 void nvgIntersectScissor(NVGcontext* ctx, float x, float y, float w, float h);
 
+/**
+ * @method nvgIntersectScissor_ex
+ * 设置一个与前一个裁剪区做交集的矩形裁剪区。
+ * 输入要设置的裁剪区，做交集后把新的裁剪区返回来给用户。
+ * 
+ * @annotation ["scriptable"]
+ * @param {NVGcontext*} ctx nanovg的对象
+ * @param {float_t} x 裁剪区x坐标。
+ * @param {float_t} y 裁剪区y坐标。
+ * @param {float_t} w 裁剪区宽度。
+ * @param {float_t} h 裁剪区高度。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+void nvgIntersectScissor_ex(NVGcontext* ctx, float* x, float* y, float* w, float* h);
+
 // Reset and disables scissoring.
 void nvgResetScissor(NVGcontext* ctx);
+
+
+/**
+ * @method nvgIntersectScissorForOtherRect
+ * 设置一个裁剪区，但是该裁剪区收到脏矩形的影响
+ * 首先会把脏矩形根据当前 nanovg 的坐标系转换为新的脏矩形区域，再和裁剪区做交集，把交集设为新的裁剪区
+ * 
+ * @annotation ["scriptable"]
+ * @param {NVGcontext*} ctx nanovg的对象
+ * @param {float_t} x 裁剪区x坐标。
+ * @param {float_t} y 裁剪区y坐标。
+ * @param {float_t} w 裁剪区宽度。
+ * @param {float_t} h 裁剪区高度。
+ * @param {float_t} dx 脏矩形x坐标。
+ * @param {float_t} dy 脏矩形y坐标。
+ * @param {float_t} dw 脏矩形宽度。
+ * @param {float_t} dh 脏矩形高度。
+ *
+ */
+void nvgIntersectScissorForOtherRect(NVGcontext* ctx, float x, float y, float w, float h, float dx, float dy, float dw, float dh);
 
 //
 // Paths
@@ -612,8 +659,13 @@ int nvgTextBreakLines(NVGcontext* ctx, const char* string, const char* end, floa
 // Internal Render API
 //
 enum NVGtexture {
-	NVG_TEXTURE_ALPHA = 0x01,
-	NVG_TEXTURE_RGBA = 0x02,
+	NVG_TEXTURE_ALPHA = 1,
+	NVG_TEXTURE_RGBA = 2,
+	NVG_TEXTURE_BGRA = 4,
+	NVG_TEXTURE_RGB  = 8,
+	NVG_TEXTURE_BGR  = 16,
+	NVG_TEXTURE_RGB565 = 32,
+	NVG_TEXTURE_BGR565 = 64
 };
 
 struct NVGscissor {
@@ -644,17 +696,24 @@ typedef struct NVGpath NVGpath;
 struct NVGparams {
 	void* userPtr;
 	int edgeAntiAlias;
+
+	void (*setLineCap)(void* uptr, int lineCap);
+	void (*setLineJoin)(void* uptr, int lineJoin);
+
+	int (*clearCache)(void* uptr);
 	int (*renderCreate)(void* uptr);
-	int (*renderCreateTexture)(void* uptr, int type, int w, int h, int imageFlags, const unsigned char* data);
+	int (*findTexture)(void* uptr, const void* data);
+	void (*setStateXfrom)(void* uptr, float* xform);
+	int (*renderCreateTexture)(void* uptr, int type, int w, int h, int stride, int imageFlags, const unsigned char* data);
 	int (*renderDeleteTexture)(void* uptr, int image);
 	int (*renderUpdateTexture)(void* uptr, int image, int x, int y, int w, int h, const unsigned char* data);
 	int (*renderGetTextureSize)(void* uptr, int image, int* w, int* h);
-	void (*renderViewport)(void* uptr, int width, int height, float devicePixelRatio);
+	void (*renderViewport)(void* uptr, float width, float height, float devicePixelRatio);
 	void (*renderCancel)(void* uptr);
-	void (*renderFlush)(void* uptr, NVGcompositeOperationState compositeOperation);
-	void (*renderFill)(void* uptr, NVGpaint* paint, NVGscissor* scissor, float fringe, const float* bounds, const NVGpath* paths, int npaths);
-	void (*renderStroke)(void* uptr, NVGpaint* paint, NVGscissor* scissor, float fringe, float strokeWidth, const NVGpath* paths, int npaths);
-	void (*renderTriangles)(void* uptr, NVGpaint* paint, NVGscissor* scissor, const NVGvertex* verts, int nverts);
+	void (*renderFlush)(void* uptr);
+	void (*renderFill)(void* uptr, NVGpaint* paint, NVGcompositeOperationState compositeOperation, NVGscissor* scissor, float fringe, const float* bounds, const NVGpath* paths, int npaths);
+	void (*renderStroke)(void* uptr, NVGpaint* paint, NVGcompositeOperationState compositeOperation, NVGscissor* scissor, float fringe, float strokeWidth, const NVGpath* paths, int npaths);
+	void (*renderTriangles)(void* uptr, NVGpaint* paint, NVGcompositeOperationState compositeOperation, NVGscissor* scissor, const NVGvertex* verts, int nverts);
 	void (*renderDelete)(void* uptr);
 };
 typedef struct NVGparams NVGparams;
@@ -673,6 +732,13 @@ void nvgDebugDumpPathCache(NVGcontext* ctx);
 #endif
 
 #define NVG_NOTUSED(v) for (;;) { (void)(1 ? (void)0 : ( (void)(v) ) ); break; }
+
+NVGparams* nvgGetParams(NVGcontext* ctx);
+int nvgCreateImageRaw(NVGcontext* ctx, int w, int h, int format, int stride, int imageFlags, const unsigned char* data);
+
+int nvgFindTextureRaw(NVGcontext* ctx, const void* data);
+
+int nvgClearCache(NVGcontext* ctx);
 
 #ifdef __cplusplus
 }

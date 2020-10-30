@@ -5,6 +5,8 @@ from selfdrive.car.toyota.values import Ecu, ECU_FINGERPRINT, CAR, TSS2_CAR, FIN
 from selfdrive.car import STD_CARGO_KG, scale_rot_inertia, scale_tire_stiffness, is_ecu_disconnected, gen_empty_fingerprint
 from selfdrive.swaglog import cloudlog
 from selfdrive.car.interfaces import CarInterfaceBase
+from common.dp_common import common_interface_atl, common_interface_get_params_lqr
+from common.params import Params
 
 EventName = car.CarEvent.EventName
 
@@ -49,6 +51,9 @@ class CarInterface(CarInterfaceBase):
       ret.steerRatio = 16.88   # 14.5 is spec end-to-end
       tire_stiffness_factor = 0.5533
       ret.mass = 3650. * CV.LB_TO_KG + STD_CARGO_KG  # mean between normal and hybrid
+      if ret.enableGasInterceptor:
+        ret.longitudinalTuning.kpV = [0.4, 0.36, 0.325]  # arne's tune.
+        ret.longitudinalTuning.kiV = [0.195, 0.10]
       ret.lateralTuning.init('lqr')
 
       ret.lateralTuning.lqr.scale = 1500.0
@@ -253,8 +258,47 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.6], [0.1]]
       ret.lateralTuning.pid.kf = 0.00006
 
+    elif candidate == CAR.LEXUS_ISH:
+      stop_and_go = True # set to true because it's a hybrid
+      ret.safetyParam = 130
+      ret.wheelbase = 2.79908
+      ret.steerRatio = 13.3
+      tire_stiffness_factor = 0.444
+      ret.mass = 3736.8 * CV.LB_TO_KG + STD_CARGO_KG
+      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.3], [0.05]]
+      ret.lateralTuning.pid.kf = 0.00006
+
+    elif candidate == CAR.LEXUS_GSH:
+      stop_and_go = True # set to true because it's a hybrid
+      ret.safetyParam = 130
+      ret.wheelbase = 2.84988
+      ret.steerRatio = 14.35 # range from 11.5 - 17.2, lets try 14.35
+      tire_stiffness_factor = 0.444
+      ret.mass = 4112 * CV.LB_TO_KG + STD_CARGO_KG
+      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.3], [0.05]]
+      ret.lateralTuning.pid.kf = 0.00006
+
+    elif candidate == CAR.LEXUS_NXT:
+      stop_and_go = True
+      ret.safetyParam = 100
+      ret.wheelbase = 2.66
+      ret.steerRatio = 14.7
+      tire_stiffness_factor = 0.444 # not optimized yet
+      ret.mass = 4070 * CV.LB_TO_KG + STD_CARGO_KG
+      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.3], [0.05]]
+      ret.lateralTuning.pid.kf = 0.00006
+
     ret.steerRateCost = 1.
     ret.centerToFront = ret.wheelbase * 0.44
+
+    # dp
+    ret = common_interface_get_params_lqr(ret)
+
+    if candidate == CAR.PRIUS and Params().get('dp_toyota_zss') == b'1':
+      ret.mass = 3370. * CV.LB_TO_KG + STD_CARGO_KG
+      if Params().get('dp_lqr') == b'0':
+        ret.lateralTuning.indi.timeConstant = 0.1
+      ret.steerRateCost = 0.5
 
     # TODO: get actual value, for now starting with reasonable value for
     # civic and scaling by mass and wheelbase
@@ -304,12 +348,17 @@ class CarInterface(CarInterfaceBase):
     return ret
 
   # returns a car.CarState
-  def update(self, c, can_strings):
+  def update(self, c, can_strings, dragonconf):
     # ******************* do can recv *******************
     self.cp.update_strings(can_strings)
     self.cp_cam.update_strings(can_strings)
 
     ret = self.CS.update(self.cp, self.cp_cam)
+    # dp
+    self.dragonconf = dragonconf
+    ret.cruiseState.enabled = common_interface_atl(ret, dragonconf.dpAtl)
+    if dragonconf.dpToyotaLowestCruiseOverride and ret.cruiseState.speed < dragonconf.dpToyotaLowestCruiseOverrideAt * CV.KPH_TO_MS:
+      ret.cruiseState.speed = dragonconf.dpToyotaLowestCruiseOverrideSpeed * CV.KPH_TO_MS
 
     ret.canValid = self.cp.can_valid and self.cp_cam.can_valid
     ret.steeringRateLimited = self.CC.steer_rate_limited if self.CC is not None else False
@@ -343,7 +392,7 @@ class CarInterface(CarInterfaceBase):
                                c.actuators, c.cruiseControl.cancel,
                                c.hudControl.visualAlert, c.hudControl.leftLaneVisible,
                                c.hudControl.rightLaneVisible, c.hudControl.leadVisible,
-                               c.hudControl.leftLaneDepart, c.hudControl.rightLaneDepart)
+                               c.hudControl.leftLaneDepart, c.hudControl.rightLaneDepart, self.dragonconf)
 
     self.frame += 1
     return can_sends

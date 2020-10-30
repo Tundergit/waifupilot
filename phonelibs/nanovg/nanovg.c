@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) 2013 Mikko Mononen memon@inside.org
 //
 // This software is provided 'as-is', without any express or implied
@@ -17,15 +17,20 @@
 //
 
 #include <stdlib.h>
-#include <stdio.h>
 #include <math.h>
-#include <memory.h>
-
 #include "nanovg.h"
+
+#ifdef WITH_NANOVG_GPU
+#include <stdio.h>
+#include <memory.h>
 #define FONTSTASH_IMPLEMENTATION
 #include "fontstash.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#else
+#include <string.h>
+#define printf(...)
+#endif/*WITH_NANOVG_GPU*/
 
 #ifdef _MSC_VER
 #pragma warning(disable: 4100)  // unreferenced formal parameter
@@ -67,6 +72,7 @@ enum NVGpointFlags
 
 struct NVGstate {
 	NVGcompositeOperationState compositeOperation;
+	int shapeAntiAlias;
 	NVGpaint fill;
 	NVGpaint stroke;
 	float strokeWidth;
@@ -140,7 +146,7 @@ static float nvg__acosf(float a) { return acosf(a); }
 
 static int nvg__mini(int a, int b) { return a < b ? a : b; }
 static int nvg__maxi(int a, int b) { return a > b ? a : b; }
-static int nvg__clampi(int a, int mn, int mx) { return a < mn ? mn : (a > mx ? mx : a); }
+__attribute__((unused)) static int nvg__clampi(int a, int mn, int mx) { return a < mn ? mn : (a > mx ? mx : a); }
 static float nvg__minf(float a, float b) { return a < b ? a : b; }
 static float nvg__maxf(float a, float b) { return a > b ? a : b; }
 static float nvg__absf(float a) { return a >= 0.0f ? a : -a; }
@@ -263,6 +269,11 @@ static NVGcompositeOperationState nvg__compositeOperationState(int op)
 		sfactor = NVG_ONE_MINUS_DST_ALPHA;
 		dfactor = NVG_ONE_MINUS_SRC_ALPHA;
 	}
+	else
+	{
+		sfactor = NVG_ONE;
+		dfactor = NVG_ZERO;
+	}
 
 	NVGcompositeOperationState state;
 	state.srcRGB = sfactor;
@@ -277,9 +288,19 @@ static NVGstate* nvg__getState(NVGcontext* ctx)
 	return &ctx->states[ctx->nstates-1];
 }
 
+void nvgGetStateXfrom(NVGcontext* ctx, float* xform)
+{
+	if(xform != NULL) {
+		memcpy(xform, &(ctx->states[ctx->nstates-1].xform), sizeof(float) * 6);
+	}
+}
+
+
 NVGcontext* nvgCreateInternal(NVGparams* params)
 {
+#ifdef WITH_NANOVG_GPU
 	FONSparams fontParams;
+#endif/*WITH_NANOVG_GPU*/
 	NVGcontext* ctx = (NVGcontext*)malloc(sizeof(NVGcontext));
 	int i;
 	if (ctx == NULL) goto error;
@@ -304,6 +325,7 @@ NVGcontext* nvgCreateInternal(NVGparams* params)
 
 	if (ctx->params.renderCreate(ctx->params.userPtr) == 0) goto error;
 
+#ifdef WITH_NANOVG_GPU
 	// Init font rendering
 	memset(&fontParams, 0, sizeof(fontParams));
 	fontParams.width = NVG_INIT_FONTIMAGE_SIZE;
@@ -318,9 +340,10 @@ NVGcontext* nvgCreateInternal(NVGparams* params)
 	if (ctx->fs == NULL) goto error;
 
 	// Create font texture
-	ctx->fontImages[0] = ctx->params.renderCreateTexture(ctx->params.userPtr, NVG_TEXTURE_ALPHA, fontParams.width, fontParams.height, 0, NULL);
+	ctx->fontImages[0] = ctx->params.renderCreateTexture(ctx->params.userPtr, NVG_TEXTURE_ALPHA, fontParams.width, fontParams.height, 0, 0, NULL);
 	if (ctx->fontImages[0] == 0) goto error;
 	ctx->fontImageIdx = 0;
+#endif/*WITH_NANOVG_GPU*/
 
 	return ctx;
 
@@ -341,6 +364,7 @@ void nvgDeleteInternal(NVGcontext* ctx)
 	if (ctx->commands != NULL) free(ctx->commands);
 	if (ctx->cache != NULL) nvg__deletePathCache(ctx->cache);
 
+#ifdef WITH_NANOVG_GPU
 	if (ctx->fs)
 		fonsDeleteInternal(ctx->fs);
 
@@ -350,6 +374,9 @@ void nvgDeleteInternal(NVGcontext* ctx)
 			ctx->fontImages[i] = 0;
 		}
 	}
+#else
+	(void)i;
+#endif/*WITH_NANOVG_GPU*/
 
 	if (ctx->params.renderDelete != NULL)
 		ctx->params.renderDelete(ctx->params.userPtr);
@@ -357,7 +384,7 @@ void nvgDeleteInternal(NVGcontext* ctx)
 	free(ctx);
 }
 
-void nvgBeginFrame(NVGcontext* ctx, int windowWidth, int windowHeight, float devicePixelRatio)
+void nvgBeginFrame(NVGcontext* ctx, float windowWidth, float windowHeight, float devicePixelRatio)
 {
 /*	printf("Tris: draws:%d  fill:%d  stroke:%d  text:%d  TOT:%d\n",
 		ctx->drawCallCount, ctx->fillTriCount, ctx->strokeTriCount, ctx->textTriCount,
@@ -384,8 +411,7 @@ void nvgCancelFrame(NVGcontext* ctx)
 
 void nvgEndFrame(NVGcontext* ctx)
 {
-	NVGstate* state = nvg__getState(ctx);
-	ctx->params.renderFlush(ctx->params.userPtr, state->compositeOperation);
+	ctx->params.renderFlush(ctx->params.userPtr);
 	if (ctx->fontImageIdx != 0) {
 		int fontImage = ctx->fontImages[ctx->fontImageIdx];
 		int i, j, iw, ih;
@@ -461,7 +487,7 @@ NVGcolor nvgLerpRGBA(NVGcolor c0, NVGcolor c1, float u)
 {
 	int i;
 	float oneminu;
-	NVGcolor cint = {0};
+	NVGcolor cint = {{{0}}};
 
 	u = nvg__clampf(u, 0.0f, 1.0f);
 	oneminu = 1.0f - u;
@@ -641,6 +667,7 @@ void nvgReset(NVGcontext* ctx)
 	nvg__setPaintColor(&state->fill, nvgRGBA(255,255,255,255));
 	nvg__setPaintColor(&state->stroke, nvgRGBA(0,0,0,255));
 	state->compositeOperation = nvg__compositeOperationState(NVG_SOURCE_OVER);
+	state->shapeAntiAlias = 1;
 	state->strokeWidth = 1.0f;
 	state->miterLimit = 10.0f;
 	state->lineCap = NVG_BUTT;
@@ -660,6 +687,12 @@ void nvgReset(NVGcontext* ctx)
 }
 
 // State setting
+void nvgShapeAntiAlias(NVGcontext* ctx, int enabled)
+{
+	NVGstate* state = nvg__getState(ctx);
+	state->shapeAntiAlias = enabled;
+}
+
 void nvgStrokeWidth(NVGcontext* ctx, float width)
 {
 	NVGstate* state = nvg__getState(ctx);
@@ -676,12 +709,20 @@ void nvgLineCap(NVGcontext* ctx, int cap)
 {
 	NVGstate* state = nvg__getState(ctx);
 	state->lineCap = cap;
+	if(ctx->params.setLineJoin != NULL)
+	{
+		ctx->params.setLineCap(ctx->params.userPtr, cap);
+	}
 }
 
 void nvgLineJoin(NVGcontext* ctx, int join)
 {
 	NVGstate* state = nvg__getState(ctx);
 	state->lineJoin = join;
+	if(ctx->params.setLineJoin != NULL)
+	{
+		ctx->params.setLineJoin(ctx->params.userPtr, join);
+	}
 }
 
 void nvgGlobalAlpha(NVGcontext* ctx, float alpha)
@@ -776,6 +817,7 @@ void nvgFillPaint(NVGcontext* ctx, NVGpaint paint)
 	nvgTransformMultiply(state->fill.xform, state->xform);
 }
 
+#ifdef WITH_NANOVG_GPU
 int nvgCreateImage(NVGcontext* ctx, const char* filename, int imageFlags)
 {
 	int w, h, n, image;
@@ -804,10 +846,21 @@ int nvgCreateImageMem(NVGcontext* ctx, int imageFlags, unsigned char* data, int 
 	stbi_image_free(img);
 	return image;
 }
+#else
+int nvgCreateImage(NVGcontext* ctx, const char* filename, int imageFlags)
+{
+  return -1;
+}
+
+int nvgCreateImageMem(NVGcontext* ctx, int imageFlags, unsigned char* data, int ndata)
+{
+  return -1;
+}
+#endif/*WITH_NANOVG_GPU*/
 
 int nvgCreateImageRGBA(NVGcontext* ctx, int w, int h, int imageFlags, const unsigned char* data)
 {
-	return ctx->params.renderCreateTexture(ctx->params.userPtr, NVG_TEXTURE_RGBA, w, h, imageFlags, data);
+	return ctx->params.renderCreateTexture(ctx->params.userPtr, NVG_TEXTURE_RGBA, w, h, w * 4, imageFlags, data);
 }
 
 void nvgUpdateImage(NVGcontext* ctx, int image, const unsigned char* data)
@@ -821,6 +874,15 @@ void nvgImageSize(NVGcontext* ctx, int image, int* w, int* h)
 {
 	ctx->params.renderGetTextureSize(ctx->params.userPtr, image, w, h);
 }
+
+void nvgDeleteFontByName(NVGcontext* ctx, const char* name)
+{
+#ifdef WITH_NANOVG_GPU
+	if (ctx->fs) {
+		fontsDeleteFontByName(ctx->fs, name);
+	}
+#endif
+} 
 
 void nvgDeleteImage(NVGcontext* ctx, int image)
 {
@@ -948,7 +1010,12 @@ void nvgScissor(NVGcontext* ctx, float x, float y, float w, float h)
 
 	w = nvg__maxf(0.0f, w);
 	h = nvg__maxf(0.0f, h);
-
+	/* 消除着色器精度不够引起的漏出颜色的问题 */
+	if (w == 0.0f || h == 0.0f) {
+		w = 0.0f;
+		h = 0.0f;
+	}
+	
 	nvgTransformIdentity(state->scissor.xform);
 	state->scissor.xform[4] = x+w*0.5f;
 	state->scissor.xform[5] = y+h*0.5f;
@@ -971,6 +1038,66 @@ static void nvg__isectRects(float* dst,
 	dst[2] = nvg__maxf(0.0f, maxx - minx);
 	dst[3] = nvg__maxf(0.0f, maxy - miny);
 }
+
+
+void nvgIntersectScissorForOtherRect(NVGcontext* ctx, float x, float y, float w, float h, float dx, float dy, float dw, float dh)
+{
+	NVGstate* state = nvg__getState(ctx);
+	float rect[4];
+	float invxorm[6];
+	float ex = 0.0f, ey = 0.0f, tex = 0.0f, tey = 0.0f;
+	/* 因为脏矩形默认坐标系就是没有旋转没有缩放没有平移的状态 */
+	float pxform[6] = { 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f };
+	ex = dw * 0.5f;
+	ey = dh * 0.5f;
+	pxform[4] = dx + dw * 0.5f;
+	pxform[5] = dy + dh * 0.5f;
+	memset(invxorm, 0, sizeof(float) * 6);
+	nvgTransformInverse(invxorm, state->xform);
+	nvgTransformMultiply(pxform, invxorm);
+	tex = ex*nvg__absf(pxform[0]) + ey*nvg__absf(pxform[2]);
+	tey = ex*nvg__absf(pxform[1]) + ey*nvg__absf(pxform[3]);
+
+	// Intersect rects.
+	nvg__isectRects(rect, pxform[4] - tex, pxform[5] - tey, tex * 2, tey * 2, x, y, w, h);
+
+	nvgScissor(ctx, rect[0], rect[1], rect[2], rect[3]);
+}
+
+void nvgIntersectScissor_ex(NVGcontext* ctx, float* x, float* y, float* w, float* h)
+{
+	NVGstate* state = nvg__getState(ctx);
+	float pxform[6], invxorm[6];
+	float rect[4];
+	float ex, ey, tex, tey;
+
+	// If no previous scissor has been set, set the scissor as current scissor.
+	if (state->scissor.extent[0] < 0) {
+		nvgScissor(ctx, *x, *y, *w, *h);
+		return;
+	}
+
+	// Transform the current scissor rect into current transform space.
+	// If there is difference in rotation, this will be approximation.
+	memcpy(pxform, state->scissor.xform, sizeof(float)*6);
+	ex = state->scissor.extent[0];
+	ey = state->scissor.extent[1];
+	nvgTransformInverse(invxorm, state->xform);
+	nvgTransformMultiply(pxform, invxorm);
+	tex = ex*nvg__absf(pxform[0]) + ey*nvg__absf(pxform[2]);
+	tey = ex*nvg__absf(pxform[1]) + ey*nvg__absf(pxform[3]);
+
+	// Intersect rects.
+	nvg__isectRects(rect, pxform[4]-tex,pxform[5]-tey,tex*2,tey*2, *x, *y, *w, *h);
+
+	*x = rect[0];
+	*y = rect[1];
+	*w = rect[2];
+	*h = rect[3];
+
+	nvgScissor(ctx, rect[0], rect[1], rect[2], rect[3]);
+}
+
 
 void nvgIntersectScissor(NVGcontext* ctx, float x, float y, float w, float h)
 {
@@ -1411,6 +1538,7 @@ static int nvg__curveDivs(float r, float arc, float tol)
 	return nvg__maxi(2, (int)ceilf(arc / da));
 }
 
+#ifdef WITH_NANOVG_GPU
 static void nvg__chooseBevel(int bevel, NVGpoint* p0, NVGpoint* p1, float w,
 							float* x0, float* y0, float* x1, float* y1)
 {
@@ -1428,7 +1556,8 @@ static void nvg__chooseBevel(int bevel, NVGpoint* p0, NVGpoint* p1, float w,
 }
 
 static NVGvertex* nvg__roundJoin(NVGvertex* dst, NVGpoint* p0, NVGpoint* p1,
-										float lw, float rw, float lu, float ru, int ncap, float fringe)
+								 float lw, float rw, float lu, float ru, int ncap,
+								 float fringe)
 {
 	int i, n;
 	float dlx0 = p0->dy;
@@ -1561,36 +1690,39 @@ static NVGvertex* nvg__bevelJoin(NVGvertex* dst, NVGpoint* p0, NVGpoint* p1,
 }
 
 static NVGvertex* nvg__buttCapStart(NVGvertex* dst, NVGpoint* p,
-										   float dx, float dy, float w, float d, float aa)
+									float dx, float dy, float w, float d,
+									float aa, float u0, float u1)
 {
 	float px = p->x - dx*d;
 	float py = p->y - dy*d;
 	float dlx = dy;
 	float dly = -dx;
-	nvg__vset(dst, px + dlx*w - dx*aa, py + dly*w - dy*aa, 0,0); dst++;
-	nvg__vset(dst, px - dlx*w - dx*aa, py - dly*w - dy*aa, 1,0); dst++;
-	nvg__vset(dst, px + dlx*w, py + dly*w, 0,1); dst++;
-	nvg__vset(dst, px - dlx*w, py - dly*w, 1,1); dst++;
+	nvg__vset(dst, px + dlx*w - dx*aa, py + dly*w - dy*aa, u0,0); dst++;
+	nvg__vset(dst, px - dlx*w - dx*aa, py - dly*w - dy*aa, u1,0); dst++;
+	nvg__vset(dst, px + dlx*w, py + dly*w, u0,1); dst++;
+	nvg__vset(dst, px - dlx*w, py - dly*w, u1,1); dst++;
 	return dst;
 }
 
 static NVGvertex* nvg__buttCapEnd(NVGvertex* dst, NVGpoint* p,
-										   float dx, float dy, float w, float d, float aa)
+								  float dx, float dy, float w, float d,
+								  float aa, float u0, float u1)
 {
 	float px = p->x + dx*d;
 	float py = p->y + dy*d;
 	float dlx = dy;
 	float dly = -dx;
-	nvg__vset(dst, px + dlx*w, py + dly*w, 0,1); dst++;
-	nvg__vset(dst, px - dlx*w, py - dly*w, 1,1); dst++;
-	nvg__vset(dst, px + dlx*w + dx*aa, py + dly*w + dy*aa, 0,0); dst++;
-	nvg__vset(dst, px - dlx*w + dx*aa, py - dly*w + dy*aa, 1,0); dst++;
+	nvg__vset(dst, px + dlx*w, py + dly*w, u0,1); dst++;
+	nvg__vset(dst, px - dlx*w, py - dly*w, u1,1); dst++;
+	nvg__vset(dst, px + dlx*w + dx*aa, py + dly*w + dy*aa, u0,0); dst++;
+	nvg__vset(dst, px - dlx*w + dx*aa, py - dly*w + dy*aa, u1,0); dst++;
 	return dst;
 }
 
 
 static NVGvertex* nvg__roundCapStart(NVGvertex* dst, NVGpoint* p,
-											float dx, float dy, float w, int ncap, float aa)
+									 float dx, float dy, float w, int ncap,
+									 float aa, float u0, float u1)
 {
 	int i;
 	float px = p->x;
@@ -1601,16 +1733,17 @@ static NVGvertex* nvg__roundCapStart(NVGvertex* dst, NVGpoint* p,
 	for (i = 0; i < ncap; i++) {
 		float a = i/(float)(ncap-1)*NVG_PI;
 		float ax = cosf(a) * w, ay = sinf(a) * w;
-		nvg__vset(dst, px - dlx*ax - dx*ay, py - dly*ax - dy*ay, 0,1); dst++;
+		nvg__vset(dst, px - dlx*ax - dx*ay, py - dly*ax - dy*ay, u0,1); dst++;
 		nvg__vset(dst, px, py, 0.5f,1); dst++;
 	}
-	nvg__vset(dst, px + dlx*w, py + dly*w, 0,1); dst++;
-	nvg__vset(dst, px - dlx*w, py - dly*w, 1,1); dst++;
+	nvg__vset(dst, px + dlx*w, py + dly*w, u0,1); dst++;
+	nvg__vset(dst, px - dlx*w, py - dly*w, u1,1); dst++;
 	return dst;
 }
 
 static NVGvertex* nvg__roundCapEnd(NVGvertex* dst, NVGpoint* p,
-										  float dx, float dy, float w, int ncap, float aa)
+								   float dx, float dy, float w, int ncap,
+								   float aa, float u0, float u1)
 {
 	int i;
 	float px = p->x;
@@ -1618,13 +1751,13 @@ static NVGvertex* nvg__roundCapEnd(NVGvertex* dst, NVGpoint* p,
 	float dlx = dy;
 	float dly = -dx;
 	NVG_NOTUSED(aa);
-	nvg__vset(dst, px + dlx*w, py + dly*w, 0,1); dst++;
-	nvg__vset(dst, px - dlx*w, py - dly*w, 1,1); dst++;
+	nvg__vset(dst, px + dlx*w, py + dly*w, u0,1); dst++;
+	nvg__vset(dst, px - dlx*w, py - dly*w, u1,1); dst++;
 	for (i = 0; i < ncap; i++) {
 		float a = i/(float)(ncap-1)*NVG_PI;
 		float ax = cosf(a) * w, ay = sinf(a) * w;
 		nvg__vset(dst, px, py, 0.5f,1); dst++;
-		nvg__vset(dst, px - dlx*ax + dx*ay, py - dly*ax + dy*ay, 0,1); dst++;
+		nvg__vset(dst, px - dlx*ax + dx*ay, py - dly*ax + dy*ay, u0,1); dst++;
 	}
 	return dst;
 }
@@ -1700,14 +1833,23 @@ static void nvg__calculateJoins(NVGcontext* ctx, float w, int lineJoin, float mi
 }
 
 
-static int nvg__expandStroke(NVGcontext* ctx, float w, int lineCap, int lineJoin, float miterLimit)
+static int nvg__expandStroke(NVGcontext* ctx, float w, float fringe, int lineCap, int lineJoin, float miterLimit)
 {
 	NVGpathCache* cache = ctx->cache;
 	NVGvertex* verts;
 	NVGvertex* dst;
 	int cverts, i, j;
-	float aa = ctx->fringeWidth;
+	float aa = fringe;//ctx->fringeWidth;
+	float u0 = 0.0f, u1 = 1.0f;
 	int ncap = nvg__curveDivs(w, NVG_PI, ctx->tessTol);	// Calculate divisions per half circle.
+
+	w += aa * 0.5f;
+
+	// Disable the gradient used for antialiasing when antialiasing is not used.
+	if (aa == 0.0f) {
+		u0 = 0.5f;
+		u1 = 0.5f;
+	}
 
 	nvg__calculateJoins(ctx, w, lineJoin, miterLimit);
 
@@ -1769,42 +1911,42 @@ static int nvg__expandStroke(NVGcontext* ctx, float w, int lineCap, int lineJoin
 			dy = p1->y - p0->y;
 			nvg__normalize(&dx, &dy);
 			if (lineCap == NVG_BUTT)
-				dst = nvg__buttCapStart(dst, p0, dx, dy, w, -aa*0.5f, aa);
+				dst = nvg__buttCapStart(dst, p0, dx, dy, w, -aa*0.5f, aa, u0, u1);
 			else if (lineCap == NVG_BUTT || lineCap == NVG_SQUARE)
-				dst = nvg__buttCapStart(dst, p0, dx, dy, w, w-aa, aa);
+				dst = nvg__buttCapStart(dst, p0, dx, dy, w, w-aa, aa, u0, u1);
 			else if (lineCap == NVG_ROUND)
-				dst = nvg__roundCapStart(dst, p0, dx, dy, w, ncap, aa);
+				dst = nvg__roundCapStart(dst, p0, dx, dy, w, ncap, aa, u0, u1);
 		}
 
 		for (j = s; j < e; ++j) {
 			if ((p1->flags & (NVG_PT_BEVEL | NVG_PR_INNERBEVEL)) != 0) {
 				if (lineJoin == NVG_ROUND) {
-					dst = nvg__roundJoin(dst, p0, p1, w, w, 0, 1, ncap, aa);
+					dst = nvg__roundJoin(dst, p0, p1, w, w, u0, u1, ncap, aa);
 				} else {
-					dst = nvg__bevelJoin(dst, p0, p1, w, w, 0, 1, aa);
+					dst = nvg__bevelJoin(dst, p0, p1, w, w, u0, u1, aa);
 				}
 			} else {
-				nvg__vset(dst, p1->x + (p1->dmx * w), p1->y + (p1->dmy * w), 0,1); dst++;
-				nvg__vset(dst, p1->x - (p1->dmx * w), p1->y - (p1->dmy * w), 1,1); dst++;
+				nvg__vset(dst, p1->x + (p1->dmx * w), p1->y + (p1->dmy * w), u0,1); dst++;
+				nvg__vset(dst, p1->x - (p1->dmx * w), p1->y - (p1->dmy * w), u1,1); dst++;
 			}
 			p0 = p1++;
 		}
 
 		if (loop) {
 			// Loop it
-			nvg__vset(dst, verts[0].x, verts[0].y, 0,1); dst++;
-			nvg__vset(dst, verts[1].x, verts[1].y, 1,1); dst++;
+			nvg__vset(dst, verts[0].x, verts[0].y, u0,1); dst++;
+			nvg__vset(dst, verts[1].x, verts[1].y, u1,1); dst++;
 		} else {
 			// Add cap
 			dx = p1->x - p0->x;
 			dy = p1->y - p0->y;
 			nvg__normalize(&dx, &dy);
 			if (lineCap == NVG_BUTT)
-				dst = nvg__buttCapEnd(dst, p1, dx, dy, w, -aa*0.5f, aa);
+				dst = nvg__buttCapEnd(dst, p1, dx, dy, w, -aa*0.5f, aa, u0, u1);
 			else if (lineCap == NVG_BUTT || lineCap == NVG_SQUARE)
-				dst = nvg__buttCapEnd(dst, p1, dx, dy, w, w-aa, aa);
+				dst = nvg__buttCapEnd(dst, p1, dx, dy, w, w-aa, aa, u0, u1);
 			else if (lineCap == NVG_ROUND)
-				dst = nvg__roundCapEnd(dst, p1, dx, dy, w, ncap, aa);
+				dst = nvg__roundCapEnd(dst, p1, dx, dy, w, ncap, aa, u0, u1);
 		}
 
 		path->nstroke = (int)(dst - verts);
@@ -1935,6 +2077,197 @@ static int nvg__expandFill(NVGcontext* ctx, float w, int lineJoin, float miterLi
 	return 1;
 }
 
+#else
+
+static int nvg__expandStroke(NVGcontext* ctx, float w, float fringe, int lineCap, int lineJoin, float miterLimit)
+{
+	NVGpathCache* cache = ctx->cache;
+	NVGvertex* verts;
+	NVGvertex* dst;
+	int cverts, i, j;
+	float aa = fringe;//ctx->fringeWidth;
+	float u0 = 0.0f, u1 = 1.0f;
+	int ncap = nvg__curveDivs(w, NVG_PI, ctx->tessTol);	// Calculate divisions per half circle.
+
+	w += aa * 0.5f;
+
+	// Disable the gradient used for antialiasing when antialiasing is not used.
+	if (aa == 0.0f) {
+		u0 = 0.5f;
+		u1 = 0.5f;
+	}
+
+	// Calculate max vertex usage.
+	cverts = 0;
+	for (i = 0; i < cache->npaths; i++) {
+		NVGpath* path = &cache->paths[i];
+		int loop = (path->closed == 0) ? 0 : 1;
+		cverts += (path->count + path->nbevel*5 + 1) * 2; // plus one for loop
+		if (loop == 0) {
+			// space for caps
+			if (lineCap == NVG_ROUND) {
+				cverts += (ncap*2 + 2)*2;
+			} else {
+				cverts += (3+3)*2;
+			}
+		}
+	}
+
+	verts = nvg__allocTempVerts(ctx, cverts);
+	if (verts == NULL) return 0;
+
+	for (i = 0; i < cache->npaths; i++) {
+		NVGpath* path = &cache->paths[i];
+		NVGpoint* pts = &cache->points[path->first];
+		NVGpoint* p0;
+		NVGpoint* p1;
+		int s, e, loop;
+
+		path->fill = 0;
+		path->nfill = 0;
+
+		// Calculate fringe or stroke
+		loop = (path->closed == 0) ? 0 : 1;
+		dst = verts;
+		path->stroke = dst;
+
+		if (loop) {
+			// Looping
+			p0 = &pts[path->count-1];
+			p1 = &pts[0];
+			s = 0;
+			e = path->count;
+		} else {
+			// Add cap
+			p0 = &pts[0];
+			p1 = &pts[1];
+			s = 1;
+			e = path->count-1;
+		}
+
+		if (loop == 0) {
+			// Add cap
+			nvg__vset(dst, p0->x, p0->y, u0,1); dst++;
+		}
+
+		for (j = s; j < e; ++j) {
+			nvg__vset(dst, p1->x + (p1->dmx * w), p1->y + (p1->dmy * w), u0,1); dst++;
+			nvg__vset(dst, p1->x - (p1->dmx * w), p1->y - (p1->dmy * w), u1,1); dst++;
+			p0 = p1++;
+		}
+
+		if (loop) {
+			// Loop it
+			nvg__vset(dst, verts[0].x, verts[0].y, u0,1); dst++;
+			nvg__vset(dst, verts[1].x, verts[1].y, u1,1); dst++;
+		} else {
+			// Add cap
+			nvg__vset(dst, p1->x, p1->y, u0,1); dst++;
+		}
+
+		path->nstroke = (int)(dst - verts);
+
+		verts = dst;
+	}
+
+	return 1;
+}
+
+static int nvg__expandFill(NVGcontext* ctx, float w, int lineJoin, float miterLimit)
+{
+	NVGpathCache* cache = ctx->cache;
+	NVGvertex* verts;
+	NVGvertex* dst;
+	int cverts, convex, i, j;
+	float aa = ctx->fringeWidth;
+	int fringe = w > 0.0f;
+
+	// Calculate max vertex usage.
+	cverts = 0;
+	for (i = 0; i < cache->npaths; i++) {
+		NVGpath* path = &cache->paths[i];
+		cverts += path->count + path->nbevel + 1;
+		if (fringe)
+			cverts += (path->count + path->nbevel*5 + 1) * 2; // plus one for loop
+	}
+
+	verts = nvg__allocTempVerts(ctx, cverts);
+	if (verts == NULL) return 0;
+
+	convex = cache->npaths == 1 && cache->paths[0].convex;
+
+	for (i = 0; i < cache->npaths; i++) {
+		NVGpath* path = &cache->paths[i];
+		NVGpoint* pts = &cache->points[path->first];
+		NVGpoint* p0;
+		NVGpoint* p1;
+		float rw, lw, woff;
+		float ru, lu;
+
+		// Calculate shape vertices.
+		woff = 0.5f*aa;
+		dst = verts;
+		path->fill = dst;
+
+		if (fringe) {
+			// Looping
+			p0 = &pts[path->count-1];
+			p1 = &pts[0];
+			for (j = 0; j < path->count; ++j) {
+				nvg__vset(dst, p1->x + (p1->dmx * woff), p1->y + (p1->dmy * woff), 0.5f,1); dst++;
+				p0 = p1++;
+			}
+		} else {
+			for (j = 0; j < path->count; ++j) {
+				nvg__vset(dst, pts[j].x, pts[j].y, 0.5f,1);
+				dst++;
+			}
+		}
+
+		path->nfill = (int)(dst - verts);
+		verts = dst;
+
+		// Calculate fringe
+		if (fringe) {
+			lw = w + woff;
+			rw = w - woff;
+			lu = 0;
+			ru = 1;
+			dst = verts;
+			path->stroke = dst;
+
+			// Create only half a fringe for convex shapes so that
+			// the shape can be rendered without stenciling.
+			if (convex) {
+				lw = woff;	// This should generate the same vertex as fill inset above.
+				lu = 0.5f;	// Set outline fade at middle.
+			}
+
+			// Looping
+			p0 = &pts[path->count-1];
+			p1 = &pts[0];
+
+			for (j = 0; j < path->count; ++j) {
+				nvg__vset(dst, p1->x + (p1->dmx * lw), p1->y + (p1->dmy * lw), lu,1); dst++;
+				nvg__vset(dst, p1->x - (p1->dmx * rw), p1->y - (p1->dmy * rw), ru,1); dst++;
+				p0 = p1++;
+			}
+
+			// Loop it
+			nvg__vset(dst, verts[0].x, verts[0].y, lu,1); dst++;
+			nvg__vset(dst, verts[1].x, verts[1].y, ru,1); dst++;
+
+			path->nstroke = (int)(dst - verts);
+			verts = dst;
+		} else {
+			path->stroke = NULL;
+			path->nstroke = 0;
+		}
+	}
+
+	return 1;
+}
+#endif/*WITH_NANOVG_GPU*/
 
 // Draw
 void nvgBeginPath(NVGcontext* ctx)
@@ -2168,6 +2501,14 @@ void nvgCircle(NVGcontext* ctx, float cx, float cy, float r)
 	nvgEllipse(ctx, cx,cy, r,r);
 }
 
+int nvgClearCache(NVGcontext* ctx) {
+	if(ctx->params.clearCache != NULL) {
+		ctx->params.clearCache(ctx->params.userPtr);
+	}
+	return 0;
+}
+
+#ifdef WITH_NANOVG_GPU
 void nvgDebugDumpPathCache(NVGcontext* ctx)
 {
 	const NVGpath* path;
@@ -2189,6 +2530,7 @@ void nvgDebugDumpPathCache(NVGcontext* ctx)
 		}
 	}
 }
+#endif/*WITH_NANOVG_GPU*/
 
 void nvgFill(NVGcontext* ctx)
 {
@@ -2198,7 +2540,7 @@ void nvgFill(NVGcontext* ctx)
 	int i;
 
 	nvg__flattenPaths(ctx);
-	if (ctx->params.edgeAntiAlias)
+	if (ctx->params.edgeAntiAlias && state->shapeAntiAlias)
 		nvg__expandFill(ctx, ctx->fringeWidth, NVG_MITER, 2.4f);
 	else
 		nvg__expandFill(ctx, 0.0f, NVG_MITER, 2.4f);
@@ -2207,7 +2549,12 @@ void nvgFill(NVGcontext* ctx)
 	fillPaint.innerColor.a *= state->alpha;
 	fillPaint.outerColor.a *= state->alpha;
 
-	ctx->params.renderFill(ctx->params.userPtr, &fillPaint, &state->scissor, ctx->fringeWidth,
+	/* 把 nanovg 的坐标系传入到适量画布算法中 */
+	if(ctx->params.setStateXfrom != NULL) {
+		ctx->params.setStateXfrom(ctx->params.userPtr, state->xform);
+	}
+
+	ctx->params.renderFill(ctx->params.userPtr, &fillPaint, state->compositeOperation, &state->scissor, ctx->fringeWidth,
 						   ctx->cache->bounds, ctx->cache->paths, ctx->cache->npaths);
 
 	// Count triangles
@@ -2228,6 +2575,7 @@ void nvgStroke(NVGcontext* ctx)
 	const NVGpath* path;
 	int i;
 
+
 	if (strokeWidth < ctx->fringeWidth) {
 		// If the stroke width is less than pixel size, use alpha to emulate coverage.
 		// Since coverage is area, scale by alpha*alpha.
@@ -2243,12 +2591,17 @@ void nvgStroke(NVGcontext* ctx)
 
 	nvg__flattenPaths(ctx);
 
-	if (ctx->params.edgeAntiAlias)
-		nvg__expandStroke(ctx, strokeWidth*0.5f + ctx->fringeWidth*0.5f, state->lineCap, state->lineJoin, state->miterLimit);
+	if (ctx->params.edgeAntiAlias && state->shapeAntiAlias)
+		nvg__expandStroke(ctx, strokeWidth*0.5f, ctx->fringeWidth, state->lineCap, state->lineJoin, state->miterLimit);
 	else
-		nvg__expandStroke(ctx, strokeWidth*0.5f, state->lineCap, state->lineJoin, state->miterLimit);
+		nvg__expandStroke(ctx, strokeWidth*0.5f, 0.0f, state->lineCap, state->lineJoin, state->miterLimit);
 
-	ctx->params.renderStroke(ctx->params.userPtr, &strokePaint, &state->scissor, ctx->fringeWidth,
+	/* 把 nanovg 的坐标系传入到适量画布算法中 */
+	if(ctx->params.setStateXfrom != NULL) {
+		ctx->params.setStateXfrom(ctx->params.userPtr, state->xform);
+	}
+
+	ctx->params.renderStroke(ctx->params.userPtr, &strokePaint, state->compositeOperation, &state->scissor, ctx->fringeWidth,
 							 strokeWidth, ctx->cache->paths, ctx->cache->npaths);
 
 	// Count triangles
@@ -2259,6 +2612,7 @@ void nvgStroke(NVGcontext* ctx)
 	}
 }
 
+#ifdef WITH_NANOVG_GPU
 // Add fonts
 int nvgCreateFont(NVGcontext* ctx, const char* name, const char* path)
 {
@@ -2377,7 +2731,7 @@ static int nvg__allocTextAtlas(NVGcontext* ctx)
 			iw *= 2;
 		if (iw > NVG_MAX_FONTIMAGE_SIZE || ih > NVG_MAX_FONTIMAGE_SIZE)
 			iw = ih = NVG_MAX_FONTIMAGE_SIZE;
-		ctx->fontImages[ctx->fontImageIdx+1] = ctx->params.renderCreateTexture(ctx->params.userPtr, NVG_TEXTURE_ALPHA, iw, ih, 0, NULL);
+		ctx->fontImages[ctx->fontImageIdx+1] = ctx->params.renderCreateTexture(ctx->params.userPtr, NVG_TEXTURE_ALPHA, iw, ih, 0, 0, NULL);
 	}
 	++ctx->fontImageIdx;
 	fonsResetAtlas(ctx->fs, iw, ih);
@@ -2396,7 +2750,7 @@ static void nvg__renderText(NVGcontext* ctx, NVGvertex* verts, int nverts)
 	paint.innerColor.a *= state->alpha;
 	paint.outerColor.a *= state->alpha;
 
-	ctx->params.renderTriangles(ctx->params.userPtr, &paint, &state->scissor, verts, nverts);
+	ctx->params.renderTriangles(ctx->params.userPtr, &paint, state->compositeOperation, &state->scissor, verts, nverts);
 
 	ctx->drawCallCount++;
 	ctx->textTriCount += nverts/3;
@@ -2428,17 +2782,17 @@ float nvgText(NVGcontext* ctx, float x, float y, const char* string, const char*
 	verts = nvg__allocTempVerts(ctx, cverts);
 	if (verts == NULL) return x;
 
-	fonsTextIterInit(ctx->fs, &iter, x*scale, y*scale, string, end);
+	fonsTextIterInit(ctx->fs, &iter, x*scale, y*scale, string, end, FONS_GLYPH_BITMAP_REQUIRED);
 	prevIter = iter;
 	while (fonsTextIterNext(ctx->fs, &iter, &q)) {
 		float c[4*2];
 		if (iter.prevGlyphIndex == -1) { // can not retrieve glyph?
-			if (!nvg__allocTextAtlas(ctx))
-				break; // no memory :(
 			if (nverts != 0) {
 				nvg__renderText(ctx, verts, nverts);
 				nverts = 0;
 			}
+			if (!nvg__allocTextAtlas(ctx))
+				break; // no memory :(
 			iter = prevIter;
 			fonsTextIterNext(ctx->fs, &iter, &q); // try again
 			if (iter.prevGlyphIndex == -1) // still can not find glyph?
@@ -2466,7 +2820,7 @@ float nvgText(NVGcontext* ctx, float x, float y, const char* string, const char*
 
 	nvg__renderText(ctx, verts, nverts);
 
-	return iter.x;
+	return iter.nextx / scale;
 }
 
 void nvgTextBox(NVGcontext* ctx, float x, float y, float breakRowWidth, const char* string, const char* end)
@@ -2525,7 +2879,7 @@ int nvgTextGlyphPositions(NVGcontext* ctx, float x, float y, const char* string,
 	fonsSetAlign(ctx->fs, state->textAlign);
 	fonsSetFont(ctx->fs, state->fontId);
 
-	fonsTextIterInit(ctx->fs, &iter, x*scale, y*scale, string, end);
+	fonsTextIterInit(ctx->fs, &iter, x*scale, y*scale, string, end, FONS_GLYPH_BITMAP_OPTIONAL);
 	prevIter = iter;
 	while (fonsTextIterNext(ctx->fs, &iter, &q)) {
 		if (iter.prevGlyphIndex < 0 && nvg__allocTextAtlas(ctx)) { // can not retrieve glyph?
@@ -2549,6 +2903,7 @@ enum NVGcodepointType {
 	NVG_SPACE,
 	NVG_NEWLINE,
 	NVG_CHAR,
+	NVG_CJK_CHAR,
 };
 
 int nvgTextBreakLines(NVGcontext* ctx, const char* string, const char* end, float breakRowWidth, NVGtextRow* rows, int maxRows)
@@ -2590,7 +2945,7 @@ int nvgTextBreakLines(NVGcontext* ctx, const char* string, const char* end, floa
 
 	breakRowWidth *= scale;
 
-	fonsTextIterInit(ctx->fs, &iter, 0, 0, string, end);
+	fonsTextIterInit(ctx->fs, &iter, 0, 0, string, end, FONS_GLYPH_BITMAP_OPTIONAL);
 	prevIter = iter;
 	while (fonsTextIterNext(ctx->fs, &iter, &q)) {
 		if (iter.prevGlyphIndex < 0 && nvg__allocTextAtlas(ctx)) { // can not retrieve glyph?
@@ -2616,7 +2971,15 @@ int nvgTextBreakLines(NVGcontext* ctx, const char* string, const char* end, floa
 				type = NVG_NEWLINE;
 				break;
 			default:
-				type = NVG_CHAR;
+				if ((iter.codepoint >= 0x4E00 && iter.codepoint <= 0x9FFF) ||
+					(iter.codepoint >= 0x3000 && iter.codepoint <= 0x30FF) ||
+					(iter.codepoint >= 0xFF00 && iter.codepoint <= 0xFFEF) ||
+					(iter.codepoint >= 0x1100 && iter.codepoint <= 0x11FF) ||
+					(iter.codepoint >= 0x3130 && iter.codepoint <= 0x318F) ||
+					(iter.codepoint >= 0xAC00 && iter.codepoint <= 0xD7AF))
+					type = NVG_CJK_CHAR;
+				else
+					type = NVG_CHAR;
 				break;
 		}
 
@@ -2643,7 +3006,7 @@ int nvgTextBreakLines(NVGcontext* ctx, const char* string, const char* end, floa
 		} else {
 			if (rowStart == NULL) {
 				// Skip white space until the beginning of the line
-				if (type == NVG_CHAR) {
+				if (type == NVG_CHAR || type == NVG_CJK_CHAR) {
 					// The current char is the row so far
 					rowStartX = iter.x;
 					rowStart = iter.str;
@@ -2663,26 +3026,26 @@ int nvgTextBreakLines(NVGcontext* ctx, const char* string, const char* end, floa
 				float nextWidth = iter.nextx - rowStartX;
 
 				// track last non-white space character
-				if (type == NVG_CHAR) {
+				if (type == NVG_CHAR || type == NVG_CJK_CHAR) {
 					rowEnd = iter.next;
 					rowWidth = iter.nextx - rowStartX;
 					rowMaxX = q.x1 - rowStartX;
 				}
 				// track last end of a word
-				if (ptype == NVG_CHAR && type == NVG_SPACE) {
+				if (((ptype == NVG_CHAR || ptype == NVG_CJK_CHAR) && type == NVG_SPACE) || type == NVG_CJK_CHAR) {
 					breakEnd = iter.str;
 					breakWidth = rowWidth;
 					breakMaxX = rowMaxX;
 				}
 				// track last beginning of a word
-				if (ptype == NVG_SPACE && type == NVG_CHAR) {
+				if ((ptype == NVG_SPACE && (type == NVG_CHAR || type == NVG_CJK_CHAR)) || type == NVG_CJK_CHAR) {
 					wordStart = iter.str;
 					wordStartX = iter.x;
 					wordMinX = q.x0 - rowStartX;
 				}
 
 				// Break to new line when a character is beyond break width.
-				if (type == NVG_CHAR && nextWidth > breakRowWidth) {
+				if ((type == NVG_CHAR || type == NVG_CJK_CHAR) && nextWidth > breakRowWidth) {
 					// The run length is too long, need to break to new line.
 					if (breakEnd == rowStart) {
 						// The current word is longer than the row length, just break it from here.
@@ -2867,4 +3230,73 @@ void nvgTextMetrics(NVGcontext* ctx, float* ascender, float* descender, float* l
 	if (lineh != NULL)
 		*lineh *= invscale;
 }
+#else
+// State setting
+void nvgFontSize(NVGcontext* ctx, float size)
+{
+	NVGstate* state = nvg__getState(ctx);
+	state->fontSize = size;
+}
+
+void nvgFontBlur(NVGcontext* ctx, float blur)
+{
+}
+
+void nvgTextLetterSpacing(NVGcontext* ctx, float spacing)
+{
+}
+
+void nvgTextLineHeight(NVGcontext* ctx, float lineHeight)
+{
+}
+
+void nvgTextAlign(NVGcontext* ctx, int align)
+{
+}
+
+void nvgFontFaceId(NVGcontext* ctx, int font)
+{
+}
+
+void nvgFontFace(NVGcontext* ctx, const char* font)
+{
+}
+
+int nvgCreateFontMem(NVGcontext* ctx, const char* name, unsigned char* data, int ndata, int freeData)
+{
+  return 0;
+}
+
+int nvgFindFont(NVGcontext* ctx, const char* name) {
+  return 0;
+}
+
+float nvgText(NVGcontext* ctx, float x, float y, const char* string, const char* end) {
+  return 0;
+}
+
+float nvgTextBounds(NVGcontext* ctx, float x, float y, const char* string, const char* end, float* bounds)
+{
+  return 0;
+}
+
+#endif/*WITH_NANOVG_GPU*/
+
+NVGparams* nvgGetParams(NVGcontext* ctx) {
+  return &(ctx->params);
+}
+
+int nvgCreateImageRaw(NVGcontext* ctx, int w, int h, int format, int stride, int imageFlags, const unsigned char* data)
+{
+	return ctx->params.renderCreateTexture(ctx->params.userPtr, format, w, h, stride, imageFlags, data);
+}
+
+int nvgFindTextureRaw(NVGcontext* ctx, const void* data)
+{
+	if(ctx->params.findTexture != NULL) {
+		return ctx->params.findTexture(ctx->params.userPtr, data);
+	}
+	return -1;
+}
+
 // vim: ft=c nu noet ts=4

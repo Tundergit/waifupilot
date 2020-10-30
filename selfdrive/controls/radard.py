@@ -164,7 +164,7 @@ class RadarD():
     radarState.radarErrors = list(rr.errors)
     radarState.controlsStateMonoTime = sm.logMonoTime['controlsState']
 
-    if enable_lead:
+    if True:
       radarState.leadOne = get_lead(self.v_ego, self.ready, clusters, sm['model'].lead, low_speed_override=True)
       radarState.leadTwo = get_lead(self.v_ego, self.ready, clusters, sm['model'].leadFuture, low_speed_override=False)
     return dat

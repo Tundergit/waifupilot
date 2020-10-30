@@ -112,8 +112,15 @@ def set_params(new_version: bool, failed_count: int, exception: Optional[str]) -
     params.put("LastUpdateException", exception)
 
   if new_version:
+    branch_name = run(["git", "rev-parse", "--abbrev-ref", "HEAD"], FINALIZED).rstrip()
+    if branch_name == "testing":
+      postfix = ''
+    elif branch_name == "devel-i18n":
+      postfix = '-DEV'
+    else:
+      postfix = '-REL'
     try:
-      with open(os.path.join(FINALIZED, "RELEASES.md"), "rb") as f:
+      with open(os.path.join(FINALIZED, f"CHANGELOGS{postfix}.md"), "rb") as f:
         r = f.read()
       r = r[:r.find(b'\n\n')]  # Slice latest release notes
       params.put("ReleaseNotes", r + b"\n")

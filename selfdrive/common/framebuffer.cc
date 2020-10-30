@@ -37,6 +37,17 @@ extern "C" void framebuffer_swap(FramebufferState *s) {
   assert(glGetError() == GL_NO_ERROR);
 }
 
+extern "C" void framebuffer_swap_layer(FramebufferState *s, int32_t layer) {
+  status_t status;
+  SurfaceComposerClient::openGlobalTransaction();
+  status = s->control->setLayer(layer);
+  SurfaceComposerClient::closeGlobalTransaction();
+  assert(status == 0);
+
+  s->s = s->control->getSurface();
+  assert(s->s != NULL);
+}
+
 extern "C" bool set_brightness(int brightness) {
   char bright[64];
   snprintf(bright, sizeof(bright), "%d", brightness);

@@ -1,6 +1,6 @@
 Import('env', 'qt_env', 'arch', 'common', 'messaging', 'gpucommon', 'visionipc', 'cereal')
 
-src = ['ui.cc', 'paint.cc', 'sidebar.cc', '#phonelibs/nanovg/nanovg.c']
+src = ['ui.cc', 'paint.cc', 'sidebar.cc', 'paint_dp.cc', '#phonelibs/nanovg/nanovg.c']
 libs = [common, 'zmq', 'capnp', 'kj', 'm', cereal, messaging, gpucommon, visionipc]
 
 

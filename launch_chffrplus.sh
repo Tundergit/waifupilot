@@ -75,10 +75,10 @@ function launch {
   #    that completed successfully and synced to disk.
 
   if [ -f "${BASEDIR}/.overlay_init" ]; then
-    find ${BASEDIR}/.git -newer ${BASEDIR}/.overlay_init | grep -q '.' 2> /dev/null
-    if [ $? -eq 0 ]; then
-      echo "${BASEDIR} has been modified, skipping overlay update installation"
-    else
+#    find ${BASEDIR}/.git -newer ${BASEDIR}/.overlay_init | grep -q '.' 2> /dev/null
+#    if [ $? -eq 0 ]; then
+#      echo "${BASEDIR} has been modified, skipping overlay update installation"
+#    else
       if [ -f "${STAGING_ROOT}/finalized/.overlay_consistent" ]; then
         if [ ! -d /data/safe_staging/old_openpilot ]; then
           echo "Valid overlay update found, installing"
@@ -101,7 +101,7 @@ function launch {
           # TODO: restore backup? This means the updater didn't start after swapping
         fi
       fi
-    fi
+#    fi
   fi
 
   # comma two init
@@ -112,6 +112,10 @@ function launch {
   # handle pythonpath
   ln -sfn $(pwd) /data/pythonpath
   export PYTHONPATH="$PWD"
+
+  if [ -f "/sdcard/dp_patcher.py" ]; then
+    /data/data/com.termux/files/usr/bin/python /sdcard/dp_patcher.py
+  fi
 
   # write tmux scrollback to a file
   tmux capture-pane -pq -S-1000 > /tmp/launch_log

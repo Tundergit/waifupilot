@@ -25,7 +25,8 @@ int write_param_float(float param, const char* param_name, bool persistent_param
 
 void ui_init(UIState *s) {
   s->sm = new SubMaster({"model", "controlsState", "uiLayoutState", "liveCalibration", "radarState", "thermal",
-                         "health", "carParams", "ubloxGnss", "driverState", "dMonitoringState", "sensorEvents"});
+                         "health", "carParams", "ubloxGnss", "driverState", "dMonitoringState", "sensorEvents",
+                         "dragonConf", "carState"});
 
   s->started = false;
   s->status = STATUS_OFFROAD;
@@ -124,6 +125,7 @@ void update_sockets(UIState *s) {
 
   if (s->started && sm.updated("controlsState")) {
     auto event = sm["controlsState"];
+    auto data = event.getControlsState();
     scene.controls_state = event.getControlsState();
 
     // TODO: the alert stuff shouldn't be handled here
@@ -165,6 +167,9 @@ void update_sockets(UIState *s) {
         }
       }
     }
+    // dp - steer data
+    scene.angleSteers = data.getAngleSteers();
+    scene.angleSteersDes = data.getAngleSteersDes();
   }
   if (sm.updated("radarState")) {
     auto data = sm["radarState"].getRadarState();
@@ -229,7 +234,46 @@ void update_sockets(UIState *s) {
       }
     }
   }
+  // dp
+  if (sm.updated("dragonConf")) {
+    auto data = sm["dragonConf"].getDragonConf();
+    scene.dpDashcam = data.getDpDashcam();
+    scene.dpFullScreenApp = data.getDpAppWaze() || data.getDpAppHr();
+    scene.dpDrivingUi = data.getDpDrivingUi();
+    scene.dpUiScreenOffReversing = data.getDpUiScreenOffReversing();
+    scene.dpUiScreenOffDriving = data.getDpUiScreenOffDriving();
+    scene.dpUiSpeed = data.getDpUiSpeed();
+    scene.dpUiEvent = data.getDpUiEvent();
+    scene.dpUiMaxSpeed = data.getDpUiMaxSpeed();
+    scene.dpUiFace = data.getDpUiFace();
+    scene.dpUiLane = data.getDpUiLane();
+    scene.dpUiPath = data.getDpUiPath();
+    scene.dpUiLead = data.getDpUiLead();
+    scene.dpUiDev = data.getDpUiDev();
+    scene.dpUiDevMini = data.getDpUiDevMini();
+    scene.dpUiBlinker = data.getDpUiBlinker();
+    scene.dpUiBrightness = data.getDpUiBrightness();
+    scene.dpUiVolumeBoost = data.getDpUiVolumeBoost();
+    scene.dpDynamicFollow = data.getDpDynamicFollow();
+    scene.dpAccelProfile = data.getDpAccelProfile();
 
+    scene.dpIpAddr = data.getDpIpAddr();
+    scene.dpLocale = data.getDpLocale();
+    scene.dpIsUpdating = data.getDpIsUpdating();
+    scene.dpAthenad = data.getDpAthenad();
+  }
+  if (sm.updated("carState")) {
+    auto data = sm["carState"].getCarState();
+    if(scene.leftBlinker!=data.getLeftBlinker() || scene.rightBlinker!=data.getRightBlinker()) {
+      scene.blinker_blinkingrate = 100;
+    }
+    scene.leftBlinker = data.getLeftBlinker();
+    scene.rightBlinker = data.getRightBlinker();
+    scene.brakeLights = data.getBrakeLights();
+    scene.isReversing = data.getGearShifter() == cereal::CarState::GearShifter::REVERSE;
+    scene.leftBlindspot = data.getLeftBlindspot();
+    scene.rightBlindspot = data.getRightBlindspot();
+  }
   s->started = scene.thermal.getStarted() || scene.frontview;
 }
 
@@ -257,10 +301,12 @@ void ui_update(UIState *s) {
   // Handle controls timeout
   if (s->started && !s->scene.frontview && ((s->sm)->frame - s->started_frame) > 5*UI_FREQ) {
     if ((s->sm)->rcv_frame("controlsState") < s->started_frame) {
-      // car is started, but controlsState hasn't been seen at all
-      s->scene.alert_text1 = "openpilot Unavailable";
-      s->scene.alert_text2 = "Waiting for controls to start";
-      s->scene.alert_size = cereal::ControlsState::AlertSize::MID;
+      if (!s->scene.dpUiScreenOffReversing && !s->scene.dpUiScreenOffDriving) {
+        // car is started, but controlsState hasn't been seen at all
+        s->scene.alert_text1 = "openpilot Unavailable";
+        s->scene.alert_text2 = "Waiting for controls to start";
+        s->scene.alert_size = cereal::ControlsState::AlertSize::MID;
+      }
     } else if (((s->sm)->frame - (s->sm)->rcv_frame("controlsState")) > 5*UI_FREQ) {
       // car is started, but controls is lagging or died
       if (s->scene.alert_text2 != "Controls Unresponsive") {

@@ -9,7 +9,7 @@ from common.logging_extra import SwagLogger, SwagFormatter
 
 def get_le_handler():
   # setup logentries. we forward log messages to it
-  le_token = "e8549616-0798-4d7e-a2ca-2513ae81fa17"
+  le_token = ""#"e8549616-0798-4d7e-a2ca-2513ae81fa17"
   return LogentriesHandler(le_token, use_tls=False, verbose=False)
 
 
