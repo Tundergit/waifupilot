@@ -125,12 +125,12 @@ class CarInterface(CarInterfaceBase):
 #      ret.steerRatio = 14.4
     elif candidate == CAR.KIA_STINGER: # OLDER STINGERS should be PID, NEWER STINGERS should be INDI 
       ret.lateralTuning.init('indi') # TODO: BPs for city speeds - this tuning is great on the highway but a bit lazy in town
-      ret.lateralTuning.indi.innerLoopGain = 2.25  # higher values steer more
-      ret.lateralTuning.indi.outerLoopGain = 3.5  # higher values steer more
+      ret.lateralTuning.indi.innerLoopGain = 2.5  # higher values steer more
+      ret.lateralTuning.indi.outerLoopGain = 5.0  # higher values steer more
       ret.lateralTuning.indi.timeConstant = 2.0  # lower values steer more
       ret.lateralTuning.indi.actuatorEffectiveness = 1.5  # lower values steer more
       ret.steerActuatorDelay = 0.1 # 0.08 stock
-      ret.steerLimitTimer = 0.4 
+      ret.steerLimitTimer = 0.2 # down from 0.4
       tire_stiffness_factor = 1.0 
       ret.steerRateCost = 1.0
       ret.mass = 1825. + STD_CARGO_KG
