@@ -1,3 +1,8 @@
+2020-11-04 (0.7.10.0)
+========================
+* HYUNDAI_GENESIS 使用 INDI 控制器。(感謝 @donfyffe 提供)
+* HYUNDAI_GENESIS uses INDI controller. (Thanks to @donfyffe)
+
 2020-10-30 (0.7.10.0)
 ========================
 * 基於最新 openpilot 0.7.10 devel.

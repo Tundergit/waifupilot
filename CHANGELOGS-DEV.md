@@ -1,3 +1,8 @@
+dragonpilot 0.7.10.1
+========================
+* HYUNDAI_GENESIS 使用 INDI 控制器。(感謝 @donfyffe 提供)
+* HYUNDAI_GENESIS uses INDI controller. (Thanks to @donfyffe)
+
 dragonpilot 0.7.10.0
 ========================
 * 基於最新 openpilot 0.7.10 devel.
@@ -6,8 +11,6 @@ dragonpilot 0.7.10.0
 * Fixed unable to regain Prius steering control under certain condition.
 * 更新 VW MQB 的支援。(需執行 scripts/vw.sh 腳本)
 * Updated support of VW MQB. (scripts/vw.sh script required)
-* 加入 HKG mdps/sas 的支援。(需執行 scripts/hkg.sh 腳本)
-* Added support to HKG mdps/sas. (scripts/hkg.sh script required)
 * 新增 2018 China Toyota CHR 指紋v2。（感謝 @xiaohongcheung 提供)
 * Added 2018 China Toyota CHR FPv2. (Thanks to @xiaohongcheung)
 * 加入 Headunit Reloaded Android Auto App 支援。(感謝 @Ninjaa 提供)
@@ -19,6 +22,8 @@ dragonpilot 0.7.10.0
 * Based on latest openpilot 0.7.10 devel.
 * 修正 EON 接 PC/USB 充電器時仍會自動關機的錯誤。(感謝 @小愛 回報)
 * Fixed auto shutdown issue when EON connect to PC/USB Charger. (Thanks to @LOVEChen)
+* HYUNDAI_GENESIS 使用 INDI 控制器。(感謝 @donfyffe 提供)
+* HYUNDAI_GENESIS uses INDI controller. (Thanks to @donfyffe)
 
 dragonpilot 0.7.8.3
 ========================

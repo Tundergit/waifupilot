@@ -108,12 +108,12 @@ class Controls:
 
     if params.get('dp_lqr') == b'1':
       self.LaC = LatControlLQR(self.CP)
-    elif self.CP.lateralTuning.which() == 'pid':
-      self.LaC = LatControlPID(self.CP)
     elif self.CP.lateralTuning.which() == 'indi':
       self.LaC = LatControlINDI(self.CP)
     elif self.CP.lateralTuning.which() == 'lqr':
       self.LaC = LatControlLQR(self.CP)
+    elif self.CP.lateralTuning.which() == 'pid':
+      self.LaC = LatControlPID(self.CP)
 
     self.state = State.disabled
     self.enabled = False
