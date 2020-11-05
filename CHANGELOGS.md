@@ -1,3 +1,8 @@
+2020-11-05 (0.7.10.0)
+========================
+* HYUNDAI_GENESIS 加入 Cruise 按紐 和 lkMode 支援。(感謝 @donfyffe 建議)
+* HYUNDAI_GENESIS added Cruise button event and lkMode feature. (Thanks to @donfyffe) 
+ 
 2020-11-04 (0.7.10.0)
 ========================
 * HYUNDAI_GENESIS 使用 INDI 控制器。(感謝 @donfyffe 提供)
