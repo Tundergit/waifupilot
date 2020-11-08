@@ -8,7 +8,7 @@ Ecu = car.CarParams.Ecu
 class SteerLimitParams:
   def __init__(self, CP):
     if CP.carFingerprint in [CAR.SONATA, CAR.PALISADE, CAR.KIA_STINGER]:
-      self.STEER_MAX = 384
+      self.STEER_MAX = 409
     else:
       self.STEER_MAX = 255
     self.STEER_DELTA_UP = 3
