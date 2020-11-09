@@ -78,27 +78,34 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
       ret.minSteerSpeed = 32 * CV.MPH_TO_MS
     elif candidate == CAR.HYUNDAI_GENESIS:
-      ret.lateralTuning.pid.kf = 0.00005
       ret.mass = 2060. + STD_CARGO_KG
       ret.wheelbase = 3.01
-      ret.steerRatio = 16.5
+      ret.steerRatio = 15
 
       # dp - indi value from donfyffe
       ret.lateralTuning.init('indi')
       ret.lateralTuning.indi.innerLoopGain = 3.1
       ret.lateralTuning.indi.outerLoopGain = 2.1
       ret.lateralTuning.indi.timeConstant = 1.4
-      ret.lateralTuning.indi.actuatorEffectiveness = 1.3
+      ret.lateralTuning.indi.actuatorEffectiveness = 1.4
+      # ret.lateralTuning.pid.kf = 0.00005
       # ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
       # ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.16], [0.01]]
-      ret.minSteerSpeed = 60 * CV.KPH_TO_MS
+      ret.minSteerSpeed = 32 * CV.MPH_TO_MS
+      ret.minEnableSpeed = 10 * CV.MPH_TO_MS
     elif candidate == CAR.GENESIS_G70: 
-      ret.lateralTuning.pid.kf = 0.00005 
-      ret.mass = 1640. + STD_CARGO_KG 
-      ret.wheelbase = 2.84 
-      ret.steerRatio = 16.5 
-      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.16], [0.01]]
+      ret.lateralTuning.init('indi') # TODO: BPs for city speeds - this tuning is great on the highway but a bit lazy in town
+      ret.lateralTuning.indi.innerLoopGain = 2.4  # higher values steer more
+      ret.lateralTuning.indi.outerLoopGain = 3.0  # higher values steer more
+      ret.lateralTuning.indi.timeConstant = 1.0  # lower values steer more
+      ret.lateralTuning.indi.actuatorEffectiveness = 2.0  # lower values steer more
+      ret.steerActuatorDelay = 0.4 # 0.08 stock
+      ret.steerLimitTimer = 0.4 # down from 0.4
+      tire_stiffness_factor = 1.0 
+      ret.steerRateCost = 1.0
+      ret.mass = 1825. + STD_CARGO_KG
+      ret.wheelbase = 2.906
+      ret.steerRatio = 14.4
     elif candidate == CAR.GENESIS_G80:
       ret.lateralTuning.pid.kf = 0.00005
       ret.mass = 2060. + STD_CARGO_KG

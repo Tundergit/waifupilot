@@ -136,9 +136,7 @@ class CarState(CarStateBase):
     self.steer_state = cp.vl["MDPS12"]['CF_Mdps_ToiActive']  # 0 NOT ACTIVE, 1 ACTIVE
     self.lead_distance = cp.vl["SCC11"]['ACC_ObjDist']
 
-    lkas_state = cp_cam.vl["LKAS11"]["CF_Lkas_LdwsSysState"]
-    if lkas_state != 7 and self.car_fingerprint not in [CAR.SONATA,CAR.PALISADE, CAR.SANTA_FE, CAR.KONA_EV, CAR.KONA]:
-      self.lkMode = bool(lkas_state)
+    # self.lkMode = bool(cp_cam.vl["LKAS11"]["CF_Lkas_LdwsSysState"])
     return ret
 
   @staticmethod

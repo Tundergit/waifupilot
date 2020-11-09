@@ -264,7 +264,6 @@ class Controls:
 
       if self.dp_lead_count >= 300 and abs(self.sm['plan'].vTargetFuture) >= 0.1:
         self.events.add(EventName.leadCarMoving)
-        self.dp_lead_count = 0
 
       if CS.vEgo > 0. or CS.gearShifter in [car.CarState.GearShifter.reverse, car.CarState.GearShifter.park]:
         self.dp_lead_count = 0

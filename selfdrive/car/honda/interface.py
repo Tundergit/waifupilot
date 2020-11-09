@@ -11,6 +11,7 @@ from selfdrive.car import STD_CARGO_KG, CivicParams, scale_rot_inertia, scale_ti
 from selfdrive.controls.lib.planner import _A_CRUISE_MAX_V_FOLLOWING
 from selfdrive.car.interfaces import CarInterfaceBase
 from common.dp_common import common_interface_atl, common_interface_get_params_lqr
+from common.params import Params
 
 A_ACC_MAX = max(_A_CRUISE_MAX_V_FOLLOWING)
 
@@ -425,6 +426,23 @@ class CarInterface(CarInterfaceBase):
       raise ValueError("unsupported car %s" % candidate)
 
     # dp
+    if Params().get('dp_honda_eps_mod') == b'1':
+      if candidate == CAR.CIVIC:
+        ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 2566, 8000], [0, 2566, 3840]]
+        ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.32], [0.1]] #2.5x tuned by @CFranHonda
+      elif candidate in (CAR.CIVIC_BOSCH, CAR.CIVIC_BOSCH_DIESEL):
+        ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 2564, 8000], [0, 2564, 3840]]
+        ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.32], [0.1]] #2.5 default mod #TMG put your values here
+      elif candidate in (CAR.ACCORD, CAR.ACCORD_15, CAR.ACCORDH):
+        ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.3], [0.09]]
+      elif candidate == CAR.CRV_5G:
+        ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 2560, 10000], [0, 2560, 3840]] #tuned by Titanminer (8000)
+        ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.21], [0.07]]
+      elif candidate == CAR.CRV_HYBRID:
+        ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0x0, 0xB5, 0x161, 0x2D6, 0x4C0, 0x70D, 0xC42, 0x1058, 0x2C00], [0x0, 0x160, 0x1F0, 0x2E0, 0x378, 0x4A0, 0x5F0, 0x804, 0xF00]]
+        ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.21], [0.07]] #still needs to finish tuning for the new car
+        ret.lateralTuning.pid.kf = 0.00004
+
     ret = common_interface_get_params_lqr(ret)
 
     # min speed to enable ACC. if car can do stop and go, then set enabling speed

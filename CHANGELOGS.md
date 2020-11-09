@@ -1,7 +1,19 @@
-2020-11-12 (0.7.10.0)
+2020-11-18 (0.7.10.0)
 ========================
 * 支援台灣版 2018 Huyndai IONIQ + smart MDPS (dp_hkg_smart_mdps) (感謝 @andy741217 提供)
 * Support 2018 Taiwan Hyundai IONIQ + smart MDPS (dp_hkg_smart_mdps) (Thanks to @andy741217)
+* 使用 openpilot v0.8 的模型。(感謝 @eisenheim)
+* Use openpilot v0.8 model. (Thanks to @eisenheim)
+* 加入 0.8 測試版的部分優化。
+* Added optimizations from pre-0.8.
+* 加入 dp_honda_eps_mod 設定來使用更高的扭力 (需 eps mod)。(感謝 @Wuxl_369 提供)
+* Added dp_honda_eps_mod setting to enable higher torque (eps mod required). (Thanks to @Wuxl_369)
+* 修正 VW 對白/灰熊的支援 (感謝 @lirudy 提供)
+* Fixed issue with white/grey panda support for VW (Thanks to @lirudy)
+* GENESIS_G70 優化 (感謝 @sebastian4k 提供)
+* GENESIS_G70 Optimisation (Thanks to @sebastian4k)
+* HYUNDAI_GENESIS 優化 (感謝 @donfyffe 提供)
+* HYUNDAI_GENESIS Optimisation (Thanks to @donfyffe)
 
 2020-11-05 (0.7.10.0)
 ========================
