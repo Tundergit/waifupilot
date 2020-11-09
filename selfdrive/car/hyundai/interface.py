@@ -215,6 +215,11 @@ class CarInterface(CarInterfaceBase):
       self.low_speed_alert = False
     if self.low_speed_alert:
       events.add(car.CarEvent.EventName.belowSteerSpeed)
+    
+        # LKAS button alert logic: reverse on/off
+    if not self.CS.lkas_error and self.CS.lkas_button_on != self.CS.prev_lkas_button_on:
+      self.CC.lkas_button_on = not self.CC.lkas_button_on
+      self.lkas_button_alert = not self.CC.lkas_button_on
 
     ret.events = events.to_msg()
 
