@@ -90,7 +90,7 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.indi.actuatorEffectiveness = 1.3
       # ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
       # ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.16], [0.01]]
-      # ret.minSteerSpeed = 60 * CV.KPH_TO_MS
+      ret.minSteerSpeed = 60 * CV.KPH_TO_MS
     elif candidate == CAR.GENESIS_G70: 
       ret.lateralTuning.pid.kf = 0.00005 
       ret.mass = 1640. + STD_CARGO_KG 
@@ -198,7 +198,8 @@ class CarInterface(CarInterfaceBase):
     ret = self.CS.update(self.cp, self.cp_cam)
     # dp
     self.dragonconf = dragonconf
-    ret.cruiseState.enabled = common_interface_atl(ret, dragonconf.dpAtl)
+    if ret.vEgo > self.CP.minSteerSpeed:
+      ret.cruiseState.enabled = common_interface_atl(ret, dragonconf.dpAtl)
     ret.canValid = self.cp.can_valid and self.cp_cam.can_valid
     ret.lkMode = self.CS.lkMode
 
