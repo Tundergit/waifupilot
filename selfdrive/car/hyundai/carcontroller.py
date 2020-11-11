@@ -91,18 +91,18 @@ class CarController():
 
     if left_blinker:
       if frame % 51 == 0:
-        can_sends.append(make_can_msg(1939, ('b'\x02\x10\x03\x00\x00\x00\x00\x00), 0))   
+        can_sends.append(make_can_msg(1939, b'\x02\x10\x03\x00\x00\x00\x00\x00', 0))   
       if frame % 299 == 0:
-        can_sends.append(make_can_msg(1939, ('b'\x02\x3E\x00\x00\x00\x00\x00\x00), 0))     
+        can_sends.append(make_can_msg(1939, b'\x02\x3E\x00\x00\x00\x00\x00\x00', 0))     
       if frame % 101 == 0:
-        can_sends.append(make_can_msg(1939, ('b'\x05\x2F\xF0\x24\x07\xFF\x00\x00), 0))
+        can_sends.append(make_can_msg(1939, b'\x05\x2F\xF0\x24\x07\xFF\x00\x00', 0))
         
     if right_blinker:
       if frame % 51 == 0:
-        can_sends.append(make_can_msg(1939, ('b'\x02\x10\x03\x00\x00\x00\x00\x00), 0))   
+        can_sends.append(make_can_msg(1939, b'\x02\x10\x03\x00\x00\x00\x00\x00', 0))   
       if frame % 299 == 0:
-        can_sends.append(make_can_msg(1939, ('b'\x02\x3E\x00\x00\x00\x00\x00\x00), 0))     
+        can_sends.append(make_can_msg(1939, b'\x02\x3E\x00\x00\x00\x00\x00\x00', 0))     
       if frame % 101 == 0:
-        can_sends.append(make_can_msg(1939, ('b'\x05\x2F\xF0\x24\x07\xFF\x00\x00), 0))
+        can_sends.append(make_can_msg(1939, b'\x05\x2F\xF0\x24\x07\xFF\x00\x00', 0))
       
     return can_sends
