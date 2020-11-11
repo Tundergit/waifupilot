@@ -90,7 +90,7 @@ class CarController():
 
 #    if left_blinker:
 #      if frame % 51 == 0:
-#        can_sends.append(create_uds(1939, ('b'\x02\x10\x03\x00\x00\x00\x00\x00)))   
+#        can_sends.append(create_uds(1939, ('b'\x02\x10\x03\x00\x00\x00\x00\x00)))    
 #      if frame % 299 == 0:
 #        can_sends.append(create_uds(1939, ('b'\x02\x3E\x00\x00\x00\x00\x00\x00)))     
 #      if frame % 101 == 0:
