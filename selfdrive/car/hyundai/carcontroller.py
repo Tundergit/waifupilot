@@ -1,6 +1,6 @@
 from cereal import car
 from common.realtime import DT_CTRL
-from selfdrive.car import apply_std_steer_torque_limits
+from selfdrive.car import apply_std_steer_torque_limits, make_can_msg
 from selfdrive.car.hyundai.hyundaican import create_lkas11, create_clu11, create_lfa_mfa
 from selfdrive.car.hyundai.values import Buttons, SteerLimitParams, CAR
 from opendbc.can.packer import CANPacker
@@ -46,7 +46,7 @@ class CarController():
     self.p = SteerLimitParams(CP)
 
   def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert,
-             left_lane, right_lane, left_lane_depart, right_lane_depart):   # left_blinker, right_blinker
+             left_lane, right_lane, left_lane_depart, right_lane_depart, left_blinker, right_blinker):   # left_blinker, right_blinker
     # Steering Torque
     new_steer = actuators.steer * self.p.STEER_MAX
     apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.p)
@@ -55,8 +55,6 @@ class CarController():
     # disable if steer angle reach 90 deg, otherwise mdps fault in some models
     lkas_active = enabled and abs(CS.out.steeringAngle) < 90.
     
-#    right_blinker = CS.out.rightBlinker != 0   # 360 cam screen show
-#    left_blinker = CS.out.leftBlinker != 0   # 360 cam screen show
     # fix for Genesis hard fault at low speed
     if CS.out.vEgo < 16.7 and self.car_fingerprint == CAR.HYUNDAI_GENESIS:
       lkas_active = False
@@ -88,20 +86,23 @@ class CarController():
     if frame % 5 == 0 and self.car_fingerprint in [CAR.SONATA, CAR.PALISADE, CAR.IONIQ]:
       can_sends.append(create_lfa_mfa(self.packer, frame, enabled))
 
-#    if left_blinker:
-#      if frame % 51 == 0:
-#        can_sends.append(create_uds(1939, ('b'\x02\x10\x03\x00\x00\x00\x00\x00)))    
-#      if frame % 299 == 0:
-#        can_sends.append(create_uds(1939, ('b'\x02\x3E\x00\x00\x00\x00\x00\x00)))     
-#      if frame % 101 == 0:
-#        can_sends.append(create_uds(1939, ('b'\x05\x2F\xF0\x24\x07\xFF\x00\x00)))
+    left_blinker = CS.out.leftBlinker != 0   # 360 cam screen show
+    right_blinker = CS.out.rightBlinker != 0   # 360 cam screen show
+
+    if left_blinker:
+      if frame % 51 == 0:
+        can_sends.append(make_can_msg(1939, ('b'\x02\x10\x03\x00\x00\x00\x00\x00), 0))   
+      if frame % 299 == 0:
+        can_sends.append(make_can_msg(1939, ('b'\x02\x3E\x00\x00\x00\x00\x00\x00), 0))     
+      if frame % 101 == 0:
+        can_sends.append(make_can_msg(1939, ('b'\x05\x2F\xF0\x24\x07\xFF\x00\x00), 0))
         
-#    if right_blinker:
-#      if frame % 51 == 0:
-#        can_sends.append(create_uds(1939, ('b'\x02\x10\x03\x00\x00\x00\x00\x00)))   
-#      if frame % 299 == 0:
-#        can_sends.append(create_uds(1939, ('b'\x02\x3E\x00\x00\x00\x00\x00\x00)))     
-#      if frame % 101 == 0:
-#        can_sends.append(create_uds(1939, ('b'\x05\x2F\xF0\x24\x07\xFF\x00\x00)))
+    if right_blinker:
+      if frame % 51 == 0:
+        can_sends.append(make_can_msg(1939, ('b'\x02\x10\x03\x00\x00\x00\x00\x00), 0))   
+      if frame % 299 == 0:
+        can_sends.append(make_can_msg(1939, ('b'\x02\x3E\x00\x00\x00\x00\x00\x00), 0))     
+      if frame % 101 == 0:
+        can_sends.append(make_can_msg(1939, ('b'\x05\x2F\xF0\x24\x07\xFF\x00\x00), 0))
       
     return can_sends
