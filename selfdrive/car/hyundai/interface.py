@@ -206,11 +206,11 @@ class CarInterface(CarInterfaceBase):
     events = self.create_common_events(ret)
     #TODO: addd abs(self.CS.angle_steers) > 90 to 'steerTempUnavailable' event
 
-    if not self.CS.lkMode:
-      events.add(car.CarEvent.EventName.manualSteeringRequired)
     if dragonconf.dpAtl:
       if ret.vEgo < self.CP.minSteerSpeed:
         events.add(car.CarEvent.EventName.belowSteerSpeed)
+    elif not self.CS.lkMode:
+      events.add(car.CarEvent.EventName.manualSteeringRequired)
     else:
       # low speed steer alert hysteresis logic (only for cars with steer cut off above 10 m/s)
       if ret.vEgo < (self.CP.minSteerSpeed + 2.) and self.CP.minSteerSpeed > 10.:
