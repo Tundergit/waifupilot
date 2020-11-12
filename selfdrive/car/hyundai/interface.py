@@ -230,6 +230,6 @@ class CarInterface(CarInterfaceBase):
     can_sends = self.CC.update(c.enabled, self.CS, self.frame, c.actuators,
                                c.cruiseControl.cancel, c.hudControl.visualAlert, c.hudControl.leftLaneVisible,
                                c.hudControl.rightLaneVisible, c.hudControl.leftLaneDepart, c.hudControl.rightLaneDepart,
-                               c.left_blinker, c.right_blinker)
+                               c.leftBlinker, c.rightBlinker)
     self.frame += 1
     return can_sends
