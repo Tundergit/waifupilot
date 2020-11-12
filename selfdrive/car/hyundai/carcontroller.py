@@ -86,10 +86,10 @@ class CarController():
     if frame % 5 == 0 and self.car_fingerprint in [CAR.SONATA, CAR.PALISADE, CAR.IONIQ]:
       can_sends.append(create_lfa_mfa(self.packer, frame, enabled))
 
-#    left_blinker = CS.out.leftBlinker   # 360 cam screen show
-#    right_blinker = CS.out.rightBlinker   # 360 cam screen show
+    left_blinker = CS.out.leftBlinker   # 360 cam screen show
+    right_blinker = CS.out.rightBlinker   # 360 cam screen show
 
-    if CS.out.leftBlinker or CS.out.rightBlinker:
+    if left_blinker or right_blinker:
       if frame % 51 == 0:
         can_sends.append(make_can_msg(1939, b'\x02\x10\x03\x00\x00\x00\x00\x00', 0))   
       if frame % 299 == 0:
