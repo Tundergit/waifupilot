@@ -3,11 +3,14 @@
 from cereal import car
 from selfdrive.car import dbc_dict
 Ecu = car.CarParams.Ecu
+from common.params import Params
 
 # Steer torque limits
 class SteerLimitParams:
   def __init__(self, CP):
-    if CP.carFingerprint in [CAR.SONATA, CAR.PALISADE]:
+    if CP.carFingerprint in [CAR.SONATA, CAR.PALISADE, CAR.IONIQ]:
+      self.STEER_MAX = 384
+    elif Params().get('dp_hkg_smart_mdps') == b'1':
       self.STEER_MAX = 384
     else:
       self.STEER_MAX = 255
@@ -275,7 +278,7 @@ FEATURES = {
   "use_elect_gears": set([CAR.KIA_OPTIMA_H, CAR.IONIQ_EV_LTD, CAR.KONA_EV, CAR.IONIQ]),
 
   # these cars use the FCA11 message for the AEB and FCW signals, all others use SCC12
-  "use_fca": set([CAR.SONATA, CAR.ELANTRA, CAR.ELANTRA_GT_I30, CAR.KIA_STINGER, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_FORTE, CAR.PALISADE, CAR.GENESIS_G70, CAR.KONA]),
+  "use_fca": set([CAR.SONATA, CAR.ELANTRA, CAR.ELANTRA_GT_I30, CAR.KIA_STINGER, CAR.KONA_EV, CAR.KIA_FORTE, CAR.PALISADE, CAR.GENESIS_G70, CAR.KONA]),
 
   "use_bsm": set([CAR.SONATA, CAR.PALISADE, CAR.HYUNDAI_GENESIS, CAR.GENESIS_G70, CAR.GENESIS_G80, CAR.GENESIS_G90, CAR.KONA]),
 }

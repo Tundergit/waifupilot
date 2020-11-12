@@ -3,7 +3,9 @@ dragonpilot 0.7.10.1
 * HYUNDAI_GENESIS 使用 INDI 控制器。(感謝 @donfyffe 提供)
 * HYUNDAI_GENESIS uses INDI controller. (Thanks to @donfyffe)
 * HYUNDAI_GENESIS 加入 Cruise 按紐 和 lkMode 支援。(感謝 @donfyffe 建議)
-* HYUNDAI_GENESIS added Cruise button event and lkMode feature. (Thanks to @donfyffe) 
+* HYUNDAI_GENESIS added Cruise button event and lkMode feature. (Thanks to @donfyffe)
+* 支援台灣版 2018 Huyndai IONIQ + smart MDPS (dp_hkg_smart_mdps) (感謝 @andy741217 提供)
+* Support 2018 Taiwan Hyundai IONIQ + smart MDPS (dp_hkg_smart_mdps) (Thanks to @andy741217) 
 
 dragonpilot 0.7.10.0
 ========================

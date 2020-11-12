@@ -5,6 +5,7 @@ from selfdrive.car.hyundai.values import Ecu, ECU_FINGERPRINT, CAR, FINGERPRINTS
 from selfdrive.car import STD_CARGO_KG, scale_rot_inertia, scale_tire_stiffness, is_ecu_disconnected, gen_empty_fingerprint
 from selfdrive.car.interfaces import CarInterfaceBase
 from common.dp_common import common_interface_atl, common_interface_get_params_lqr
+from common.params import Params
 
 class CarInterface(CarInterfaceBase):
 
@@ -168,6 +169,8 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]  
 
+    if Params().get('dp_hkg_smart_mdps') == b'1':
+      ret.minSteerSpeed = 0.
     # dp
     ret = common_interface_get_params_lqr(ret)
 

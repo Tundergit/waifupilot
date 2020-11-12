@@ -42,7 +42,7 @@ class CarState(CarStateBase):
     ret.steerWarning = cp.vl["MDPS12"]['CF_Mdps_ToiUnavail'] != 0
 
     # cruise state
-    ret.cruiseState.available = cp.vl["SCC11"]["MainMode_ACC"] != 0 if self.CP.carFingerprint in [CAR.HYUNDAI_GENESIS] else True
+    ret.cruiseState.available = cp.vl["SCC11"]["MainMode_ACC"] != 0 if self.CP.carFingerprint in [CAR.HYUNDAI_GENESIS, CAR.IONIQ] else True
     ret.cruiseState.enabled = cp.vl["SCC12"]['ACCMode'] != 0
     ret.cruiseState.standstill = cp.vl["SCC11"]['SCCInfoDisplay'] == 4.
 
@@ -136,7 +136,9 @@ class CarState(CarStateBase):
     self.steer_state = cp.vl["MDPS12"]['CF_Mdps_ToiActive']  # 0 NOT ACTIVE, 1 ACTIVE
     self.lead_distance = cp.vl["SCC11"]['ACC_ObjDist']
 
-    self.lkMode = bool(cp_cam.vl["LKAS11"]["CF_Lkas_LdwsSysState"])
+    lkas_state = cp_cam.vl["LKAS11"]["CF_Lkas_LdwsSysState"]
+    if lkas_state != 7 and self.car_fingerprint not in [CAR.SONATA,CAR.PALISADE, CAR.SANTA_FE, CAR.KONA_EV, CAR.KONA]:
+      self.lkMode = bool(lkas_state)
     return ret
 
   @staticmethod
