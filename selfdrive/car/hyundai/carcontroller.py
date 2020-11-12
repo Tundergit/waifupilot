@@ -46,7 +46,7 @@ class CarController():
     self.p = SteerLimitParams(CP)
 
   def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert,
-             left_lane, right_lane, left_lane_depart, right_lane_depart, left_blinker, right_blinker):   # left_blinker, right_blinker
+             left_lane, right_lane, left_lane_depart, right_lane_depart):   # left_blinker, right_blinker
     # Steering Torque
     new_steer = actuators.steer * self.p.STEER_MAX
     apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.p)
@@ -86,10 +86,10 @@ class CarController():
     if frame % 5 == 0 and self.car_fingerprint in [CAR.SONATA, CAR.PALISADE, CAR.IONIQ]:
       can_sends.append(create_lfa_mfa(self.packer, frame, enabled))
 
-    left_blinker = CS.out.leftBlinker   # 360 cam screen show
-    right_blinker = CS.out.rightBlinker   # 360 cam screen show
+#    left_blinker = CS.out.leftBlinker   # 360 cam screen show
+#    right_blinker = CS.out.rightBlinker   # 360 cam screen show
 
-    if left_blinker or right_blinker:
+    if CS.out.leftBlinker or CS.out.rightBlinker:
       if frame % 51 == 0:
         can_sends.append(make_can_msg(1939, b'\x02\x10\x03\x00\x00\x00\x00\x00', 0))   
       if frame % 299 == 0:
