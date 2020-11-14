@@ -34,9 +34,9 @@ static int elm327_tx_lin_hook(int lin_num, uint8_t *data, int len) {
 }
 
 const safety_hooks elm327_hooks = {
-  .init = nooutput_init,
+  .init = alloutput_init,
   .rx = default_rx_hook,
-  .tx = elm327_tx_hook,
-  .tx_lin = elm327_tx_lin_hook,
+  .tx = alloutput_tx_hook,
+  .tx_lin = alloutput_tx_lin_hook,
   .fwd = default_fwd_hook,
 };
