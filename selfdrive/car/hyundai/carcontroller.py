@@ -1,7 +1,7 @@
 from cereal import car
 from common.realtime import DT_CTRL
 from selfdrive.car import apply_std_steer_torque_limits, make_can_msg
-from selfdrive.car.hyundai.hyundaican import create_lkas11, create_clu11, create_lfa_mfa
+from selfdrive.car.hyundai.hyundaican import create_lkas11, create_clu11, create_lfa_mfa, create_360_lane_view
 from selfdrive.car.hyundai.values import Buttons, SteerLimitParams, CAR
 from opendbc.can.packer import CANPacker
 
@@ -90,12 +90,7 @@ class CarController():
 #    right_blinker = CS.out.rightBlinker   # 360 cam screen show
 
     if CS.out.leftBlinker or CS.out.rightBlinker:
-      if frame % 51 == 0:
-        can_sends.append(make_can_msg(1939, b'\x02\x10\x03\x00\x00\x00\x00\x00', 0))   
-      if frame % 299 == 0:
-        can_sends.append(make_can_msg(1939, b'\x02\x3E\x00\x00\x00\x00\x00\x00', 0))     
-      if frame % 101 == 0:
-        can_sends.append(make_can_msg(1939, b'\x05\x2F\xF0\x24\x07\xFF\x00\x00', 0))
+      can_sends.append(create_360_lane_view(self.packer, frame))
         
       
     return can_sends
