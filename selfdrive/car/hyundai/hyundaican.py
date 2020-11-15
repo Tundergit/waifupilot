@@ -4,6 +4,8 @@ from selfdrive.car.hyundai.values import CAR, CHECKSUM
 
 hyundai_checksum = crcmod.mkCrcFun(0x11D, initCrc=0xFD, rev=False, xorOut=0xdf)
 
+TurnSigLh = car.CarState.CF_Gway_TSigLHSw
+TurnSigRh = car.CarState.CF_Gway_TSigRHSw
 
 def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
                   lkas11, sys_warning, sys_state, enabled,
@@ -88,9 +90,6 @@ def create_lfa_mfa(packer, frame, enabled):
   # HDA_USM: nothing
 
   return packer.make_can_msg("LFAHDA_MFC", 0, values)
-
-TurnSigLh = car.CarState.CF_Gway_TSigLHSw
-TurnSigRh = car.CarState.CF_Gway_TSigRHSw
 
 def create_360_lane_view(packer, frame, TurnSigLh, TurnSigRh, dat):
   if TurnSigLh != 0:
