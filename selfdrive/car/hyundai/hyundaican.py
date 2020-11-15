@@ -91,7 +91,7 @@ def create_lfa_mfa(packer, frame, enabled):
 
   return packer.make_can_msg("LFAHDA_MFC", 0, values)
 
-def create_360_lane_view(packer, frame, TurnSigLh, TurnSigRh, dat):
+def create_360_lane_view(frame, TurnSigLh, TurnSigRh, dat):
   if TurnSigLh != 0:
     if frame % 51 == 0:
       dat = b'\x02\x10\x03\x00\x00\x00\x00\x00'   
