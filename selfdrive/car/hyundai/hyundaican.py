@@ -1,11 +1,7 @@
 import crcmod
-from cereal import car
 from selfdrive.car.hyundai.values import CAR, CHECKSUM
 
 hyundai_checksum = crcmod.mkCrcFun(0x11D, initCrc=0xFD, rev=False, xorOut=0xdf)
-
-TurnSigLh = car.CarState.CF_Gway_TSigLHSw
-TurnSigRh = car.CarState.CF_Gway_TSigRHSw
 
 def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
                   lkas11, sys_warning, sys_state, enabled,
@@ -92,7 +88,7 @@ def create_lfa_mfa(packer, frame, enabled):
   return packer.make_can_msg("LFAHDA_MFC", 0, values)
 
 def create_360_lane_view(frame, blinkers, dat):
-  if blinkers in (TurnSigLh != 0, TurnSigRh != 0):
+  if blinkers:
     if frame % 51 == 0:
       dat = b'\x02\x10\x03\x00\x00\x00\x00\x00'   
     if frame % 299 == 0:
