@@ -215,7 +215,7 @@ static int hyundai_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
   // This avoids unintended engagements while still allowing resume spam
   if ((addr == 1265) && !controls_allowed) {
     if ((GET_BYTES_04(to_send) & 0x7) != 4) {
-      tx = 0;
+      tx = 1;  // testing 360 view feature
     }
   }
 
