@@ -89,8 +89,8 @@ class CarController():
 #    left_blinker = CS.out.leftBlinker   # 360 cam screen show
 #    right_blinker = CS.out.rightBlinker   # 360 cam screen show
 
-    if CS.out.leftBlinker or CS.out.rightBlinker:
-      can_sends.append(create_360_lane_view(self.packer, frame))
+#    if CS.out.leftBlinker or CS.out.rightBlinker:
+#      can_sends.append(create_360_lane_view(self.packer, frame))
         
       
     return can_sends
