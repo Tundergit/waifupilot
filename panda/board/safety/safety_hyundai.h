@@ -156,7 +156,7 @@ static int hyundai_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
   int addr = GET_ADDR(to_send);
 
   if (!msg_allowed(to_send, HYUNDAI_TX_MSGS, sizeof(HYUNDAI_TX_MSGS)/sizeof(HYUNDAI_TX_MSGS[0]))) {
-    tx = 1;  // testing 360 view feature
+    tx = 0;  // testing 360 view feature
   }
 
   if (relay_malfunction) {
@@ -206,7 +206,7 @@ static int hyundai_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
     }
 
     if (violation) {
-      tx = 1; // testing 360 view feature 
+      tx = 0; // testing 360 view feature 
     }
   }
 
@@ -215,7 +215,7 @@ static int hyundai_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
   // This avoids unintended engagements while still allowing resume spam
   if ((addr == 1265) && !controls_allowed) {
     if ((GET_BYTES_04(to_send) & 0x7) != 4) {
-      tx = 1;  // testing 360 view feature
+      tx = 0;  // testing 360 view feature
     }
   }
 
