@@ -1,9 +1,9 @@
 const int CHRYSLER_MAX_STEER = 261;
-const int CHRYSLER_MAX_RT_DELTA = 112;        // max delta torque allowed for real time checks
+const int CHRYSLER_MAX_RT_DELTA = 200;        // max delta torque allowed for real time checks 
 const uint32_t CHRYSLER_RT_INTERVAL = 250000;  // 250ms between real time checks
 const int CHRYSLER_MAX_RATE_UP = 3;
 const int CHRYSLER_MAX_RATE_DOWN = 3;
-const int CHRYSLER_MAX_TORQUE_ERROR = 80;    // max torque cmd in excess of torque motor
+const int CHRYSLER_MAX_TORQUE_ERROR = 300;    // max torque cmd in excess of torque motor - needs to be higher during override events
 const int CHRYSLER_GAS_THRSLD = 30;  // 7% more than 2m/s
 const int CHRYSLER_STANDSTILL_THRSLD = 10;  // about 1m/s
 const CanMsg CHRYSLER_TX_MSGS[] = {{571, 0, 3}, {658, 0, 6}, {678, 0, 8}};
