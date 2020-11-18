@@ -8,7 +8,7 @@ class SteerLimitParams:
   STEER_MAX = 261         # 262 faults
   STEER_DELTA_UP = 3      # 3 is stock. 100 is fine. 200 is too much it seems
   STEER_DELTA_DOWN = 3    # no faults on the way down it seems
-  STEER_ERROR_MAX = 80
+  STEER_ERROR_MAX = 300
 
 
 class CAR:
