@@ -119,7 +119,7 @@ function launch {
 
   # start manager
   cd selfdrive
-  ./manager.py > tunderlog_${date}.txt
+  ./manager.py > tunderlog_$date.txt
 
   # if broken, keep on screen error
   while true; do sleep 1; done
