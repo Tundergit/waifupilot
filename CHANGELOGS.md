@@ -1,3 +1,8 @@
+2020-11-19 (0.7.10.0)
+========================
+* 更新所有 honda/hyunda/toyota 指紋。
+* Updated all honda/hyunda/toyota fingerprints.
+
 2020-11-18 (0.7.10.0)
 ========================
 * 支援台灣版 2018 Huyndai IONIQ + smart MDPS (dp_hkg_smart_mdps) (感謝 @andy741217 提供)

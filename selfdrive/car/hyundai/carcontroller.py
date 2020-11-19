@@ -38,13 +38,13 @@ def process_hud_alert(enabled, fingerprint, visual_alert, left_lane,
 
 class CarController():
   def __init__(self, dbc_name, CP, VM):
+    self.p = SteerLimitParams(CP)
+    self.packer = CANPacker(dbc_name)
+
     self.apply_steer_last = 0
     self.car_fingerprint = CP.carFingerprint
-    self.packer = CANPacker(dbc_name)
     self.steer_rate_limited = False
     self.last_resume_frame = 0
-
-    self.p = SteerLimitParams(CP)
 
     # dp
     self.last_blinker_on = False
@@ -58,7 +58,7 @@ class CarController():
     self.steer_rate_limited = new_steer != apply_steer
 
     # disable if steer angle reach 90 deg, otherwise mdps fault in some models
-    lkas_active = enabled and abs(CS.out.steeringAngle) < 90. and CS.lkMode
+    lkas_active = enabled and abs(CS.out.steeringAngle) < 90.
 
     # fix for Genesis hard fault at low speed
     if CS.out.vEgo < 16.7 and self.car_fingerprint == CAR.HYUNDAI_GENESIS:
@@ -100,7 +100,7 @@ class CarController():
         self.last_resume_frame = frame
 
     # 20 Hz LFA MFA message
-    if frame % 5 == 0 and self.car_fingerprint in [CAR.SONATA, CAR.PALISADE, CAR.IONIQ]:
+    if frame % 5 == 0 and self.car_fingerprint in [CAR.SONATA, CAR.PALISADE, CAR.IONIQ, CAR.KIA_NIRO_EV]:
       can_sends.append(create_lfa_mfa(self.packer, frame, enabled))
 
     return can_sends
