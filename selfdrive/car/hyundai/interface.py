@@ -224,7 +224,6 @@ class CarInterface(CarInterfaceBase):
     if ret.vEgo >= self.CP.minSteerSpeed:
       ret.cruiseState.enabled = common_interface_atl(ret, dragonconf.dpAtl)
     ret.canValid = self.cp.can_valid and self.cp_cam.can_valid
-    ret.lkMode = self.CS.lkMode
 
     events = self.create_common_events(ret)
     #TODO: addd abs(self.CS.angle_steers) > 90 to 'steerTempUnavailable' event
