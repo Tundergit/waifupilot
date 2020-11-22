@@ -54,7 +54,7 @@ class Controls:
 
     self.sm = sm
     if self.sm is None:
-      socks = ['thermal', 'health', 'model', 'liveCalibration',
+      socks = ['thermal', 'health', 'model', 'liveCalibration', 'radarState',
                                      'dMonitoringState', 'plan', 'pathPlan', 'liveLocationKalman', 'dragonConf']
       ignore_alive = None if params.get('dp_driver_monitor') == b'1' else ['dMonitoringState']
       self.sm = messaging.SubMaster(socks, ignore_alive=ignore_alive)
@@ -400,7 +400,7 @@ class Controls:
     v_acc_sol = plan.vStart + dt * (a_acc_sol + plan.aStart) / 2.0
 
     # Gas/Brake PID loop
-    actuators.gas, actuators.brake = self.LoC.update(self.active, CS, v_acc_sol, plan.vTargetFuture, a_acc_sol, self.CP)
+    actuators.gas, actuators.brake = self.LoC.update(self.active, CS, v_acc_sol, plan.vTargetFuture, a_acc_sol, self.CP, self.sm)
     # Steering PID loop and lateral MPC
     actuators.steer, actuators.steerAngle, lac_log = self.LaC.update(self.active, CS, self.CP, path_plan)
 

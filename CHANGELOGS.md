@@ -1,3 +1,8 @@
+2020-11-20 (0.7.10.0)
+========================
+* 加入 Dynamic gas Lite。(感謝 toyboxZ 提供)
+* Added Dynamic Gas Lite. (Thanks to toyboxZ)
+
 2020-11-19 (0.7.10.0)
 ========================
 * 更新所有 honda/hyunda/toyota 指紋。

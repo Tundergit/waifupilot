@@ -58,6 +58,7 @@ confs = [
   {'name': 'dp_dynamic_follow', 'default': 0, 'type': 'UInt8', 'min': 0, 'max': 4, 'depends': [{'name': 'dp_atl', 'vals': [False]}], 'conf_type': ['param', 'struct']},
   {'name': 'dp_dynamic_follow_multiplier', 'default': 1., 'type': 'Float32', 'min': 0.85, 'max': 1.2, 'depends': [{'name': 'dp_atl', 'vals': [False]}], 'conf_type': ['param']},
   {'name': 'dp_dynamic_follow_min_tr', 'default': 0.9, 'type': 'Float32', 'min': 0.85, 'max': 1.6, 'depends': [{'name': 'dp_atl', 'vals': [False]}], 'conf_type': ['param']},
+  {'name': 'dp_dynamic_gas', 'default': False, 'type': 'Bool', 'depends': [{'name': 'dp_atl', 'vals': [False]}], 'conf_type': ['param']},
   {'name': 'dp_accel_profile', 'default': 0, 'type': 'UInt8', 'min': 0, 'max': 3, 'depends': [{'name': 'dp_atl', 'vals': [False]}], 'conf_type': ['param', 'struct']},
   # safety
   {'name': 'dp_driver_monitor', 'default': True, 'type': 'Bool', 'conf_type': ['param', 'struct']},

@@ -18,6 +18,8 @@ dragonpilot 0.7.10.1
 * GENESIS_G70 Optimisation (Thanks to @sebastian4k)
 * HYUNDAI_GENESIS 優化 (感謝 @donfyffe 提供)
 * HYUNDAI_GENESIS Optimisation (Thanks to @donfyffe)
+* 加入 Dynamic gas Lite。(感謝 toyboxZ 提供)
+* Added Dynamic Gas Lite. (Thanks to toyboxZ)
 
 dragonpilot 0.7.10.0
 ========================

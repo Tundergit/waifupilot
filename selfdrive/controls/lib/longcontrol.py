@@ -1,6 +1,8 @@
 from cereal import log
 from common.numpy_fast import clip, interp
 from selfdrive.controls.lib.pid import PIController
+from common.params import Params
+from selfdrive.controls.lib.dynamic_gas import DynamicGas
 
 LongCtrlState = log.ControlsState.LongControlState
 
@@ -62,17 +64,26 @@ class LongControl():
                             convert=compute_gb)
     self.v_pid = 0.0
     self.last_output_gb = 0.0
+    #dynamic_gas
+    params = Params()
+    self.dp_dynamic_gas = (params.get('dp_dynamic_gas') == b'1')
+    if self.dp_dynamic_gas:
+      self.dynamic_gas = DynamicGas(CP)
 
   def reset(self, v_pid):
     """Reset PID controller and change setpoint"""
     self.pid.reset()
     self.v_pid = v_pid
 
-  def update(self, active, CS, v_target, v_target_future, a_target, CP):
+  def update(self, active, CS, v_target, v_target_future, a_target, CP, sm):
     """Update longitudinal control. This updates the state machine and runs a PID loop"""
     # Actuation limits
     gas_max = interp(CS.vEgo, CP.gasMaxBP, CP.gasMaxV)
     brake_max = interp(CS.vEgo, CP.brakeMaxBP, CP.brakeMaxV)
+
+    #dynamic_gas
+    if self.dp_dynamic_gas:
+      gas_max = self.dynamic_gas.update(CS, sm)
 
     # Update state machine
     output_gb = self.last_output_gb
