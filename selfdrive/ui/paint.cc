@@ -519,7 +519,7 @@ static void ui_draw_driver_view(UIState *s) {
   // draw face icon
   const int face_size = 240;
   const int x = (valid_frame_x + face_size + (bdr_s * 2.5)) + (scene->is_rhd ? valid_frame_w - box_h / 2:0);  // added .5
-  const int y = (box_y + box_h - face_size - bdr_s - (bdr_s * 2));  // added .5
+  const int y = (box_y + box_h - face_size - bdr_s - (bdr_s * 4));  // previous 1.5
   ui_draw_circle_image(s->vg, x, y, face_size, s->img_face, scene->dmonitoring_state.getFaceDetected());
 }
 
@@ -545,8 +545,8 @@ void ui_draw_vision_alert(UIState *s, cereal::ControlsState::AlertSize va_size, 
                           const char* va_text1, const char* va_text2) {
   static std::map<cereal::ControlsState::AlertSize, const int> alert_size_map = {
       {cereal::ControlsState::AlertSize::NONE, 0},
-      {cereal::ControlsState::AlertSize::SMALL, 241},
-      {cereal::ControlsState::AlertSize::MID, 390},
+      {cereal::ControlsState::AlertSize::SMALL, 0},
+      {cereal::ControlsState::AlertSize::MID, 0},
       {cereal::ControlsState::AlertSize::FULL, s->fb_h}};
 
   const UIScene *scene = &s->scene;
