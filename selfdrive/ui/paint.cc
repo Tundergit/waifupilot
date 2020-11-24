@@ -464,7 +464,7 @@ static void ui_draw_vision_event(UIState *s) {
 }
 
 static void ui_draw_vision_face(UIState *s) {
-  const int face_size = 0; // last value 255
+  const int face_size = 240; // last value 255
   const int face_x = (s->scene.viz_rect.x + face_size + (bdr_s * 2));
   const int face_y = (s->scene.viz_rect.bottom() - footer_h + ((footer_h - face_size) / 2));
   ui_draw_circle_image(s->vg, face_x, face_y, face_size, s->img_face, s->scene.dmonitoring_state.getFaceDetected());
