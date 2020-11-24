@@ -411,7 +411,7 @@ static void ui_draw_vision_maxspeed(UIState *s) {
     snprintf(maxspeed_str, sizeof(maxspeed_str), "%d", maxspeed_calc);
     ui_draw_text(s->vg, text_x, 242, maxspeed_str, 48 * 2.5, COLOR_WHITE, s->font_sans_bold);
   } else {
-    ui_draw_text(s->vg, text_x, 242, "N/A", 42 * 2.5, COLOR_WHITE_ALPHA(100), s->font_sans_semibold);
+    ui_draw_text(s->vg, text_x, 242, "300", 42 * 2.5, COLOR_WHITE_ALPHA(100), s->font_sans_semibold);
   }
 }
 
@@ -464,7 +464,7 @@ static void ui_draw_vision_event(UIState *s) {
 }
 
 static void ui_draw_vision_face(UIState *s) {
-  const int face_size = 255;
+  const int face_size = 0; // last value 255
   const int face_x = (s->scene.viz_rect.x + face_size + (bdr_s * 2));
   const int face_y = (s->scene.viz_rect.bottom() - footer_h + ((footer_h - face_size) / 2));
   ui_draw_circle_image(s->vg, face_x, face_y, face_size, s->img_face, s->scene.dmonitoring_state.getFaceDetected());
@@ -500,11 +500,11 @@ static void ui_draw_driver_view(UIState *s) {
     const float face_x = fxy_list[0];
     const float face_y = fxy_list[1];
     float fbox_x;
-    float fbox_y = box_y + (face_y + 0.5) * box_h - 0.5 * 0.9 * box_h / 2;;
+    float fbox_y = box_y + (face_y + 0.5) * box_h - 0.5 * 0.75 * box_h / 2;;
     if (!scene->is_rhd) {
-      fbox_x = valid_frame_x + (1 - (face_x + 0.5)) * (box_h / 2) - 0.5 * 0.9 * box_h / 2;
+      fbox_x = valid_frame_x + (1 - (face_x + 0.5)) * (box_h / 2) - 0.5 * 0.75 * box_h / 2;
     } else {
-      fbox_x = valid_frame_x + valid_frame_w - box_h / 2 + (face_x + 0.5) * (box_h / 2) - 0.5 * 0.9 * box_h / 2;
+      fbox_x = valid_frame_x + valid_frame_w - box_h / 2 + (face_x + 0.5) * (box_h / 2) - 0.5 * 0.75 * box_h / 2;
     }
 
     if (std::abs(face_x) <= 0.35 && std::abs(face_y) <= 0.4) {
@@ -517,9 +517,9 @@ static void ui_draw_driver_view(UIState *s) {
   }
 
   // draw face icon
-  const int face_size = 255;
-  const int x = (valid_frame_x + face_size + (bdr_s * 2)) + (scene->is_rhd ? valid_frame_w - box_h / 2:0);
-  const int y = (box_y + box_h - face_size - bdr_s - (bdr_s * 1.5));
+  const int face_size = 240;
+  const int x = (valid_frame_x + face_size + (bdr_s * 2.5)) + (scene->is_rhd ? valid_frame_w - box_h / 2:0);  // added .5
+  const int y = (box_y + box_h - face_size - bdr_s - (bdr_s * 2));  // added .5
   ui_draw_circle_image(s->vg, x, y, face_size, s->img_face, scene->dmonitoring_state.getFaceDetected());
 }
 
