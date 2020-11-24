@@ -1,5 +1,10 @@
 #pragma once
 
+#ifndef __user
+  #define __user __attribute__(())
+#endif
+
+#include <stdlib.h>
 #include <stdint.h>
 #include "include/msm_kgsl.h"
 #include <vector>

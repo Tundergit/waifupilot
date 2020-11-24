@@ -8,6 +8,11 @@ source "$BASEDIR/launch_env.sh"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
+function tici_init {
+  sudo su -c 'echo "performance" > /sys/class/devfreq/soc:qcom,memlat-cpu0/governor'
+  sudo su -c 'echo "performance" > /sys/class/devfreq/soc:qcom,memlat-cpu4/governor'
+}
+
 function two_init {
   # Restrict Android and other system processes to the first two cores
   echo 0-1 > /dev/cpuset/background/cpus
@@ -36,10 +41,11 @@ function two_init {
   echo 1 > /proc/irq/78/smp_affinity_list # qcom,smd-modem (LTE radio)
   echo 1 > /proc/irq/33/smp_affinity_list # ufshcd (flash storage)
   echo 1 > /proc/irq/35/smp_affinity_list # wifi (wlan_pci)
+  echo 1 > /proc/irq/6/smp_affinity_list  # MDSS
+
   # USB traffic needs realtime handling on cpu 3
   [ -d "/proc/irq/733" ] && echo 3 > /proc/irq/733/smp_affinity_list # USB for LeEco
   [ -d "/proc/irq/736" ] && echo 3 > /proc/irq/736/smp_affinity_list # USB for OP3T
-
 
   # Check for NEOS update
   if [ $(< /VERSION) != "$REQUIRED_NEOS_VERSION" ]; then
@@ -120,6 +126,10 @@ function launch {
   # comma two init
   if [ -f /EON ]; then
     two_init
+  fi
+
+  if [ -f /TICI ]; then
+    tici_init
   fi
 
   # handle pythonpath
