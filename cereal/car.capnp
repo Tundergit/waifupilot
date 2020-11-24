@@ -119,11 +119,11 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     neosUpdateRequiredDEPRECATED @88;
 
     #dp
-    preLaneChangeLeftALC @92;
-    preLaneChangeRightALC @93;
-    manualSteeringRequired @94;
-    manualSteeringRequiredBlinkersOn @95;
-    leadCarMoving @96;
+    preLaneChangeLeftALC @94;
+    preLaneChangeRightALC @95;
+    manualSteeringRequired @96;
+    manualSteeringRequiredBlinkersOn @97;
+    leadCarMoving @98;
 
     # timebomb assist
     timebombWarn @97;
