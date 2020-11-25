@@ -15,10 +15,7 @@ from selfdrive.controls.lib.fcw import FCWChecker
 from selfdrive.controls.lib.long_mpc import LongitudinalMpc
 from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX
 
-MAX_SPEED = 255.0
-
 LON_MPC_STEP = 0.2  # first step is 0.2s
-MAX_SPEED_ERROR = 2.0
 AWARENESS_DECEL = -0.2     # car smoothly decel at .2m/s^2 when user is distracted
 
 # lookup tables VS speed to determine min and max accels in cruise

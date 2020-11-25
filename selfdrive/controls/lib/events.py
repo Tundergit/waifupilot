@@ -481,14 +481,6 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
       Priority.LOW, VisualAlert.steerRequired, AudibleAlert.chimePrompt, 1., 1., 1.),
   },
 
-  EventName.modelLagWarning: {
-    ET.WARNING: Alert(
-      _("TAKE CONTROL"),
-      _("Driving Model Lagging"),
-      AlertStatus.userPrompt, AlertSize.mid,
-      Priority.LOW, VisualAlert.steerRequired, AudibleAlert.chimePrompt, 1., 1., 1.),
-  },
-
   EventName.fanMalfunction: {
     ET.PERMANENT: NormalPermanentAlert(_("Fan Malfunction"), _("Contact Support")),
   },

@@ -252,8 +252,6 @@ class Controls:
 
     if self.sm['model'].frameDropPerc > 20 and not SIMULATION:
       self.events.add(EventName.modeldLagging)
-    elif self.sm['model'].frameDropPerc > 2 and not SIMULATION:
-      self.events.add(EventName.modelLagWarning)
 
     # Only allow engagement with brake pressed when stopped behind another stopped car
     if not self.sm['dragonConf'].dpAtl and CS.brakePressed and self.sm['plan'].vTargetFuture >= STARTING_TARGET_SPEED \

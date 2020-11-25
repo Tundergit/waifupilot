@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include "include/msm_kgsl.h"
 #include <vector>
+#include <memory>
 #include <CL/cl.h>
 
 using namespace std;
