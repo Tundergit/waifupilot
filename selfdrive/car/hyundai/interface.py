@@ -150,6 +150,9 @@ class CarInterface(CarInterfaceBase):
       ret.steerLimitTimer = 0.4 # down from 0.4
       tire_stiffness_factor = 1.0 
       ret.steerRateCost = 1.0
+      ret.mass = 1825. + STD_CARGO_KG
+      ret.wheelbase = 2.906
+      ret.steerRatio = 14
 
     elif candidate == CAR.KIA_FORTE:
       ret.lateralTuning.pid.kf = 0.00005
