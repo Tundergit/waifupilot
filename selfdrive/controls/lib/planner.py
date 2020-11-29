@@ -15,7 +15,7 @@ from selfdrive.controls.lib.fcw import FCWChecker
 from selfdrive.controls.lib.long_mpc import LongitudinalMpc
 from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX
 
-MAX_SPEED = 255
+MAX_SPEED = 300
 MAX_SPEED_ERROR = 2.0
 
 LON_MPC_STEP = 0.2  # first step is 0.2s
