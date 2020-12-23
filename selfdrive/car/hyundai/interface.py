@@ -138,13 +138,18 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
     elif candidate == CAR.KIA_STINGER:
-      ret.lateralTuning.pid.kf = 0.00005
+      ret.lateralTuning.init('indi') # TODO: BPs for city speeds - this tuning is great on the highway but a bit lazy in town
+      ret.lateralTuning.indi.innerLoopGain = 2.4  # higher values steer more
+      ret.lateralTuning.indi.outerLoopGain = 3.0  # higher values steer more
+      ret.lateralTuning.indi.timeConstant = 1.0  # lower values steer more
+      ret.lateralTuning.indi.actuatorEffectiveness = 2.0  # lower values steer more
+      ret.steerActuatorDelay = 0.4 # 0.08 stock
+      ret.steerLimitTimer = 0.4 # down from 0.4
+      tire_stiffness_factor = 1.0 
+      ret.steerRateCost = 1.0
       ret.mass = 1825. + STD_CARGO_KG
-      ret.wheelbase = 2.78
-      ret.steerRatio = 14.4 * 1.15   # 15% higher at the center seems reasonable
-      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
-
+      ret.wheelbase = 2.906
+      ret.steerRatio = 15.0
     elif candidate == CAR.KIA_FORTE:
       ret.lateralTuning.pid.kf = 0.00005
       ret.mass = 3558. * CV.LB_TO_KG
