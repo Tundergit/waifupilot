@@ -24,8 +24,8 @@ from selfdrive.hardware import HARDWARE
 
 LDW_MIN_SPEED = 31 * CV.MPH_TO_MS
 LANE_DEPARTURE_THRESHOLD = 0.1
-STEER_ANGLE_SATURATION_TIMEOUT = 1.0 / DT_CTRL
-STEER_ANGLE_SATURATION_THRESHOLD = 2.5  # Degrees
+STEER_ANGLE_SATURATION_TIMEOUT = 5.0 / DT_CTRL # up from 1.0
+STEER_ANGLE_SATURATION_THRESHOLD = 10.0  # Degrees up from 2.5
 
 SIMULATION = "SIMULATION" in os.environ
 NOSENSOR = "NOSENSOR" in os.environ
@@ -232,7 +232,7 @@ class Controls:
       self.events.add(EventName.relayMalfunction)
     if self.sm['plan'].fcw:
       self.events.add(EventName.fcw)
-    if not self.sm.alive['frontFrame'] and (self.sm.frame > 5 / DT_CTRL) and not SIMULATION:
+    if not self.sm.alive['frontFrame'] and (self.sm.frame > 25 / DT_CTRL) and not SIMULATION: # 25 up from 5
       self.events.add(EventName.cameraMalfunction)
 
     if self.sm['model'].frameDropPerc > 20 and not SIMULATION:
