@@ -263,22 +263,22 @@ void ui_update(UIState *s) {
   }
 
   // Handle controls/fcamera timeout
-  if (s->started && !s->scene.frontview && ((s->sm)->frame - s->started_frame) > 10*UI_FREQ) {
+  if (s->started && !s->scene.frontview && ((s->sm)->frame - s->started_frame) > 50*UI_FREQ) { // up from 10
     if ((s->sm)->rcv_frame("controlsState") < s->started_frame) {
       // car is started, but controlsState hasn't been seen at all
-      s->scene.alert_text1 = "openpilot Unavailable";
-      s->scene.alert_text2 = "Waiting for controls to start";
+      s->scene.alert_text1 = "Car on, controlsState lagging/dead";
+      s->scene.alert_text2 = "Forward camera lagging/dead borking controlsState";
       s->scene.alert_size = cereal::ControlsState::AlertSize::MID;
-    } else if (((s->sm)->frame - (s->sm)->rcv_frame("controlsState")) > 5*UI_FREQ) {
+    } else if (((s->sm)->frame - (s->sm)->rcv_frame("controlsState")) > 50*UI_FREQ) { // up from 5
       // car is started, but controls is lagging or died
-      if (s->scene.alert_text2 != "Controls Unresponsive" &&
-          s->scene.alert_text1 != "Camera Malfunction") {
+      if (s->scene.alert_text2 != "Car on, controlsd lagging/dead" &&
+          s->scene.alert_text1 != "sighhhhhhh") {
         s->sound->play(AudibleAlert::CHIME_WARNING_REPEAT);
-        LOGE("Controls unresponsive");
+        LOGE("controlsd AND a camera are lagging/dead");
       }
 
-      s->scene.alert_text1 = "TAKE CONTROL IMMEDIATELY";
-      s->scene.alert_text2 = "Controls Unresponsive";
+      s->scene.alert_text1 = "You might wanna grab the wheel...";
+      s->scene.alert_text2 = "All the clever shit crashed!!!!";
       s->scene.alert_size = cereal::ControlsState::AlertSize::FULL;
       s->status = STATUS_ALERT;
     }
@@ -286,10 +286,10 @@ void ui_update(UIState *s) {
     const uint64_t frame_pkt = (s->sm)->rcv_frame("frame");
     const uint64_t frame_delayed = (s->sm)->frame - frame_pkt;
     const uint64_t since_started = (s->sm)->frame - s->started_frame;
-    if ((frame_pkt > s->started_frame || since_started > 15*UI_FREQ) && frame_delayed > 5*UI_FREQ) {
+    if ((frame_pkt > s->started_frame || since_started > 60*UI_FREQ) && frame_delayed > 20*UI_FREQ) { // up from 15/5 
       // controls is fine, but rear camera is lagging or died
-      s->scene.alert_text1 = "Camera Malfunction";
-      s->scene.alert_text2 = "Contact Support";
+      s->scene.alert_text1 = "Rear camera lagging/dead";
+      s->scene.alert_text2 = "Ain't that a bitch.";
       s->scene.alert_size = cereal::ControlsState::AlertSize::FULL;
       s->status = STATUS_DISENGAGED;
       s->sound->stop();
