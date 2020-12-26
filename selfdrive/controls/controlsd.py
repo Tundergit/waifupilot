@@ -232,8 +232,8 @@ class Controls:
       self.events.add(EventName.relayMalfunction)
     if self.sm['plan'].fcw:
       self.events.add(EventName.fcw)
-    if not self.sm.alive['frontFrame'] and (self.sm.frame > 25 / DT_CTRL) and not SIMULATION: # 25 up from 5
-      self.events.add(EventName.cameraMalfunction)
+#    if not self.sm.alive['frontFrame'] and (self.sm.frame > 25 / DT_CTRL) and not SIMULATION: # 25 up from 5
+#      self.events.add(EventName.cameraMalfunction)
 
     if self.sm['model'].frameDropPerc > 20 and not SIMULATION:
       self.events.add(EventName.modeldLagging)
