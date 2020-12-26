@@ -36,16 +36,16 @@ function two_init {
   # *** set up governors ***
 
   # +50mW offroad, +500mW onroad for 30% more RAM bandwidth
-  echo "performance" > /sys/class/devfreq/soc:qcom,cpubw/governor
-  echo 1056000 > /sys/class/devfreq/soc:qcom,m4m/max_freq
-  echo "performance" > /sys/class/devfreq/soc:qcom,m4m/governor
+#  echo "performance" > /sys/class/devfreq/soc:qcom,cpubw/governor
+#  echo 1056000 > /sys/class/devfreq/soc:qcom,m4m/max_freq
+#  echo "performance" > /sys/class/devfreq/soc:qcom,m4m/governor
 
-  # unclear if these help, but they don't seem to hurt
-  echo "performance" > /sys/class/devfreq/soc:qcom,memlat-cpu0/governor
-  echo "performance" > /sys/class/devfreq/soc:qcom,memlat-cpu2/governor
+  # unclear if these help, but they don't seem to hurt -- tunder, commented out
+#  echo "performance" > /sys/class/devfreq/soc:qcom,memlat-cpu0/governor
+#  echo "performance" > /sys/class/devfreq/soc:qcom,memlat-cpu2/governor
 
   # GPU
-  echo "performance" > /sys/class/devfreq/b00000.qcom,kgsl-3d0/governor
+#  echo "performance" > /sys/class/devfreq/b00000.qcom,kgsl-3d0/governor
 
   # /sys/class/devfreq/soc:qcom,mincpubw is the only one left at "powersave"
   # it seems to gain nothing but a wasted 500mW
