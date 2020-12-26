@@ -106,7 +106,7 @@ function two_init {
     mv /persist/sensors/sns.reg /persist/comma/op3t-sns-reg-backup &&
       rm -f /persist/sensors/sensors_settings /persist/sensors/error_log /persist/sensors/gyro_sensitity_cal &&
       echo "restart" > /sys/kernel/debug/msm_subsys/slpi &&
-      sleep 5  # Give Android sensor subsystem a moment to recover
+      sleep 50  # Give Android sensor subsystem a moment to recover (up from 5)
   fi
 }
 
