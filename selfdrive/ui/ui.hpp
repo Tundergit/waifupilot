@@ -70,8 +70,8 @@ const int settings_btn_h = 117;
 const int settings_btn_w = 200;
 const int settings_btn_x = 50;
 const int settings_btn_y = 35;
-const int home_btn_h = 180;
-const int home_btn_w = 180;
+const int home_btn_h = 300;
+const int home_btn_w = 300;
 const int home_btn_x = 60;
 const int home_btn_y = vwp_h - home_btn_h - 40;
 
