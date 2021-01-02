@@ -30,7 +30,7 @@ static void ui_draw_sidebar_home_button(UIState *s, bool hasSidebar) {
 
   nvgBeginPath(s->vg);
   NVGpaint imgPaint = nvgImagePattern(s->vg, home_btn_xr, home_btn_y,
-    home_btn_w, home_btn_h, 0, s->img_button_home, homeActive ? 2.0f : 1.3f);
+    home_btn_w, home_btn_h, 0, s->img_button_home, homeActive ? 1.0f : 0.65f);
   nvgRect(s->vg, home_btn_xr, home_btn_y, home_btn_w, home_btn_h);
   nvgFillPaint(s->vg, imgPaint);
   nvgFill(s->vg);
