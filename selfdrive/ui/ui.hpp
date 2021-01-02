@@ -72,8 +72,8 @@ const int settings_btn_x = 50;
 const int settings_btn_y = 35;
 const int home_btn_h = 300;
 const int home_btn_w = 300;
-const int home_btn_x = 60;
-const int home_btn_y = vwp_h - home_btn_h - 40;
+const int home_btn_x = 10;
+const int home_btn_y = vwp_h - home_btn_h - 10;
 
 const int UI_FREQ = 30;   // Hz
 
