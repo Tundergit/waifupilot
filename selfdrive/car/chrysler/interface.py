@@ -29,7 +29,7 @@ class CarInterface(CarInterfaceBase):
     ret.steerRateCost = 1.0
     ret.steerLimitTimer = 0.4
 
-#    if candidate in (CAR.JEEP_CHEROKEE, CAR.JEEP_CHEROKEE_2019):
+#    if candidate in (CAR.KL_CHEROKEE):
 #      ret.wheelbase = 2.91  # in meters
 #      ret.steerRatio = 12.7
 #      ret.steerActuatorDelay = 0.2  # in seconds
@@ -37,9 +37,9 @@ class CarInterface(CarInterfaceBase):
     ret.centerToFront = ret.wheelbase * 0.44
 
     ret.minSteerSpeed = 15.65  # m/s
-#    if candidate in (CAR.PACIFICA_2019_HYBRID, CAR.JEEP_CHEROKEE_2019):
+    if candidate in (CAR.KL_CHEROKEE):
       # TODO allow 2019 cars to steer down to 13 m/s if already engaged.
-#      ret.minSteerSpeed = 17.5  # m/s 17 on the way up, 13 on the way down once engaged.
+      ret.minSteerSpeed = 17.5  # m/s 17 on the way up, 13 on the way down once engaged.
 
     # starting with reasonable value for civic and scaling by mass and wheelbase
     ret.rotationalInertia = scale_rot_inertia(ret.mass, ret.wheelbase)
