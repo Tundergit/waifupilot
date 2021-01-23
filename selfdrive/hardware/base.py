@@ -25,6 +25,14 @@ class HardwareBase:
     pass
 
   @abstractmethod
+  def get_os_version(self):
+    pass
+
+  @abstractmethod
+  def get_device_type(self):
+    pass
+
+  @abstractmethod
   def get_sound_card_online(self):
     pass
 

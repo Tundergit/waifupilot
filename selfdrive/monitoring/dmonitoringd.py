@@ -12,20 +12,15 @@ def dmonitoringd_thread(sm=None, pm=None):
     pm = messaging.PubMaster(['dMonitoringState'])
 
   if sm is None:
-    sm = messaging.SubMaster(['driverState', 'liveCalibration', 'carState', 'controlsState', 'model'], poll=['driverState'])
+    sm = messaging.SubMaster(['driverState', 'liveCalibration', 'carState', 'controlsState', 'modelV2'], poll=['driverState'])
 
-  driver_status = DriverStatus()
-  driver_status.is_rhd_region = Params().get("IsRHD") == b"1"
+  driver_status = DriverStatus(rhd=Params().get("IsRHD") == b"1")
 
   offroad = Params().get("IsOffroad") == b"1"
 
   sm['liveCalibration'].calStatus = Calibration.INVALID
   sm['liveCalibration'].rpyCalib = [0, 0, 0]
-  sm['carState'].vEgo = 0.
-  sm['carState'].cruiseState.speed = 0.
   sm['carState'].buttonEvents = []
-  sm['carState'].steeringPressed = False
-  sm['carState'].gasPressed = False
   sm['carState'].standstill = True
 
   v_cruise_last = 0
@@ -49,8 +44,8 @@ def dmonitoringd_thread(sm=None, pm=None):
         driver_status.update(Events(), True, sm['controlsState'].enabled, sm['carState'].standstill)
       v_cruise_last = v_cruise
 
-    if sm.updated['model']:
-      driver_status.set_policy(sm['model'])
+    if sm.updated['modelV2']:
+      driver_status.set_policy(sm['modelV2'])
 
     # Get data from dmonitoringmodeld
     events = Events()
@@ -81,6 +76,7 @@ def dmonitoringd_thread(sm=None, pm=None):
       "isLowStd": driver_status.pose.low_std,
       "hiStdCount": driver_status.hi_stds,
       "isPreview": offroad,
+      "isActiveMode": driver_status.active_monitoring_mode,
     }
     pm.send('dMonitoringState', dat)
 
