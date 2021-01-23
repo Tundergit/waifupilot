@@ -33,9 +33,9 @@
 
 #define USER_AGENT "NEOSUpdater-0.2"
 
-#define MANIFEST_URL_EON_STAGING "https://github.com/commaai/eon-neos/raw/master/update.staging.json"
+#define MANIFEST_URL_EON_STAGING "https://github.com/Tundergit/eon-neos/raw/master/update.staging.json"
 #define MANIFEST_URL_EON_LOCAL "http://192.168.5.1:8000/neosupdate/update.local.json"
-#define MANIFEST_URL_EON "https://github.com/commaai/eon-neos/raw/master/update.json"
+#define MANIFEST_URL_EON "https://github.com/Tundergit/eon-neos/raw/master/update.json"
 const char *manifest_url = MANIFEST_URL_EON;
 
 #define RECOVERY_DEV "/dev/block/bootdevice/by-name/recovery"
@@ -635,8 +635,8 @@ struct Updater {
 
     switch (state) {
     case CONFIRMATION:
-      draw_ack_screen("An update to NEOS is required.",
-                      "Your device will now be reset and upgraded. You may want to connect to wifi as download is around 1 GB. Existing data on device should not be lost.",
+      draw_ack_screen("An downgrade to NEOS is required.",as download is around 1 GB. Existing data
+                      "Your device will now be reset and downgraded... hopefully. You may want to connect to wifi, approx 1GB.",
                       "Continue",
                       "Connect to WiFi");
       break;
