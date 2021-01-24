@@ -54,7 +54,7 @@ const int bdr_s = 30;
 const int header_h = 420;
 const int footer_h = 280;
 const Rect settings_btn = {50, 35, 200, 117};
-const Rect home_btn = {10, 1080 - 280 - 10, 260, 260};
+const Rect home_btn = {20, 1080 - 280 - 20, 260, 260};
 
 const int UI_FREQ = 20;   // Hz
 
