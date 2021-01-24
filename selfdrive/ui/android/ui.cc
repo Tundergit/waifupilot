@@ -13,7 +13,6 @@
 #include "ui.hpp"
 #include "paint.hpp"
 #include "android/sl_sound.hpp"
-#include "dashcam.h"
 
 ExitHandler do_exit;
 static void ui_set_brightness(UIState *s, int brightness) {
@@ -161,13 +160,6 @@ int main(int argc, char* argv[]) {
     handle_display_state(s, touched == 1);
     if (!s->awake) {
       continue;
-    }
-    
-    if (s->awake && s->vision_connected) {
-      dashcam(s, touch_x, touch_y);
-      ui_draw(s);
-      glFinish();
-      should_swap = true;
     }
 
     // up one notch every 5 m/s
