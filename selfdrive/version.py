@@ -56,8 +56,8 @@ commit = get_git_commit()
 
 if (origin is not None) and (branch is not None):
   try:
-    comma_remote = origin.startswith('git@github.com:commaai') or origin.startswith('https://github.com/commaai')
-    tested_branch = get_git_branch() in ['devel', 'release2-staging', 'dashcam-staging', 'release2', 'dashcam']
+    comma_remote = origin.startswith('git@github.com:Tundergit') or origin.startswith('https://github.com/Tundergit')
+    tested_branch = get_git_branch() in ['devel', '082-testing', 'dashcam-staging', 'kia-release2', 'dashcam']
 
     dirty = False
 
