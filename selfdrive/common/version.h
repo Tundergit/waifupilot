@@ -1,1 +1,1 @@
-#define COMMA_VERSION "0.8.2-c9679222-2021-01-22T20:07:57"
+#define COMMA_VERSION "waifupilot 0.8.2-testing"
