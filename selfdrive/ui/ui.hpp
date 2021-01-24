@@ -54,14 +54,14 @@ const int bdr_s = 30;
 const int header_h = 420;
 const int footer_h = 280;
 const Rect settings_btn = {50, 35, 200, 117};
-const Rect home_btn = {60, 1080 - 180 - 40, 180, 180};
+const Rect home_btn = {10, 1080 - 180 - 10, 280, 280};
 
 const int UI_FREQ = 20;   // Hz
 
 const int MODEL_PATH_MAX_VERTICES_CNT = TRAJECTORY_SIZE*2;
 const int TRACK_POINTS_MAX_CNT = TRAJECTORY_SIZE*4;
 
-const int SET_SPEED_NA = 255;
+const int SET_SPEED_NA = 320;
 
 typedef enum NetStatus {
   NET_CONNECTED,
