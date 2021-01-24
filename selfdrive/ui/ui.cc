@@ -10,6 +10,7 @@
 #include "common/visionimg.h"
 #include "ui.hpp"
 #include "paint.hpp"
+#include "dashcam.h"
 
 
 int write_param_float(float param, const char* param_name, bool persistent_param) {
