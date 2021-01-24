@@ -57,7 +57,7 @@ try:
     pass
 
   if (origin is not None) and (branch is not None):
-    comma_remote = origin.startswith('git@github.com:commaai') or origin.startswith('https://github.com/commaai')
+    comma_remote = origin.startswith('git@github.com:Tundergit') or origin.startswith('https://github.com/Tundergit')
 
     dirty = not comma_remote
     dirty = dirty or ('master' in branch)
