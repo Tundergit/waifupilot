@@ -39,7 +39,7 @@ FINGERPRINTS = {
 }
 
 DBC = {
-  CAR.RAM_1500: dbc_dict('ram_1500'),
+  CAR.RAM_1500: dbc_dict('ram_1500', 'ram_1500'),
 }
 
 STEER_THRESHOLD = 120
