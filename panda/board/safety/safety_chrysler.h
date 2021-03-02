@@ -1,19 +1,19 @@
 const int CHRYSLER_MAX_STEER = 261;
 const int CHRYSLER_MAX_RT_DELTA = 112;        // max delta torque allowed for real time checks
 const uint32_t CHRYSLER_RT_INTERVAL = 250000;  // 250ms between real time checks
-const int CHRYSLER_MAX_RATE_UP = 3;
-const int CHRYSLER_MAX_RATE_DOWN = 3;
+const int CHRYSLER_MAX_RATE_UP = 5;
+const int CHRYSLER_MAX_RATE_DOWN = 5;
 const int CHRYSLER_MAX_TORQUE_ERROR = 80;    // max torque cmd in excess of torque motor
 const int CHRYSLER_GAS_THRSLD = 30;  // 7% more than 2m/s
 const int CHRYSLER_STANDSTILL_THRSLD = 10;  // about 1m/s
-const CanMsg CHRYSLER_TX_MSGS[] = {{571, 0, 3}, {658, 0, 6}, {678, 0, 8}};
+const CanMsg CHRYSLER_TX_MSGS[] = {{166, 0, 8}, {250, 0, 8}}; // {177, 0, 8}};  // 177 is for long
 
 AddrCheckStruct chrysler_rx_checks[] = {
-  {.msg = {{544, 0, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 10000U}}},
-  {.msg = {{514, 0, 8, .check_checksum = false, .max_counter = 0U, .expected_timestep = 10000U}}},
-  {.msg = {{500, 0, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},
-  {.msg = {{308, 0, 8, .check_checksum = false, .max_counter = 15U,  .expected_timestep = 20000U}}},
-  {.msg = {{320, 0, 8, .check_checksum = true, .max_counter = 15U,  .expected_timestep = 20000U}}},
+  {.msg = {{35, 0, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 10000U}}},  // EPS module
+  {.msg = {{139, 0, 8, .check_checksum = false, .max_counter = 0U, .expected_timestep = 10000U}}},  // wheel speeds
+  {.msg = {{153, 0, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},  // forward cam ACC
+  {.msg = {{129, 0, 8, .check_checksum = false, .max_counter = 15U,  .expected_timestep = 20000U}}},  // gas pedal
+  {.msg = {{121, 0, 8, .check_checksum = true, .max_counter = 15U,  .expected_timestep = 20000U}}},  // brake pressed
 };
 const int CHRYSLER_RX_CHECK_LEN = sizeof(chrysler_rx_checks) / sizeof(chrysler_rx_checks[0]);
 
@@ -70,7 +70,7 @@ static int chrysler_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
     int addr = GET_ADDR(to_push);
 
     // Measured eps torque
-    if (addr == 544) {
+    if (addr == 35) {
       int torque_meas_new = ((GET_BYTE(to_push, 4) & 0x7U) << 8) + GET_BYTE(to_push, 5) - 1024U;
 
       // update array of samples
@@ -78,7 +78,7 @@ static int chrysler_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
     }
 
     // enter controls on rising edge of ACC, exit controls on ACC off
-    if (addr == 500) {
+    if (addr == 153) {
       int cruise_engaged = ((GET_BYTE(to_push, 2) & 0x38) >> 3) == 7;
       if (cruise_engaged && !cruise_engaged_prev) {
         controls_allowed = 1;
@@ -90,7 +90,7 @@ static int chrysler_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
     }
 
     // update speed
-    if (addr == 514) {
+    if (addr == 139) {
       int speed_l = (GET_BYTE(to_push, 0) << 4) + (GET_BYTE(to_push, 1) >> 4);
       int speed_r = (GET_BYTE(to_push, 2) << 4) + (GET_BYTE(to_push, 3) >> 4);
       vehicle_speed = (speed_l + speed_r) / 2;
@@ -98,12 +98,12 @@ static int chrysler_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
     }
 
     // exit controls on rising edge of gas press
-    if (addr == 308) {
+    if (addr == 129) {
       gas_pressed = ((GET_BYTE(to_push, 5) & 0x7F) != 0) && ((int)vehicle_speed > CHRYSLER_GAS_THRSLD);
     }
 
     // exit controls on rising edge of brake press
-    if (addr == 320) {
+    if (addr == 121) {
       brake_pressed = (GET_BYTE(to_push, 0) & 0x7) == 5;
       if (brake_pressed && (!brake_pressed_prev || vehicle_moving)) {
         controls_allowed = 0;
@@ -111,7 +111,7 @@ static int chrysler_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
       brake_pressed_prev = brake_pressed;
     }
 
-    generic_rx_checks((addr == 0x292));
+    generic_rx_checks((addr == 0xa6));
   }
   return valid;
 }
@@ -122,7 +122,7 @@ static int chrysler_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
   int addr = GET_ADDR(to_send);
 
   if (!msg_allowed(to_send, CHRYSLER_TX_MSGS, sizeof(CHRYSLER_TX_MSGS) / sizeof(CHRYSLER_TX_MSGS[0]))) {
-    tx = 0;
+    tx = 1;  // for dev
   }
 
   if (relay_malfunction) {
@@ -130,7 +130,7 @@ static int chrysler_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
   }
 
   // LKA STEER
-  if (addr == 0x292) {
+  if (addr == 0xa6) {
     int desired_torque = ((GET_BYTE(to_send, 0) & 0x7U) << 8) + GET_BYTE(to_send, 1) - 1024U;
     uint32_t ts = TIM2->CNT;
     bool violation = 0;
@@ -171,14 +171,14 @@ static int chrysler_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
     }
 
     if (violation) {
-      tx = 0;
+      tx = 1;  // for dev
     }
   }
 
   // FORCE CANCEL: only the cancel button press is allowed
-  if (addr == 571) {
+  if (addr == 177) {
     if ((GET_BYTE(to_send, 0) != 1) || ((GET_BYTE(to_send, 1) & 1) == 1)) {
-      tx = 0;
+      tx = 1;
     }
   }
 
@@ -196,7 +196,7 @@ static int chrysler_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
       bus_fwd = 2;
     }
     // forward all messages from camera except LKAS_COMMAND and LKAS_HUD
-    if ((bus_num == 2) && (addr != 658) && (addr != 678)) {
+    if ((bus_num == 2) && (addr != 166) && (addr != 250)) {
       bus_fwd = 0;
     }
   }
