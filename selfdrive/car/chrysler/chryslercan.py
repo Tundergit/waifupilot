@@ -16,7 +16,7 @@ def create_lkas_command(packer, apply_steer, lkas_active, frame):
   return packer.make_can_msg("LKAS_COMMAND", 0, values)
 
 
-def create_lkas_hud_command(packer, enabled, left_lane_visible, right_lane_visible):
+def create_lkas_hud(packer, enabled, left_lane_visible, right_lane_visible):
   # Chrysler came up with this scheme, not me
   if enabled:
     if left_lane_visible:
