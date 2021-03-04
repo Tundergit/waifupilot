@@ -5,14 +5,11 @@ from selfdrive.config import Conversions as CV
 from selfdrive.car.interfaces import CarStateBase
 from selfdrive.car.chrysler.values import DBC, STEER_THRESHOLD
 
+GearShifter = car.CarState.GearShifter
 
 class CarState(CarStateBase):
-  def __init__(self, CP):
-    super().__init__(CP)
-    can_define = CANDefine(DBC[CP.carFingerprint]['pt'])
-    self.shifter_values = can_define.dv["SHIFTER_ASSM"]['SHIFTER_POSITION']
-
-  def update(self, cp):
+  
+    def update(self, cp):
 
     ret = car.CarState.new_message()
 
@@ -61,6 +58,18 @@ class CarState(CarStateBase):
     ret.genericToggle = bool(cp.vl["STEERING_LEVERS"]['HIGH_BEAM_FLASH'])
 
     self.lkas_counter = cp_cam.vl["FORWARD_CAMERA_LKAS"]['COUNTER']
+    
+    gear = cp.vl["SHIFTER_ASSM"]['SHIFTER_POSITION']
+      if gear in (4, 8):
+        ret.gearShifter = GearShifter.drive
+      elif gear == 3:
+        ret.gearShifter = GearShifter.neutral
+      elif gear == 1:
+        ret.gearShifter = GearShifter.park
+      elif gear == 2:
+        ret.gearShifter = GearShifter.reverse
+      else:
+        ret.gearShifter = GearShifter.unknown
 
     return ret
 
