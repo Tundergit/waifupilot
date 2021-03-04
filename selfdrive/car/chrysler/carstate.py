@@ -60,16 +60,16 @@ class CarState(CarStateBase):
     self.lkas_counter = cp_cam.vl["FORWARD_CAMERA_LKAS"]['COUNTER']
     
     gear = cp.vl["SHIFTER_ASSM"]['SHIFTER_POSITION']
-      if gear in (4, 8):
-        ret.gearShifter = GearShifter.drive
-      elif gear == 3:
-        ret.gearShifter = GearShifter.neutral
-      elif gear == 1:
-        ret.gearShifter = GearShifter.park
-      elif gear == 2:
-        ret.gearShifter = GearShifter.reverse
-      else:
-        ret.gearShifter = GearShifter.unknown
+    if gear in (4, 8):
+      ret.gearShifter = GearShifter.drive
+    elif gear == 3:
+      ret.gearShifter = GearShifter.neutral
+    elif gear == 1:
+      ret.gearShifter = GearShifter.park
+    elif gear == 2:
+      ret.gearShifter = GearShifter.reverse
+    else:
+      ret.gearShifter = GearShifter.unknown
 
     return ret
 
