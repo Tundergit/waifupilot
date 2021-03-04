@@ -9,7 +9,7 @@ GearShifter = car.CarState.GearShifter
 
 class CarState(CarStateBase):
   
-    def update(self, cp):
+  def update(self, cp):
 
     ret = car.CarState.new_message()
 
