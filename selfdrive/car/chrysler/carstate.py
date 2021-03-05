@@ -19,13 +19,13 @@ class CarState(CarStateBase):
                         cp.vl["DOORS"]['DOOR_OPEN_RF'],
                         cp.vl["DOORS"]['DOOR_OPEN_LR'],
                         cp.vl["DOORS"]['DOOR_OPEN_RR']])
-    ret.seatbeltUnlatched = cp.vl["DRIVER_SEATBELT_STATUS"]['DRIVER_SEATBELT_STATUS'] == 1
+    ret.seatbeltUnlatched = cp.vl["OCCUPANT_RESTRAINT_MODULE"]['DRIVER_SEATBELT_STATUS'] == 1
 
-    ret.brakePressed = cp.vl["BRAKE_PEDAL"]['BRK_PEDAL'] > 1  # human-only... TODO: find values when ACC uses brakes - might have been lucky
+    ret.brakePressed = cp.vl["ABS_1"]['BRAKE_PEDAL'] > 1  # human-only... TODO: find values when ACC uses brakes - might have been lucky
     ret.brake = 0
     ret.brakeLights = ret.brakePressed
-    ret.gas = cp.vl["GAS_PEDAL"]['THROTTLE_POSITION']
-    ret.gasPressed = ret.gas > 1
+    ret.gas = cp.vl["TPS_1"]['THROTTLE_POSITION']
+    ret.gasPressed = ret.gas > 5
 
     ret.espDisabled = (cp.vl["CENTER_STACK"]['TRAC_OFF'] == 1)
 
@@ -40,8 +40,7 @@ class CarState(CarStateBase):
     ret.leftBlinker = cp.vl["STEERING_LEVERS"]['TURN_SIGNALS'] == 1
     ret.rightBlinker = cp.vl["STEERING_LEVERS"]['TURN_SIGNALS'] == 2
     ret.steeringAngle = cp.vl["EPS_1"]['STEER_ANGLE']
-    ret.steeringRate = cp.vl["EPS_2"]['STEERING_RATE_DRIVER']
-    ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(cp.vl['SHIFTER_ASSM']['SHIFTER_POSITION'], None))
+    ret.steeringRate = cp.vl["EPS_2"]['STEER_RATE_DRIVER']
 
     ret.cruiseState.enabled = cp.vl["FORWARD_CAMERA_ACC"]['ACC_STATUS'] == 3  # ACC is green.
     ret.cruiseState.available = cp.vl["FORWARD_CAMERA_ACC"]['ACC_STATUS'] == 1 # ACC is white... right???
@@ -82,31 +81,30 @@ class CarState(CarStateBase):
       ("DOOR_OPEN_RF", "DOORS", 0),
       ("DOOR_OPEN_LR", "DOORS", 0),
       ("DOOR_OPEN_RR", "DOORS", 0),
-      ("BRK_PEDAL", "BRAKE_PEDAL", 0),
-      ("THROTTLE_POSITION", "GAS_PEDAL", 0),
+      ("BRAKE_PEDAL", "ABS_1", 0),
+      ("THROTTLE_POSITION", "TPS_1", 0),
       ("WHEEL_SPEED_RR", "WHEEL_SPEEDS", 0),
       ("WHEEL_SPEED_LR", "WHEEL_SPEEDS", 0),
       ("WHEEL_SPEED_RF", "WHEEL_SPEEDS", 0),
       ("WHEEL_SPEED_LF", "WHEEL_SPEEDS", 0),
       ("STEER_ANGLE", "EPS_1", 0),
-      ("STEERING_RATE_DRIVER", "EPS_2", 0),
+      ("STEER_RATE_DRIVER", "EPS_2", 0),
       ("TURN_SIGNALS", "STEERING_LEVERS", 0),
       ("ACC_STATUS", "FORWARD_CAMERA_ACC", 0),
       ("HIGH_BEAM_FLASH", "STEERING_LEVERS", 0),
       ("ACC_SET_SPEED", "FORWARD_CAMERA_CLUSTER", 0),
-      ("ACC_STATUS", "FORWARD_CAMERA_ACC", 0),
       ("TORQUE_DRIVER", "EPS_2", 0),
       ("TORQUE_MOTOR", "EPS_1", 0),
       ("LKAS_CONTROL_BIT", "FORWARD_CAMERA_LKAS", 1),
       ("COUNTER", "EPS_2", -1),
       ("TRAC_OFF", "CENTER_STACK", 0),
-      ("DRIVER_SEATBELT_STATUS", "DRIVER_SEATBELT_STATUS", 0),
-      ("FORWARD_CAMERA_HUD", "LKAS_HUD", 0),
+      ("DRIVER_SEATBELT_STATUS", "OCCUPANT_RESTRAINT_MODULE", 0),
+      ("LKAS_HUD", "FORWARD_CAMERA_HUD", 0),
     ]
 
     checks = [
       # sig_address, frequency
-      ("BRAKE_PEDAL", 50),
+      ("ABS_1", 50),
       ("EPS_1", 100),
       ("EPS_2", 100),
       ("WHEEL_SPEEDS", 50),
@@ -114,12 +112,12 @@ class CarState(CarStateBase):
       ("FORWARD_CAMERA_CLUSTER", 50),
       ("FORWARD_CAMERA_LKAS", 50),
       ("SHIFTER_ASSM", 50),
-      ("GAS_PEDAL", 50),
+      ("TPS_1", 50),
       ("STEERING_LEVERS", 10),
       ("DRIVER_SEATBELT_STATUS", 1),
       ("DOORS", 1),
       ("CENTER_STACK", 20),
-      ("FORWARD_CAMERA_HUD", 20),
+      ("FORWARD_CAMERA_HUD", 15),
       ("WHEEL_BUTTONS_CRUISE_CONTROL", 50),
     ]
 
@@ -133,8 +131,8 @@ class CarState(CarStateBase):
       ("LKAS_HUD", "FOWARD_CAMERA_HUD", -1),
     ]
     checks = [
-      ("FORWARD_CAMERA_LKAS", 100),
-      ("FORWARD_CAMERA_HUD", 4),
+      ("FORWARD_CAMERA_LKAS", 50),
+      ("FORWARD_CAMERA_HUD", 15),
     ]
 
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 2)
