@@ -134,8 +134,8 @@ CANParser::CANParser(int abus, const std::string& dbc_name,
       }
     }
     if (!msg) {
-      fprintf(stderr, "CANParser: could not find message 0x%X in DBC %s\n", op.address, dbc_name.c_str());
-      assert(false);
+      fprintf(stderr, "CANParser: could not find message 0x%[i] in DBC %s\n", op.address, dbc_name.c_str());
+      static_assert(false);
     }
 
     state.size = msg->size;
