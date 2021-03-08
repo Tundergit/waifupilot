@@ -42,9 +42,9 @@ class CarState(CarStateBase):
     ret.steeringAngle = cp.vl["EPS_1"]['STEER_ANGLE']
     ret.steeringRate = cp.vl["EPS_2"]['STEER_RATE_DRIVER']
 
-    ret.cruiseState.enabled = cp.vl["FORWARD_CAMERA_ACC"]['ACC_STATUS'] == 3  # ACC is green.
-    ret.cruiseState.available = cp.vl["FORWARD_CAMERA_ACC"]['ACC_STATUS'] == 1 # ACC is white... right???
-    ret.cruiseState.speed = cp.vl["FORWARD_CAMERA_CLUSTER"]['ACC_SET_SPEED'] * CV.KPH_TO_MS
+    ret.cruiseState.enabled = cp_cam.vl["FORWARD_CAMERA_ACC"]['ACC_STATUS'] == 3  # ACC is green.
+    ret.cruiseState.available = cp_cam.vl["FORWARD_CAMERA_ACC"]['ACC_STATUS'] == 1 # ACC is white... right???
+    ret.cruiseState.speed = cp_cam.vl["FORWARD_CAMERA_CLUSTER"]['ACC_SET_SPEED'] * CV.KPH_TO_MS
     # CRUISE_STATE is a three bit msg, 0 is off, 1 and 2 are Non-ACC mode, 3 and 4 are ACC mode, find if there are other states too
    # ret.cruiseState.nonAdaptive = cp.vl["DASHBOARD"]['CRUISE_STATE'] in [1, 2]  do we need this at all?
 
