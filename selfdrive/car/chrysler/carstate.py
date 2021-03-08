@@ -90,16 +90,12 @@ class CarState(CarStateBase):
       ("STEER_ANGLE", "EPS_1", 0),
       ("STEER_RATE_DRIVER", "EPS_2", 0),
       ("TURN_SIGNALS", "STEERING_LEVERS", 0),
-      ("ACC_STATUS", "FORWARD_CAMERA_ACC", 0),
       ("HIGH_BEAM_FLASH", "STEERING_LEVERS", 0),
-      ("ACC_SET_SPEED", "FORWARD_CAMERA_CLUSTER", 0),
       ("TORQUE_DRIVER", "EPS_2", 0),
       ("TORQUE_MOTOR", "EPS_1", 0),
-      ("LKAS_CONTROL_BIT", "FORWARD_CAMERA_LKAS", 1),
       ("COUNTER", "EPS_2", -1),
       ("TRAC_OFF", "CENTER_STACK", 0),
       ("DRIVER_SEATBELT_STATUS", "OCCUPANT_RESTRAINT_MODULE", 0),
-      ("LKAS_HUD", "FORWARD_CAMERA_HUD", 0),
     ]
 
     checks = [
@@ -108,16 +104,12 @@ class CarState(CarStateBase):
       ("EPS_1", 100),
       ("EPS_2", 100),
       ("WHEEL_SPEEDS", 50),
-      ("FORWARD_CAMERA_ACC", 50),
-      ("FORWARD_CAMERA_CLUSTER", 50),
-      ("FORWARD_CAMERA_LKAS", 50),
       ("SHIFTER_ASSM", 50),
       ("TPS_1", 50),
       ("STEERING_LEVERS", 10),
       ("DRIVER_SEATBELT_STATUS", 1),
       ("DOORS", 1),
       ("CENTER_STACK", 20),
-      ("FORWARD_CAMERA_HUD", 15),
       ("WHEEL_BUTTONS_CRUISE_CONTROL", 50),
     ]
 
@@ -128,11 +120,16 @@ class CarState(CarStateBase):
     signals = [
       # sig_name, sig_address, default
       ("COUNTER", "FORWARD_CAMERA_LKAS", -1),
+      ("ACC_STATUS", "FORWARD_CAMERA_ACC", 0),
+      ("ACC_SET_SPEED", "FORWARD_CAMERA_CLUSTER", 0),
       ("LKAS_HUD", "FOWARD_CAMERA_HUD", -1),
+      ("LKAS_CONTROL_BIT", "FORWARD_CAMERA_LKAS", 1),
     ]
     checks = [
       ("FORWARD_CAMERA_LKAS", 50),
       ("FORWARD_CAMERA_HUD", 15),
+      ("FORWARD_CAMERA_ACC", 50),
+      ("FORWARD_CAMERA_CLUSTER", 50),
     ]
 
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 2)
