@@ -92,6 +92,7 @@ class CarState(CarStateBase):
       ("TURN_SIGNALS", "STEERING_LEVERS", 0),
       ("HIGH_BEAM_FLASH", "STEERING_LEVERS", 0),
       ("TORQUE_DRIVER", "EPS_2", 0),
+      ("EPS_STATUS", "EPS_2", 0),
       ("TORQUE_MOTOR", "EPS_1", 0),
       ("COUNTER", "EPS_2", -1),
       ("TRAC_OFF", "CENTER_STACK", 0),
