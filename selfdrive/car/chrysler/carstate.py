@@ -107,7 +107,7 @@ class CarState(CarStateBase):
       ("SHIFTER_ASSM", 50),
       ("TPS_1", 50),
       ("STEERING_LEVERS", 10),
-      ("DRIVER_SEATBELT_STATUS", 1),
+      ("OCCUPANT_RESTRAINT_MODULE", 1),
       ("DOORS", 1),
       ("CENTER_STACK", 20),
       ("WHEEL_BUTTONS_CRUISE_CONTROL", 50),
@@ -121,9 +121,9 @@ class CarState(CarStateBase):
       # sig_name, sig_address, default
       ("COUNTER", "FORWARD_CAMERA_LKAS", -1),
       ("ACC_STATUS", "FORWARD_CAMERA_ACC", 0),
-      ("ACC_SET_SPEED", "FORWARD_CAMERA_CLUSTER", 0),
+      ("ACC_SET_SPEED", "FORWARD_CAMERA_CLUSTER", -1),
       ("LKAS_HUD", "FOWARD_CAMERA_HUD", -1),
-      ("LKAS_CONTROL_BIT", "FORWARD_CAMERA_LKAS", 1),
+      ("LKAS_CONTROL_BIT", "FORWARD_CAMERA_LKAS", 0),
     ]
     checks = [
       ("FORWARD_CAMERA_LKAS", 50),
