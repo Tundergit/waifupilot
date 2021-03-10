@@ -94,7 +94,7 @@ class CarState(CarStateBase):
       ("TORQUE_DRIVER", "EPS_2", 0),
       ("EPS_STATUS", "EPS_2", 0),
       ("TORQUE_MOTOR", "EPS_1", 0),
-      ("COUNTER", "EPS_2", -1),
+#      ("COUNTER", "EPS_2", -1),
       ("TRAC_OFF", "CENTER_STACK", 0),
       ("DRIVER_SEATBELT_STATUS", "OCCUPANT_RESTRAINT_MODULE", 0),
     ]
@@ -123,12 +123,12 @@ class CarState(CarStateBase):
       ("COUNTER", "FORWARD_CAMERA_LKAS", -1),
       ("ACC_STATUS", "FORWARD_CAMERA_ACC", 0),
       ("ACC_SET_SPEED", "FORWARD_CAMERA_CLUSTER", -1),
-      ("LKAS_HUD", "FOWARD_CAMERA_HUD", -1),
-      ("LKAS_CONTROL_BIT", "FORWARD_CAMERA_LKAS", 0),
+#      ("LKAS_HUD", "FOWARD_CAMERA_HUD", -1),
+#      ("LKAS_CONTROL_BIT", "FORWARD_CAMERA_LKAS", 0),
     ]
     checks = [
       ("FORWARD_CAMERA_LKAS", 50),
-      ("FORWARD_CAMERA_HUD", 15),
+#      ("FORWARD_CAMERA_HUD", 15),
       ("FORWARD_CAMERA_ACC", 50),
       ("FORWARD_CAMERA_CLUSTER", 50),
     ]
