@@ -32,6 +32,7 @@ class CarInterface(CarInterfaceBase):
     ret.steerActuatorDelay = 0.2  # may need tuning
     ret.steerRateCost = 1.0  # may need tuning
     ret.steerLimitTimer = 0.4
+    ret.centerToFront = ret.wheelbase * 0.4 # just a guess
 
     ret.minSteerSpeed = 18.0  # m/s
 
