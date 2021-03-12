@@ -16,8 +16,8 @@ class CarController():
 
     self.packer = CANPacker(dbc_name)
 
-  def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, left_lane_visible,
-             right_lane_visible):  # TODO hud_alert
+  def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, leftLaneVisible,
+             rightLaneVisible):  # TODO hud_alert
     P = CarControllerParams
 
     steer_ready = CS.out.vEgo > CS.CP.minSteerSpeed + 0.2
