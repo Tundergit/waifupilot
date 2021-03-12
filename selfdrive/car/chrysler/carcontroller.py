@@ -47,6 +47,6 @@ class CarController():
       can_sends.append(create_lkas_command(self.packer, int(apply_steer), steer_command_bit, frame))
 
     if frame % P.HUD_STEP == 0:
-      can_sends.append(create_lkas_hud(self.packer, enabled, left_lane_visible, right_lane_visible))
+      can_sends.append(create_lkas_hud(self.packer, enabled, leftLaneVisible, rightLaneVisible))
 
     return can_sends
