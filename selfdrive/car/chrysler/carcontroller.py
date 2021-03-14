@@ -43,10 +43,10 @@ class CarController():
     #      new_msg = create_wheel_buttons(self.packer, self.frame, cancel=True)
     #      can_sends.append(new_msg)
 
-    if int(frame % P.STEER_STEP) == 0:
+    if frame % P.STEER_STEP == 0:
       can_sends.append(create_lkas_command(self.packer, int(apply_steer), steer_command_bit, frame))
 
-    if int(frame % P.HUD_STEP) == 0:
+    if frame % P.HUD_STEP == 0:
       can_sends.append(create_lkas_hud(self.packer, enabled, leftLaneVisible, rightLaneVisible))
 
     return can_sends
