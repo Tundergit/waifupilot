@@ -13,7 +13,7 @@ class CarState(CarStateBase):
 
     ret = car.CarState.new_message()
 
-#    frame = cp_cam.vl["FORWARD_CAMERA_LKAS"]['COUNTER']
+    self.frame = cp_cam.vl["FORWARD_CAMERA_LKAS"]['COUNTER']
 #    self.frame = frame 
 
     ret.doorOpen = any([cp.vl["DOORS"]['DOOR_OPEN_LF'],
