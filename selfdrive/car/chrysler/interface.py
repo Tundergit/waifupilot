@@ -81,6 +81,7 @@ class CarInterface(CarInterfaceBase):
 #    if (self.CS.frame == -1):
 #      return []  
 
-    can_sends = self.CC.update(c.enabled, self.CS, self.CS.frame, c.actuators, c.cruiseControl.cancel, c.hudControl.leftLaneVisible, c.hudControl.rightLaneVisible)
+    can_sends = self.CC.update(c.enabled, self.CS, self.CS.frame, c.actuators, c.cruiseControl.cancel, 
+                               c.hudControl.leftLaneVisible, c.hudControl.rightLaneVisible)
 
     return can_sends
