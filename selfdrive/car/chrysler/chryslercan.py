@@ -13,7 +13,7 @@ def create_lkas_command(packer, apply_steer, lkas_active, frame):
     "COUNTER": frame % 0x10,
   }
 
-  return packer.make_can_msg("LKAS_COMMAND", 0, values)
+  return packer.make_can_msg("FORWARD_CAMERA_LKAS", 0, values)
 
 
 def create_lkas_hud(packer, enabled, leftLaneVisible, rightLaneVisible):
@@ -32,10 +32,10 @@ def create_lkas_hud(packer, enabled, leftLaneVisible, rightLaneVisible):
     lane_visibility_signal = 0x4      # Neither lane border shown
 
   values = {
-    "LKAS_LANE_LINES": lane_visibility_signal,
+    "LKAS_HUD": lane_visibility_signal,
   }
 
-  return packer.make_can_msg("LKAS_HUD", 0, values)
+  return packer.make_can_msg("FORWARD_CAMERA_HUD", 0, values)
 
 
 def create_wheel_buttons(packer, frame, cancel=False):
@@ -44,4 +44,4 @@ def create_wheel_buttons(packer, frame, cancel=False):
     "CANCEL": cancel,
     "COUNTER": frame % 0x10
   }
-  return packer.make_can_msg("WHEEL_BUTTONS", 0, values)
+  return packer.make_can_msg("WHEEL_BUTTONS_CRUISE_CONTROL", 0, values)
