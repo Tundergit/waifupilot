@@ -30,10 +30,11 @@ class CarState(CarStateBase):
 
     ret.espDisabled = (cp.vl["CENTER_STACK"]['TRAC_OFF'] == 1)
 
-    ret.wheelSpeeds.fl = cp.vl['WHEEL_SPEEDS']['WHEEL_SPEED_LF']
-    ret.wheelSpeeds.rr = cp.vl['WHEEL_SPEEDS']['WHEEL_SPEED_RR']
-    ret.wheelSpeeds.rl = cp.vl['WHEEL_SPEEDS']['WHEEL_SPEED_LR']
-    ret.wheelSpeeds.fr = cp.vl['WHEEL_SPEEDS']['WHEEL_SPEED_RF']
+    MAX_SPEED = 300
+    ret.wheelSpeeds.fl = MAX_SPEED if cp.vl['WHEEL_SPEEDS']['WHEEL_SPEED_LF'] >= MAX_SPEED else cp.vl['WHEEL_SPEEDS']['WHEEL_SPEED_LF']
+    ret.wheelSpeeds.rr = MAX_SPEED if cp.vl['WHEEL_SPEEDS']['WHEEL_SPEED_RR'] >= MAX_SPEED else cp.vl['WHEEL_SPEEDS']['WHEEL_SPEED_RR']
+    ret.wheelSpeeds.rl = MAX_SPEED if cp.vl['WHEEL_SPEEDS']['WHEEL_SPEED_LR'] >= MAX_SPEED else cp.vl['WHEEL_SPEEDS']['WHEEL_SPEED_LR']
+    ret.wheelSpeeds.fr = MAX_SPEED if cp.vl['WHEEL_SPEEDS']['WHEEL_SPEED_RF'] >= MAX_SPEED else cp.vl['WHEEL_SPEEDS']['WHEEL_SPEED_RF']
     ret.vEgoRaw = (cp.vl['WHEEL_SPEEDS']['WHEEL_SPEED_LF'] + cp.vl['WHEEL_SPEEDS']['WHEEL_SPEED_RR']) / 2.
     ret.vEgo, ret.aEgo = self.update_speed_kf(ret.vEgoRaw)
     ret.standstill = not ret.vEgoRaw > 0.001
