@@ -5,16 +5,44 @@ from selfdrive.car import make_can_msg
 GearShifter = car.CarState.GearShifter
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 
-def create_lkas_command(packer, apply_steer, lkas_active, frame):
+def calc_checksum(data):
 
+  checksum = 0xFF
+  for curr in data[:-1]:
+    shift = 0x80
+    for i in range(0, 8):
+      bit_sum = curr & shift
+      temp_chk = checksum & 0x80
+      if (bit_sum != 0):
+        bit_sum = 0x1C
+        if (temp_chk != 0):
+          bit_sum = 1
+        checksum = checksum << 1
+        temp_chk = checksum | 1
+        bit_sum ^= temp_chk
+      else:
+        if (temp_chk != 0):
+          bit_sum = 0x1D
+        checksum = checksum << 1
+        bit_sum ^= checksum
+      checksum = bit_sum
+      shift = shift >> 1
+  return ~checksum & 0xFF
+
+
+def create_lkas_command(packer, apply_steer, lkas_active, frame):
+  
   values = {
     "LKAS_COMMAND": apply_steer,
     "LKAS_COMMAND_BIT": 1 if lkas_active else 0,
     "COUNTER": frame % 0x10,
   }
 
-  return packer.make_can_msg("FORWARD_CAMERA_LKAS", 0, values)
+  dat = packer.make_can_msg("FORWARD_CAMERA_LKAS", 0, values)[2]
+  checksum = calc_checksum(dat)
 
+  values["CHECKSUM"] = checksum
+  return packer.make_can_msg("FORWARD_CAMERA_LKAS", 0, values)
 
 def create_lkas_hud(packer, enabled, leftLaneVisible, rightLaneVisible):
   # Chrysler came up with this scheme, not me
