@@ -14,7 +14,7 @@ class CarController():
     self.car_fingerprint = CP.carFingerprint
     self.steer_rate_limited = False
     self.prev_frame = -1
-    self.steer_command_bit = 0
+#    self.steer_command_bit = 0
 
     self.packer = CANPacker(dbc_name)
 
