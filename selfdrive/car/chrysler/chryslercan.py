@@ -30,7 +30,7 @@ def calc_checksum(data):
   return ~checksum & 0xFF
 
 
-def create_lkas_command(packer, apply_steer, steer_command_bit, frame):
+def create_lkas_command(packer, apply_steer, frame):
   
   values = {
     "LKAS_COMMAND": apply_steer,
