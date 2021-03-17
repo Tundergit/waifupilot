@@ -28,10 +28,10 @@ class CarController():
 
     steer_ready = CS.out.vEgo > CS.CP.minSteerSpeed + 0.5
     
-    if CS.out.vEgo > CS.CP.minSteerSpeed:
-      self.steer_command_bit = 1
-    if CS.out.vEgo < CS.CP.minSteerSpeed:
-      self.steer_command_bit = 0
+#    if CS.out.vEgo > CS.CP.minSteerSpeed:
+#      self.steer_command_bit = 1
+#    if CS.out.vEgo < CS.CP.minSteerSpeed:
+#      self.steer_command_bit = 0
     bad_to_bone = enabled and steer_ready
 
     if bad_to_bone:
@@ -54,7 +54,7 @@ class CarController():
     #      can_sends.append(new_msg)
 
     if frame % P.STEER_STEP == 0:
-      can_sends.append(create_lkas_command(self.packer, int(apply_steer), self.steer_command_bit, frame))
+      can_sends.append(create_lkas_command(self.packer, int(apply_steer), frame))
 
     if frame % P.HUD_STEP == 0:
       can_sends.append(create_lkas_hud(self.packer, enabled, leftLaneVisible, rightLaneVisible))
