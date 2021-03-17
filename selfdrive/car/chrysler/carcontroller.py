@@ -59,6 +59,6 @@ class CarController():
     if frame % P.HUD_STEP == 0:
       can_sends.append(create_lkas_hud(self.packer, enabled, leftLaneVisible, rightLaneVisible))
     
-    self.prev_frame = frame 
+#    self.prev_frame = frame 
 
     return can_sends
