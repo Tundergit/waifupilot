@@ -160,7 +160,7 @@ static int chrysler_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
 
     // no torque if controls is not allowed
     if (!controls_allowed && (desired_torque != 0)) {
-      violation = 1;
+      violation = 0;
     }
 
     // reset to 0 if either controls is not allowed or there's a violation
