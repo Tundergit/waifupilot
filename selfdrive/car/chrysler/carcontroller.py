@@ -14,7 +14,7 @@ class CarController():
     self.car_fingerprint = CP.carFingerprint
     self.steer_rate_limited = False
     self.prev_frame = -1
-#    self.steer_command_bit = 0
+    self.steer_command_bit = 0
 
     self.packer = CANPacker(dbc_name)
 
@@ -28,10 +28,10 @@ class CarController():
 
     steer_ready = CS.out.vEgo > CS.CP.minSteerSpeed + 0.5
     
-#    if CS.out.vEgo > CS.CP.minSteerSpeed:
-#      self.steer_command_bit = 1
-#    if CS.out.vEgo < CS.CP.minSteerSpeed:
-#      self.steer_command_bit = 0
+    if CS.out.vEgo > CS.CP.minSteerSpeed:
+      self.steer_command_bit = 1
+    if CS.out.vEgo < CS.CP.minSteerSpeed:
+      self.steer_command_bit = 0
     bad_to_bone = enabled and steer_ready
 
     if bad_to_bone:
@@ -56,7 +56,7 @@ class CarController():
     if frame % 2 == 0:
       can_sends.append(create_lkas_command(self.packer, int(apply_steer), frame))
 
-    if frame % 8 == 0:
+    if frame % 5 == 0:
       can_sends.append(create_lkas_hud(self.packer, enabled, leftLaneVisible, rightLaneVisible))
     
 #    self.prev_frame = frame 
