@@ -27,7 +27,7 @@ class CarController():
       return []
 
     steer_ready = CS.out.vEgo > CS.CP.minSteerSpeed + 0.2
-    if CS.out.vEgo > (CS.CP.minSteerSpeed + 0.1)
+    if CS.out.vEgo > CS.CP.minSteerSpeed + 0.1
       steer_command_bit = True
     if CS.out.vEgo < CS.CP.minSteerSpeed
       steer_command_bit = False
