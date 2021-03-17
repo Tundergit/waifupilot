@@ -14,7 +14,7 @@ class CarState(CarStateBase):
     ret = car.CarState.new_message()
 
 #    self.frame = cp_cam.vl["FORWARD_CAMERA_LKAS"]['COUNTER']
-    self.frame = cp.vl["EPS_2"]['COUNTER']
+    self.frame = cp_cam.vl["FORWARD_CAMERA_ACC"]['COUNTER']
 
     ret.doorOpen = any([cp.vl["DOORS"]['DOOR_OPEN_LF'],
                         cp.vl["DOORS"]['DOOR_OPEN_RF'],
@@ -99,7 +99,7 @@ class CarState(CarStateBase):
       ("TORQUE_DRIVER", "EPS_2", 0),
       ("EPS_STATUS", "EPS_2", 0),
       ("TORQUE_MOTOR", "EPS_1", 0),
-      ("COUNTER", "EPS_2", -1),
+#      ("COUNTER", "EPS_2", -1),
       ("TRAC_OFF", "CENTER_STACK", 0),
       ("DRIVER_SEATBELT_STATUS", "OCCUPANT_RESTRAINT_MODULE", 0),
     ]
@@ -127,6 +127,7 @@ class CarState(CarStateBase):
       # sig_name, sig_address, default
       ("COUNTER", "FORWARD_CAMERA_LKAS", -1),
       ("ACC_STATUS", "FORWARD_CAMERA_ACC", 0),
+      ("COUNTER", "FORWARD_CAMERA_ACC", -1),
       ("ACC_SET_SPEED", "FORWARD_CAMERA_CLUSTER", -1),
 #      ("LKAS_HUD", "FOWARD_CAMERA_HUD", -1),
 #      ("LKAS_CONTROL_BIT", "FORWARD_CAMERA_LKAS", 0),
