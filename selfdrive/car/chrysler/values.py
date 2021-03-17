@@ -5,7 +5,7 @@ from cereal import car
 Ecu = car.CarParams.Ecu
 
 class CarControllerParams:
-  STEER_STEP = 2
+  STEER_STEP = 1
   HUD_STEP = 8
   STEER_MAX = 255
   STEER_DELTA_UP = 5
