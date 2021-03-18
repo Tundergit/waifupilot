@@ -11,9 +11,9 @@ const CanMsg CHRYSLER_TX_MSGS[] = {{166, 0, 8}, {250, 0, 8}}; // {177, 0, 8}};  
 AddrCheckStruct chrysler_rx_checks[] = {
   {.msg = {{35, 0, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 10000U}}},  // EPS module
   {.msg = {{139, 0, 8, .check_checksum = false, .max_counter = 0U, .expected_timestep = 10000U}}},  // wheel speeds
-  {.msg = {{153, 0, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},  // forward cam ACC
+  {.msg = {{153, 0, 8, .check_checksum = false, .max_counter = 15U, .expected_timestep = 20000U}}},  // forward cam ACC
   {.msg = {{129, 0, 8, .check_checksum = false, .max_counter = 15U,  .expected_timestep = 20000U}}},  // gas pedal
-  {.msg = {{121, 0, 8, .check_checksum = true, .max_counter = 15U,  .expected_timestep = 20000U}}},  // brake pressed
+  {.msg = {{121, 0, 8, .check_checksum = false, .max_counter = 15U,  .expected_timestep = 20000U}}},  // brake pressed
 };
 const int CHRYSLER_RX_CHECK_LEN = sizeof(chrysler_rx_checks) / sizeof(chrysler_rx_checks[0]);
 
