@@ -26,11 +26,11 @@ class CarController():
     if self.prev_frame == frame:
       return []
 
-    steer_ready = CS.out.vEgo > P.minSteerSpeed + 0.5
+    steer_ready = CS.out.vEgo > CS.CP.minSteerSpeed + 0.5
     
-    if CS.out.vEgo > P.minSteerSpeed:
+    if CS.out.vEgo > CS.CP.minSteerSpeed:
       self.steer_command_bit = 1
-    if CS.out.vEgo < P.minSteerSpeed:
+    if CS.out.vEgo < CS.CP.minSteerSpeed:
       self.steer_command_bit = 0
     bad_to_bone = enabled and steer_ready
 
