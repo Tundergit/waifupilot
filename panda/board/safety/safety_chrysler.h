@@ -10,7 +10,7 @@ const CanMsg CHRYSLER_TX_MSGS[] = {{166, 0, 8}, {250, 0, 8}}; // {177, 0, 8}};  
 
 AddrCheckStruct chrysler_rx_checks[] = {
   {.msg = {{35, 0, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 10000U}}},  // EPS module
-  {.msg = {{139, 0, 8, .check_checksum = false, .max_counter = 0U, .expected_timestep = 10000U}}},  // wheel speeds
+  {.msg = {{139, 0, 8, .check_checksum = false, .max_counter = 0U, .expected_timestep = 20000U}}},  // wheel speeds
   {.msg = {{153, 0, 8, .check_checksum = false, .max_counter = 15U, .expected_timestep = 20000U}}},  // forward cam ACC
   {.msg = {{129, 0, 8, .check_checksum = false, .max_counter = 15U,  .expected_timestep = 20000U}}},  // gas pedal
   {.msg = {{121, 0, 8, .check_checksum = false, .max_counter = 15U,  .expected_timestep = 20000U}}},  // brake pressed
@@ -192,11 +192,11 @@ static int chrysler_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
 
   if (!relay_malfunction) {
     // forward CAN 0 -> 2 so stock LKAS camera sees messages
-    if (bus_num == 0) {
+    if ((bus_num == 0) && (addr != 166) && (addr != 250)) {
       bus_fwd = 2;
     }
     // forward all messages from camera except LKAS_COMMAND and LKAS_HUD
-    if ((bus_num == 2) && (addr != 166) && (addr != 250)) {
+    if ((bus_num == 2) {// && (addr != 166) && (addr != 250)) {
       bus_fwd = 0;
     }
   }
