@@ -30,12 +30,12 @@ def calc_checksum(data):
   return ~checksum & 0xFF
 
 
-def create_lkas_command(packer, apply_steer, frame, steer_command_bit):
+def create_lkas_command(packer, apply_steer, counter, steer_command_bit):
   
   values = {
     "LKAS_COMMAND": apply_steer,
     "LKAS_COMMAND_BIT": steer_command_bit,
-    "COUNTER": frame % 0x10,
+    "COUNTER": counter
   }
 
   dat = packer.make_can_msg("FORWARD_CAMERA_LKAS", 0, values)[2]
@@ -66,10 +66,10 @@ def create_lkas_hud(packer, enabled, leftLaneVisible, rightLaneVisible):
   return packer.make_can_msg("FORWARD_CAMERA_HUD", 0, values)
 
 
-def create_wheel_buttons(packer, frame, cancel=False):
+def create_wheel_buttons(packer, counter, cancel=False):
 
   values = {
     "CANCEL": cancel,
-    "COUNTER": frame % 0x10
+    "COUNTER": counter
   }
   return packer.make_can_msg("WHEEL_BUTTONS_CRUISE_CONTROL", 0, values)
