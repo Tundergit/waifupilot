@@ -22,10 +22,6 @@ class CarController():
              rightLaneVisible):  # TODO hud_alert
     P = CarControllerParams
     
-    frame = CS.lkas_counter
-    if self.prev_frame == frame:
-      return []
-
     steer_ready = CS.out.vEgo > CS.CP.minSteerSpeed + 0.5
     
     if CS.out.vEgo > CS.CP.minSteerSpeed:
@@ -59,6 +55,4 @@ class CarController():
     if frame % 5 == 0:
       can_sends.append(create_lkas_hud(self.packer, enabled, leftLaneVisible, rightLaneVisible))
     
-#    self.prev_frame = frame 
-
     return can_sends
