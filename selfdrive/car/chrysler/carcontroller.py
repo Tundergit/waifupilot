@@ -26,7 +26,7 @@ class CarController():
     
     if steer_ready:
       self.steer_command_bit = True
-    else
+    if not steer_ready:
       self.steer_command_bit = False
     
     bad_to_bone = enabled and steer_ready
