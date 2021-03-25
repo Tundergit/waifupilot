@@ -14,20 +14,21 @@ class CarController():
     self.car_fingerprint = CP.carFingerprint
     self.steer_rate_limited = False
     self.prev_frame = -1
-    self.steer_command_bit = 0
+    self.steer_command_bit = False
 
     self.packer = CANPacker(dbc_name)
 
-  def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, leftLaneVisible,
+  def update(self, enabled, CS, frame, counter, actuators, pcm_cancel_cmd, leftLaneVisible,
              rightLaneVisible):  # TODO hud_alert
     P = CarControllerParams
     
-    steer_ready = CS.out.vEgo > CS.CP.minSteerSpeed + 0.5
+    steer_ready = CS.out.vEgo > CS.CP.minSteerSpeed
     
-    if CS.out.vEgo > CS.CP.minSteerSpeed:
-      self.steer_command_bit = 1
-    if CS.out.vEgo < CS.CP.minSteerSpeed:
-      self.steer_command_bit = 0
+    if steer_ready:
+      self.steer_command_bit = True
+    else
+      self.steer_command_bit = False
+    
     bad_to_bone = enabled and steer_ready
 
     if bad_to_bone:
