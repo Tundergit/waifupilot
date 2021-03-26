@@ -24,7 +24,7 @@ class CarInterface(CarInterfaceBase):
 
     # Speed conversion:              20, 45 mph
     ret.wheelbase = 3.88  # 2021 Ram 1500
-    ret.steerRatio = 16.  # just a guess
+    ret.steerRatio = 18.  # just a guess
     ret.mass = 2493. + STD_CARGO_KG  # kg curb weight 2021 Ram 1500
     ret.lateralTuning.pid.kpBP, ret.lateralTuning.pid.kiBP = [[9., 20.], [9., 20.]]
     ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.15, 0.30], [0.03, 0.05]]
