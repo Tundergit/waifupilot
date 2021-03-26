@@ -34,7 +34,7 @@ def create_lkas_command(packer, apply_steer, counter, steer_command_bit):
   
   values = {
     "LKAS_COMMAND": apply_steer,
-    "LKAS_COMMAND_BIT": steer_command_bit,
+    "LKAS_CONTROL_BIT": steer_command_bit,
     "COUNTER": counter
   }
 
