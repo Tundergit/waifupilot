@@ -13,9 +13,7 @@ class CarState(CarStateBase):
 
     ret = car.CarState.new_message()
 
-    self.frame = cp_cam.vl["FORWARD_CAMERA_LKAS"]['COUNTER']
     self.steer_command_bit = cp_cam.vl["FORWARD_CAMERA_LKAS"]['LKAS_CONTROL_BIT']
-#    self.frame = cp_cam.vl["FORWARD_CAMERA_ACC"]['COUNTER']
 
     ret.doorOpen = any([cp.vl["DOORS"]['DOOR_OPEN_LF'],
                         cp.vl["DOORS"]['DOOR_OPEN_RF'],
@@ -62,8 +60,6 @@ class CarState(CarStateBase):
 
     ret.genericToggle = bool(cp.vl["STEERING_LEVERS"]['HIGH_BEAM_FLASH'])
 
-    self.lkas_counter = cp_cam.vl["FORWARD_CAMERA_LKAS"]['COUNTER']
-    
     gear = cp.vl["SHIFTER_ASSM"]['SHIFTER_POSITION']
     if gear in (4, 8):
       ret.gearShifter = GearShifter.drive
@@ -126,9 +122,9 @@ class CarState(CarStateBase):
   def get_cam_can_parser(CP):
     signals = [
       # sig_name, sig_address, default
-      ("COUNTER", "FORWARD_CAMERA_LKAS", -1),
+#      ("COUNTER", "FORWARD_CAMERA_LKAS", -1),
       ("ACC_STATUS", "FORWARD_CAMERA_ACC", 0),
-      ("COUNTER", "FORWARD_CAMERA_ACC", -1),
+#      ("COUNTER", "FORWARD_CAMERA_ACC", -1),
       ("ACC_SET_SPEED", "FORWARD_CAMERA_CLUSTER", -1),
 #      ("LKAS_HUD", "FOWARD_CAMERA_HUD", -1),
       ("LKAS_CONTROL_BIT", "FORWARD_CAMERA_LKAS", 0),
