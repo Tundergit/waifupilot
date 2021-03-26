@@ -18,7 +18,7 @@ class CarController():
 
     self.packer = CANPacker(dbc_name)
 
-  def update(self, enabled, CS, frame, counter, actuators, pcm_cancel_cmd, leftLaneVisible,
+  def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, leftLaneVisible,
              rightLaneVisible):  # TODO hud_alert
     P = CarControllerParams
     
