@@ -66,10 +66,10 @@ def create_lkas_hud(packer, enabled, leftLaneVisible, rightLaneVisible):
   return packer.make_can_msg("FORWARD_CAMERA_HUD", 0, values)
 
 
-def create_wheel_buttons(packer, counter, cancel=False):
+def create_wheel_buttons(packer, frame, cancel=False):
 
   values = {
     "CANCEL": cancel,
-    "COUNTER": counter
+    "COUNTER": frame % 16
   }
   return packer.make_can_msg("WHEEL_BUTTONS_CRUISE_CONTROL", 0, values)
