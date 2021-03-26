@@ -14,6 +14,7 @@ class CarState(CarStateBase):
     ret = car.CarState.new_message()
 
     self.frame = cp_cam.vl["FORWARD_CAMERA_LKAS"]['COUNTER']
+    self.steer_command_bit = cp_cam.vl["FORWARD_CAMERA_LKAS"]['LKAS_CONTROL_BIT']
 #    self.frame = cp_cam.vl["FORWARD_CAMERA_ACC"]['COUNTER']
 
     ret.doorOpen = any([cp.vl["DOORS"]['DOOR_OPEN_LF'],
@@ -130,7 +131,7 @@ class CarState(CarStateBase):
       ("COUNTER", "FORWARD_CAMERA_ACC", -1),
       ("ACC_SET_SPEED", "FORWARD_CAMERA_CLUSTER", -1),
 #      ("LKAS_HUD", "FOWARD_CAMERA_HUD", -1),
-#      ("LKAS_CONTROL_BIT", "FORWARD_CAMERA_LKAS", 0),
+      ("LKAS_CONTROL_BIT", "FORWARD_CAMERA_LKAS", 0),
     ]
     checks = [
       ("FORWARD_CAMERA_LKAS", 50),
