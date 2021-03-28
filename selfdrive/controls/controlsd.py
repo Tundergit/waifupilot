@@ -24,8 +24,8 @@ from selfdrive.hardware import HARDWARE
 
 LDW_MIN_SPEED = 31 * CV.MPH_TO_MS
 LANE_DEPARTURE_THRESHOLD = 0.1
-STEER_ANGLE_SATURATION_TIMEOUT = 1.0 / DT_CTRL
-STEER_ANGLE_SATURATION_THRESHOLD = 2.5  # Degrees
+STEER_ANGLE_SATURATION_TIMEOUT = 10.0 / DT_CTRL # up from 1.0
+STEER_ANGLE_SATURATION_THRESHOLD = 5.0  # Degrees up from 2.5
 
 SIMULATION = "SIMULATION" in os.environ
 NOSENSOR = "NOSENSOR" in os.environ
@@ -200,7 +200,7 @@ class Controls:
     if self.can_rcv_error or (not CS.canValid and self.sm.frame > 5 / DT_CTRL):
       self.events.add(EventName.canError)
     if (self.sm['health'].safetyModel != self.CP.safetyModel and self.sm.frame > 2 / DT_CTRL) or \
-      self.mismatch_counter >= 200:
+      self.mismatch_counter >= 200000: # up from 200
       self.events.add(EventName.controlsMismatch)
     if not self.sm.alive['plan'] and self.sm.alive['pathPlan']:
       # only plan not being received: radar not communicating
@@ -269,7 +269,7 @@ class Controls:
       self.mismatch_counter = 0
 
     if not self.sm['health'].controlsAllowed and self.enabled:
-      self.mismatch_counter += 1
+      self.mismatch_counter = 0 # += 1 <- default value, 0 for dev
 
     self.distance_traveled += CS.vEgo * DT_CTRL
 
