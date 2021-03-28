@@ -53,6 +53,7 @@ class CarState(CarStateBase):
    # ret.cruiseState.nonAdaptive = cp.vl["DASHBOARD"]['CRUISE_STATE'] in [1, 2]  do we need this at all?
 
     ret.steeringTorque = cp.vl["EPS_2"]["TORQUE_DRIVER"]
+    # ret.steeringTorqueEps = cp.vl["EPS_2"]['TORQUE_MOTOR_IN']
     ret.steeringTorqueEps = cp.vl["EPS_1"]["TORQUE_MOTOR"]
     ret.steeringPressed = abs(ret.steeringTorque) > STEER_THRESHOLD
     steer_state = cp.vl["EPS_2"]["EPS_STATUS"]
@@ -96,6 +97,7 @@ class CarState(CarStateBase):
       ("TORQUE_DRIVER", "EPS_2", 0),
       ("EPS_STATUS", "EPS_2", 0),
       ("TORQUE_MOTOR", "EPS_1", 0),
+#      ("TORQUE_MOTOR_IN", "EPS_2", 0),
 #      ("COUNTER", "EPS_2", -1),
       ("TRAC_OFF", "CENTER_STACK", 0),
       ("DRIVER_SEATBELT_STATUS", "OCCUPANT_RESTRAINT_MODULE", 0),
