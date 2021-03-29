@@ -21,7 +21,7 @@ class CarState(CarStateBase):
                         cp.vl["DOORS"]['DOOR_OPEN_RR']])
     ret.seatbeltUnlatched = cp.vl["OCCUPANT_RESTRAINT_MODULE"]['DRIVER_SEATBELT_STATUS'] == 1
 
-    ret.brakePressed = cp.vl["ABS_1"]['BRAKE_PEDAL'] > 1  # human-only... TODO: find values when ACC uses brakes - might have been lucky
+    ret.brakePressed = cp.vl["ABS_2"]['DRIVER_BRAKE'] > 5  # human-only... TODO: find values when ACC uses brakes - might have been lucky
     ret.brake = 0
     ret.brakeLights = ret.brakePressed
     ret.gas = cp.vl["TPS_1"]['THROTTLE_POSITION']
@@ -85,6 +85,7 @@ class CarState(CarStateBase):
       ("DOOR_OPEN_LR", "DOORS", 0),
       ("DOOR_OPEN_RR", "DOORS", 0),
       ("BRAKE_PEDAL", "ABS_1", 0),
+      ("DRIVER_BRAKE", "ABS_2", 0),
       ("THROTTLE_POSITION", "TPS_1", 0),
       ("WHEEL_SPEED_RR", "WHEEL_SPEEDS", 0),
       ("WHEEL_SPEED_LR", "WHEEL_SPEEDS", 0),
@@ -106,6 +107,7 @@ class CarState(CarStateBase):
     checks = [
       # sig_address, frequency
       ("ABS_1", 50),
+      ("ABS_2", 50),
       ("EPS_1", 100),
       ("EPS_2", 100),
       ("WHEEL_SPEEDS", 50),
