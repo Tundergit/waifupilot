@@ -38,8 +38,8 @@ class CarState(CarStateBase):
     ret.vEgo, ret.aEgo = self.update_speed_kf(ret.vEgoRaw)
     ret.standstill = not ret.vEgoRaw > 0.001
 
-    ret.leftBlinker = cp.vl["STEERING_LEVERS"]['TURN_SIGNALS'] == 1
-    ret.rightBlinker = cp.vl["STEERING_LEVERS"]['TURN_SIGNALS'] == 2
+    ret.leftBlinker = bool(cp.vl["STEERING_LEVERS"]['BLINKER_LEFT'])
+    ret.rightBlinker = bool(cp.vl["STEERING_LEVERS"]['BLINKER_RIGHT'])
     ret.steeringAngle = cp.vl["EPS_1"]['STEER_ANGLE']
     ret.steeringRate = cp.vl["EPS_2"]['STEER_RATE_DRIVER']
 
@@ -93,7 +93,8 @@ class CarState(CarStateBase):
       ("WHEEL_SPEED_LF", "WHEEL_SPEEDS", 0),
       ("STEER_ANGLE", "EPS_1", 0),
       ("STEER_RATE_DRIVER", "EPS_2", 0),
-      ("TURN_SIGNALS", "STEERING_LEVERS", 0),
+      ("BLINKER_LEFT", "STEERING_LEVERS", 0),
+      ("BLINKER_RIGHT", "STEERING_LEVERS", 0),
       ("HIGH_BEAM_FLASH", "STEERING_LEVERS", 0),
       ("TORQUE_DRIVER", "EPS_2", 0),
       ("EPS_STATUS", "EPS_2", 0),
