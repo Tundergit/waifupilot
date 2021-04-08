@@ -34,7 +34,7 @@ class CarInterface(CarInterfaceBase):
     ret.steerLimitTimer = 0.4
     ret.centerToFront = ret.wheelbase * 0.4 # just a guess
 
-    ret.minSteerSpeed = 0.1  # m/s
+    ret.minSteerSpeed = 18.0  # m/s
 
     # starting with reasonable value for civic and scaling by mass and wheelbase
     ret.rotationalInertia = scale_rot_inertia(ret.mass, ret.wheelbase)
