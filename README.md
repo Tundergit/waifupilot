@@ -2,6 +2,8 @@
 
 ** Ram 1500 users: this fork and branch are untested, and incomplete.  Panda safety features are not being enforced.  There is inherent risk involved with any automotive pursuit.  This is no different.  Use common sense, use only when it's safe, and understand that you and only you are liable for any damages caused by your use of this software.  
 
+And now, a word from comma.ai: 
+
 Community Maintained Cars and Features are not verified by comma to meet our [safety model](SAFETY.md). Be extra cautious using them. They are only available after enabling the toggle in `Settings->Developer->Enable Community Features`.
 
 To promote a car from community maintained, it must meet a few requirements. We must own one from the brand, we must sell the harness for it, has full ISO26262 in both panda and openpilot, there must be a path forward for longitudinal control, it must have AEB still enabled, and it must support fingerprinting 2.0
