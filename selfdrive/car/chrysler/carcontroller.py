@@ -49,7 +49,7 @@ class CarController():
     #    if pcm_cancel_cmd:  # TODO: ENABLE ONCE STEERING WORKS
     #      new_msg = create_wheel_buttons(self.packer, self.frame, cancel=True)
     #      can_sends.append(new_msg)
-    counter = (frame / P.STEER_STEP) % 16
+    counter = (frame / 2) % 16
     
     if frame % 2 == 0:
       can_sends.append(create_lkas_command(self.packer, int(apply_steer), counter, self.steer_command_bit))
