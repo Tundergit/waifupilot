@@ -50,8 +50,7 @@ class CarInterface(CarInterfaceBase):
     ret.lateralTuning.indi.timeConstantV = [12.0]
     ret.lateralTuning.indi.actuatorEffectivenessBP = [0.]
     ret.lateralTuning.indi.actuatorEffectivenessV = [18.0]
-    ret.steerActuatorDelay = 0.2    
-
+    ret.steerActuatorDelay = 0.8
     ret.centerToFront = ret.wheelbase * 0.4 # just a guess
     
     ret.minSteerSpeed = 18.0  # m/s
