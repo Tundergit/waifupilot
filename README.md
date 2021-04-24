@@ -1,4 +1,4 @@
-**waifupilot - a fun and sassy dashcam software that does other stuff too**
+**Development Branch for 2019 Ram 1500**
 
 ** Ram 1500 users: this fork and branch are untested, and incomplete.  Panda safety features are not being enforced.  There is inherent risk involved with any automotive pursuit.  This is no different.  Use common sense, use only when it's safe, and understand that you and only you are liable for any damages caused by your use of this software.  
 
