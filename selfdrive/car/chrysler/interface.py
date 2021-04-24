@@ -35,6 +35,11 @@ class CarInterface(CarInterfaceBase):
 #    ret.steerLimitTimer = 0.4
 #    ret.steerRateCost = 1.0  # may need tuning
 
+# timeconstant is smoothing. Higher values == more smoothing
+# actuatoreffectiveness is how much it steers. Lower values == more steering
+      
+# outer and inner are gains. Higher values = more steering
+
 #_______TUNDER INDI TUNING________
     ret.lateralTuning.init('indi')
     ret.lateralTuning.indi.innerLoopGainBP = [0.]
@@ -42,7 +47,7 @@ class CarInterface(CarInterfaceBase):
     ret.lateralTuning.indi.outerLoopGainBP = [0.]
     ret.lateralTuning.indi.outerLoopGainV = [1.0]
     ret.lateralTuning.indi.timeConstantBP = [0.]
-    ret.lateralTuning.indi.timeConstantV = [1.0]
+    ret.lateralTuning.indi.timeConstantV = [3.0]
     ret.lateralTuning.indi.actuatorEffectivenessBP = [0.]
     ret.lateralTuning.indi.actuatorEffectivenessV = [6.0]
     ret.steerActuatorDelay = 0.1    
