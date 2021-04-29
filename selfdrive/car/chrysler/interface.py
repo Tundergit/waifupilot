@@ -43,14 +43,14 @@ class CarInterface(CarInterfaceBase):
 #_______TUNDER INDI TUNING________
     ret.lateralTuning.init('indi')
     ret.lateralTuning.indi.innerLoopGainBP = [0.]
-    ret.lateralTuning.indi.innerLoopGainV = [0.018]
+    ret.lateralTuning.indi.innerLoopGainV = [0.022]
     ret.lateralTuning.indi.outerLoopGainBP = [0.]
-    ret.lateralTuning.indi.outerLoopGainV = [0.0022]
+    ret.lateralTuning.indi.outerLoopGainV = [0.60]
     ret.lateralTuning.indi.timeConstantBP = [0.]
-    ret.lateralTuning.indi.timeConstantV = [43.0]
+    ret.lateralTuning.indi.timeConstantV = [13.0]
     ret.lateralTuning.indi.actuatorEffectivenessBP = [0.]
-    ret.lateralTuning.indi.actuatorEffectivenessV = [7.55]
-    ret.steerActuatorDelay = 0.905
+    ret.lateralTuning.indi.actuatorEffectivenessV = [13.0]
+    ret.steerActuatorDelay = 1.2
     ret.centerToFront = ret.wheelbase * 0.4 # just a guess
     
     ret.minSteerSpeed = 18.0  # m/s
