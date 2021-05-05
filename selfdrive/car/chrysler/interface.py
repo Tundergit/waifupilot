@@ -53,7 +53,7 @@ class CarInterface(CarInterfaceBase):
     ret.steerActuatorDelay = 0.1
     ret.centerToFront = ret.wheelbase * 0.4 # just a guess
     
-    ret.minSteerSpeed = 18.0  # m/s
+    ret.minSteerSpeed = 14.0  # m/s
 
     # starting with reasonable value for civic and scaling by mass and wheelbase
     ret.rotationalInertia = scale_rot_inertia(ret.mass, ret.wheelbase)
