@@ -24,7 +24,7 @@ class CarInterface(CarInterfaceBase):
 
     # Speed conversion:              20, 45 mph
     ret.wheelbase = 3.88  # 2021 Ram 1500
-    ret.steerRatio = 15.5  # 4x4 crew cab long bed
+    ret.steerRatio = 18  # 4x4 crew cab long bed
     ret.mass = 2493. + STD_CARGO_KG  # kg curb weight 2021 Ram 1500
     
 #_______COMMA PID TUNING_______ -uncomment to enable
