@@ -28,12 +28,12 @@ class CarInterface(CarInterfaceBase):
     ret.mass = 2493. + STD_CARGO_KG  # kg curb weight 2021 Ram 1500
     
 #_______COMMA PID TUNING_______ -uncomment to enable
-#    ret.lateralTuning.pid.kpBP, ret.lateralTuning.pid.kiBP = [[9., 20.], [9., 20.]]
-#    ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.30, 0.30], [0.05, 0.05]]
-#    ret.lateralTuning.pid.kf = 0.00006
-#    ret.steerActuatorDelay = 0.1  # may need tuning
-#    ret.steerLimitTimer = 0.4
-#    ret.steerRateCost = 1.0  # may need tuning
+    ret.lateralTuning.pid.kpBP, ret.lateralTuning.pid.kiBP = [[9., 20.], [9., 20.]]
+    ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.30, 0.30], [0.05, 0.05]]
+    ret.lateralTuning.pid.kf = 0.00006
+    ret.steerActuatorDelay = 0.1  # may need tuning
+    ret.steerLimitTimer = 0.4
+    ret.steerRateCost = 1.0  # may need tuning
 
 # timeconstant is smoothing. Higher values == more smoothing
 # actuatoreffectiveness is how much it steers. Lower values == more steering
@@ -41,17 +41,17 @@ class CarInterface(CarInterfaceBase):
 # outer and inner are gains. Higher values = more steering
 
 #_______TUNDER INDI TUNING________
-    ret.lateralTuning.init('indi')
-    ret.lateralTuning.indi.innerLoopGainBP = [0.]
-    ret.lateralTuning.indi.innerLoopGainV = [2.0]
-    ret.lateralTuning.indi.outerLoopGainBP = [0.]
-    ret.lateralTuning.indi.outerLoopGainV = [3.0]
-    ret.lateralTuning.indi.timeConstantBP = [0.]
-    ret.lateralTuning.indi.timeConstantV = [1.0]
-    ret.lateralTuning.indi.actuatorEffectivenessBP = [0.]
-    ret.lateralTuning.indi.actuatorEffectivenessV = [2.0]
-    ret.steerActuatorDelay = 0.1
-    ret.centerToFront = ret.wheelbase * 0.4 # just a guess
+#    ret.lateralTuning.init('indi')
+#    ret.lateralTuning.indi.innerLoopGainBP = [0.]
+#    ret.lateralTuning.indi.innerLoopGainV = [2.0]
+#    ret.lateralTuning.indi.outerLoopGainBP = [0.]
+#    ret.lateralTuning.indi.outerLoopGainV = [3.0]
+#    ret.lateralTuning.indi.timeConstantBP = [0.]
+#    ret.lateralTuning.indi.timeConstantV = [1.0]
+#    ret.lateralTuning.indi.actuatorEffectivenessBP = [0.]
+#    ret.lateralTuning.indi.actuatorEffectivenessV = [2.0]
+#    ret.steerActuatorDelay = 0.1
+#    ret.centerToFront = ret.wheelbase * 0.4 # just a guess
     
     ret.minSteerSpeed = 14.0  # m/s
 
