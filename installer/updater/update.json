@@ -1,7 +1,7 @@
 {
-  "ota_url": "https://www.dropbox.com/s/dl/sa6i7iqcwcp7gcx/ota-signed-5c366df88020863525f80f6803afaca9f852854b4b1aef9184189844b7979f0b.zip",
-  "ota_hash": "5c366df88020863525f80f6803afaca9f852854b4b1aef9184189844b7979f0b",
-  "recovery_url": "https://www.dropbox.com/s/dl/72w602c7ev4v2a7/recovery-4772f9348e04b560b9df87d6dea6c740fa8d62ea41a8db3842eec216f04e3110.img",
+  "ota_url": "https://commadist.azureedge.net/neosupdate/ota-signed-e5cb30d3c0c8f7903fa2d04047296605a0136324201c30f59013c614a9fc6804.zip",
+  "ota_hash": "e5cb30d3c0c8f7903fa2d04047296605a0136324201c30f59013c614a9fc6804",
+  "recovery_url": "https://commadist.azureedge.net/neosupdate/recovery-b905c42c54fbd69b6ad6152b434b3567f24169f31ad8409aee8858ceb2918bba.img",
   "recovery_len": 15922476,
-  "recovery_hash": "4772f9348e04b560b9df87d6dea6c740fa8d62ea41a8db3842eec216f04e3110"
+  "recovery_hash": "b905c42c54fbd69b6ad6152b434b3567f24169f31ad8409aee8858ceb2918bba"
 }
