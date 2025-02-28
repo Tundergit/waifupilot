@@ -303,10 +303,11 @@ def read_db(params_path, key):
     return None
 
 def write_db(params_path, key, value):
+  prev_umask = os.umask(0)
   if isinstance(value, str):
     value = value.encode('utf8')
 
-  prev_umask = os.umask(0)
+  
   lock = FileLock(params_path+"/.lock", True)
   lock.acquire()
 
