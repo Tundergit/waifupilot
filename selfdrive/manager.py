@@ -505,12 +505,12 @@ def main():
   params.manager_start()
 
   default_params = [
-    ("CommunityFeaturesToggle", "1"),
-    ("CompletedTrainingVersion", "1"),
+    ("CommunityFeaturesToggle", "0"),
+    ("CompletedTrainingVersion", "0"),
     ("IsMetric", "0"),
     ("RecordFront", "0"),
     ("HasAcceptedTerms", "1"),
-    ("HasCompletedSetup", "1"),
+    ("HasCompletedSetup", "0"),
     ("IsUploadRawEnabled", "1"),
     ("IsLdwEnabled", "1"),
     ("IsGeofenceEnabled", "-1"),
